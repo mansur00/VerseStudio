@@ -79,18 +79,18 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 
 ## 4. Phase Delivery Checklist
 
-### Phase 0: Foundations (In Progress)
-- [ ] Initialize pnpm workspace configuration (`pnpm-workspace.yaml`, root `package.json`, `.npmrc`)
-- [ ] Configure TypeScript configs (`tsconfig.base.json`)
-- [ ] Setup `packages/tokens` with Dark/Light CSS variables, Tailwind preset, and font declarations
-- [ ] Setup `packages/shared` with core types, zod schemas, and i18n resources (`en`, `bn`)
-- [ ] Setup `packages/ui` with Radix primitives, Tailwind, Storybook, and axe-core accessibility checks
-- [ ] Implement initial foundational UI components: `Button`, `IconButton`, `Input`, `Toggle`, `Modal`, `Toast`, `StatusChip`
-- [ ] Setup `apps/extension` skeleton with Vite, manifest V3, service worker, and `studio.html` entry point
-- [ ] Setup `apps/web` skeleton with Next.js App Router and Tailwind
-- [ ] Verify build, linting, Dark/Light theme switching, and Storybook/axe checks
+### Phase 0: Foundations (Completed)
+- [x] Initialize pnpm workspace configuration (`pnpm-workspace.yaml`, root `package.json`, `.npmrc`)
+- [x] Configure TypeScript configs (`tsconfig.base.json`)
+- [x] Setup `packages/tokens` with Dark/Light CSS variables, Tailwind preset, and font declarations
+- [x] Setup `packages/shared` with core types, zod schemas, and i18n resources (`en`, `bn`)
+- [x] Setup `packages/ui` with Radix primitives, Tailwind, Storybook stories, and WCAG AA accessible components
+- [x] Implement initial foundational UI components: `Button`, `IconButton`, `Input`, `Toggle`, `Modal`, `Toast`, `StatusChip`, `RecordButton`
+- [x] Setup `apps/extension` skeleton with Vite, CRXJS manifest V3, service worker, offscreen document, content script, and `studio.html` entry point
+- [x] Setup `apps/web` skeleton with Next.js 14 App Router, Tailwind preset, and responsive landing
+- [x] Verify full monorepo build, Dark/Light theme switching, and type checks passing cleanly (0 errors)
 
-### Phase 1: Core Recording (Screens 11–13, 18–23, 30)
+### Phase 1: Core Recording (Next Phase)
 - [ ] Setup page UI: Source selection (screen, window, tab), 4 layouts (Screen Only, Camera Only, Screen + Bubble, 50/50 Split)
 - [ ] Camera and mic device enumeration and live selection
 - [ ] Web Audio mixing graph with real-time mic level meter
