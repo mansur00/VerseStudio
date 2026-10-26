@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "VerseStudio 4K Pro",
+  "version": "1.0.0",
+  "description": "Studio-grade 4K 60FPS screen-recording with bilingual AI voice and Google Drive cloud sync",
+  "action": {
+    "default_title": "Open VerseStudio 4K Pro"
+  },
+  "background": {
+    "service_worker": "src/background/index.ts",
+    "type": "module"
+  },
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "offscreen",
+    "identity",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "tabCapture"
+  ],
+  "optional_permissions": [
+    "desktopCapture"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "studio.html",
+        "src/offscreen/offscreen.html"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/index.ts"],
+      "run_at": "document_idle"
+    }
+  ]
+}

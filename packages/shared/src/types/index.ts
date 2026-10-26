@@ -1,0 +1,96 @@
+/**
+ * VerseStudio Core Domain Types
+ */
+
+export type RecordingResolution = '4k' | '1440p' | '1080p';
+export type RecordingFPS = 30 | 60;
+
+export type RecordingLayout = 
+  | 'screen-only' 
+  | 'camera-only' 
+  | 'screen-camera' 
+  | 'split-50-50';
+
+export type RecordingStatus = 
+  | 'idle' 
+  | 'countdown' 
+  | 'recording' 
+  | 'paused' 
+  | 'stopped';
+
+export type SourceType = 'screen' | 'window' | 'tab';
+
+export type AudioTrackOption = 
+  | 'original-bangla' 
+  | 'english-ai' 
+  | 'mixed';
+
+export interface AudioMixSettings {
+  micEnabled: boolean;
+  systemAudioEnabled: boolean;
+  selectedMicDeviceId?: string;
+  micVolume: number; // 0 to 1
+  systemVolume: number; // 0 to 1
+}
+
+export interface LiveToolsState {
+  laserActive: boolean;
+  spotlightActive: boolean;
+  keystrokeHudActive: boolean;
+  privacyBlurActive: boolean;
+  autoZoomActive: boolean;
+  teleprompterActive: boolean;
+}
+
+export interface TeleprompterConfig {
+  text: string;
+  scrollSpeed: number; // 1 to 10
+  fontSize: number; // px
+  isBangla: boolean;
+}
+
+export type DriveCardStatus = 'shared' | 'private' | 'uploading' | 'failed';
+
+export interface DriveRecordingItem {
+  id: string;
+  name: string;
+  driveFileId?: string;
+  shareUrl?: string;
+  thumbnailUrl?: string;
+  durationSeconds: number;
+  sizeBytes: number;
+  createdAt: string;
+  status: DriveCardStatus;
+  uploadProgress?: number; // 0 to 100
+  resolution: RecordingResolution;
+  fps: RecordingFPS;
+}
+
+export type UserPlan = 'free' | 'pro';
+
+export interface UserProfile {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  plan: UserPlan;
+  aiMinutesUsed: number;
+  aiMinutesLimit: number;
+  googleDriveConnected: boolean;
+  googleDriveEmail?: string;
+  createdAt: string;
+}
+
+export type AppTheme = 'dark' | 'light';
+export type SupportedLanguage = 'en' | 'bn';
+
+export interface AppSettings {
+  language: SupportedLanguage;
+  theme: AppTheme;
+  reduceMotion: boolean;
+  resolution: RecordingResolution;
+  fps: RecordingFPS;
+  videoFormat: 'webm' | 'mp4';
+  enableAutoSaveDrive: boolean;
+  shortcuts: Record<string, string>;
+}

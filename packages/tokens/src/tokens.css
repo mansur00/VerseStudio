@@ -1,0 +1,181 @@
+/* VerseStudio 4K Pro — Design Tokens (Generated from Figma Variables) */
+
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root,
+[data-theme='dark'] {
+  /* Color - Backgrounds */
+  --color-bg-canvas: #1B1C21;
+  --color-bg-surface: #222329;
+  --color-bg-elevated: #292A31;
+  --color-bg-hover: #2F3037;
+  --color-bg-active: #383942;
+
+  /* Color - Text */
+  --color-text-primary: #F5F5F7;
+  --color-text-secondary: #B9BAC4;
+  --color-text-tertiary: #A3A4B0;
+  --color-text-disabled: #6E6F7B;
+  --color-text-on-brand: #1B1C21;
+
+  /* Color - Borders */
+  --color-border-subtle: #2F3037;
+  --color-border-default: #383942;
+  --color-border-strong: #4A4B55;
+  --color-border-input: #6E6F7B;
+  --color-border-focus: #A3E635;
+
+  /* Color - Brand (Lime) */
+  --color-brand-default: #A3E635;
+  --color-brand-hover: #BEF264;
+  --color-brand-pressed: #84CC16;
+  --color-brand-subtle: #26400A;
+
+  /* Color - Semantic Feedback */
+  --color-record-default: #FF4D4F;
+  --color-record-subtle: #450A0A;
+  
+  --color-danger-default: #CF3235;
+  --color-danger-hover: #D83538;
+  --color-danger-pressed: #BA2A2D;
+  --color-danger-subtle: #450A0A;
+
+  --color-success-default: #22C55E;
+  --color-success-subtle: #052E16;
+
+  --color-warning-default: #F59E0B;
+  --color-warning-subtle: #451A03;
+
+  --color-error-default: #FF6B6B;
+  --color-error-subtle: #450A0A;
+
+  --color-accent-laser: #22D3EE;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.50);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.60);
+  --glow-brand: 0 0 24px rgba(163, 230, 53, 0.40);
+  --glow-record: 0 0 24px rgba(255, 77, 79, 0.50);
+}
+
+[data-theme='light'] {
+  /* Color - Backgrounds */
+  --color-bg-canvas: #F5F5F7;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-elevated: #FFFFFF;
+  --color-bg-hover: #E9EAEE;
+  --color-bg-active: #D3D4DB;
+
+  /* Color - Text */
+  --color-text-primary: #1B1C21;
+  --color-text-secondary: #4A4B55;
+  --color-text-tertiary: #6E6F7B;
+  --color-text-disabled: #B9BAC4;
+  --color-text-on-brand: #1B1C21;
+
+  /* Color - Borders */
+  --color-border-subtle: #E9EAEE;
+  --color-border-default: #D3D4DB;
+  --color-border-strong: #B9BAC4;
+  --color-border-input: #6E6F7B;
+  --color-border-focus: #65A30D;
+
+  /* Color - Brand (Lime) */
+  --color-brand-default: #84CC16;
+  --color-brand-hover: #A3E635;
+  --color-brand-pressed: #65A30D;
+  --color-brand-subtle: #F7FEE7;
+
+  /* Color - Semantic Feedback */
+  --color-record-default: #E5383B;
+  --color-record-subtle: #FEF2F2;
+
+  --color-danger-default: #CF3235;
+  --color-danger-hover: #D83538;
+  --color-danger-pressed: #BA2A2D;
+  --color-danger-subtle: #FEF2F2;
+
+  --color-success-default: #16A34A;
+  --color-success-subtle: #F0FDF4;
+
+  --color-warning-default: #D97706;
+  --color-warning-subtle: #FFFBEB;
+
+  --color-error-default: #E5383B;
+  --color-error-subtle: #FEF2F2;
+
+  --color-accent-laser: #06B6D4;
+
+  /* Shadows & Glows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.10);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  --glow-brand: 0 0 24px rgba(132, 204, 22, 0.35);
+  --glow-record: 0 0 24px rgba(229, 56, 59, 0.40);
+}
+
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-bangla: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing Grid (4px scale) */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Radius */
+  --radius-none: 0px;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+
+  /* Motion */
+  --duration-instant: 0.10s;
+  --duration-fast: 0.15s;
+  --duration-base: 0.25s;
+  --duration-slow: 0.40s;
+  --duration-morph: 0.50s;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 2px var(--color-bg-canvas), 0 0 0 4px var(--color-text-primary);
+}
+
+/* Global utility classes */
+body {
+  background-color: var(--color-bg-canvas);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+[lang="bn"] {
+  font-family: var(--font-bangla);
+}
+
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

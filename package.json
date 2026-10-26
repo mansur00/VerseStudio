@@ -1,0 +1,18 @@
+{
+  "name": "verse-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VerseStudio 4K Pro — 4K 60 FPS screen-recording studio with bilingual AI and Google Drive cloud sync",
+  "scripts": {
+    "build": "pnpm --recursive run build",
+    "dev": "pnpm --recursive --parallel run dev",
+    "test": "pnpm --recursive run test",
+    "lint": "pnpm --recursive run lint",
+    "typecheck": "pnpm --recursive run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.4.5"
+  },
+  "packageManager": "pnpm@12.15.0"
+}
