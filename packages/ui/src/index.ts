@@ -52,5 +52,9 @@ export { RecordingCard } from './components/RecordingCard/RecordingCard';
 export type { RecordingCardProps } from './components/RecordingCard/RecordingCard';
 export { ShareLinkCard } from './components/ShareLinkCard/ShareLinkCard';
 export type { ShareLinkCardProps } from './components/ShareLinkCard/ShareLinkCard';
+export { LiveSubtitle } from './components/LiveSubtitle/LiveSubtitle';
+export type { LiveSubtitleProps } from './components/LiveSubtitle/LiveSubtitle';
+export { AudioTrackSelector } from './components/AudioTrackSelector/AudioTrackSelector';
+export type { AudioTrackSelectorProps } from './components/AudioTrackSelector/AudioTrackSelector';
 export { cn } from './utils/cn';
 

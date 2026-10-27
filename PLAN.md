@@ -133,16 +133,17 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Network interruption recovery test (resumable 308 range status query and resumption)
 - [x] Unit tests passing (6/6 drive tests green, 30/30 total tests passing)
 
-### Phase 5: Bilingual AI Studio (Screens 19, 22–24) (Next Phase)
-- [ ] Real-time audio streaming to speech-to-text service
-- [ ] Live Bengali speech to English subtitle overlay (bilingual and English-only modes)
-- [ ] Post-recording AI English neural voice dubbing and mixed audio (20% Bangla / 80% English)
-- [ ] Multi-audio track selector in Post-Studio
-- [ ] `.srt` / `.vtt` subtitle export
-- [ ] One-click Markdown step-by-step tutorial generator from click events + transcript
-- [ ] AI quota tracker and plan-tier enforcement (Free 30m / Pro 300m)
+### Phase 5: Bilingual AI Studio (Screens 19, 22–24) (Completed)
+- [x] Real-time audio streaming and speech-to-text integration
+- [x] Live Bengali speech to English subtitle overlay (`LiveSubtitle`, bilingual and English-only modes)
+- [x] Post-recording AI English neural voice dubbing and mixed audio (20% Bangla / 80% English)
+- [x] Multi-audio track selector in Post-Studio (`AudioTrackSelector` with 3 choices)
+- [x] `.srt` / `.vtt` subtitle export
+- [x] One-click Markdown step-by-step tutorial generator from click events + transcript (`GuidePreviewModal`)
+- [x] AI quota tracker and plan-tier enforcement (Free 30m / Pro 300m)
+- [x] Unit tests passing (7/7 AI tests green, 37/37 total tests passing)
 
-### Phase 6: Phone Camera Integration (Screens 14–16)
+### Phase 6: Phone Camera Integration (Screens 14–16) (Next Phase)
 - [ ] WebRTC peer connection pipeline
 - [ ] Studio QR code pairing generator and signaling handshake
 - [ ] Mobile companion web page (`/mobile-camera`) with start/stop stream controls

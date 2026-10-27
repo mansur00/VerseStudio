@@ -25,6 +25,51 @@ export type AudioTrackOption =
   | 'english-ai' 
   | 'mixed';
 
+export type SubtitleMode = 'bilingual' | 'english-only' | 'off';
+
+export interface SubtitleCue {
+  id: string;
+  startTime: number; // in seconds
+  endTime: number; // in seconds
+  banglaText: string;
+  englishText: string;
+}
+
+export interface ClickEventLog {
+  timestamp: number; // in seconds
+  x: number; // relative coordinate 0..1
+  y: number; // relative coordinate 0..1
+  targetTag?: string;
+  targetText?: string;
+  actionDescription?: string;
+}
+
+export interface GuideStep {
+  stepNumber: number;
+  timestamp: number;
+  timeFormatted: string;
+  title: string;
+  description: string;
+  banglaTranscript?: string;
+  englishTranscript?: string;
+}
+
+export interface StepByStepGuide {
+  title: string;
+  createdAt: string;
+  durationSeconds: number;
+  steps: GuideStep[];
+  markdownContent: string;
+}
+
+export interface AIProcessingState {
+  status: 'idle' | 'transcribing' | 'translating' | 'generating-voice' | 'generating-guide' | 'completed' | 'error';
+  progress: number; // 0 to 100
+  activeStepText: string;
+  error?: string;
+}
+
+
 export interface AudioMixSettings {
   micEnabled: boolean;
   systemAudioEnabled: boolean;

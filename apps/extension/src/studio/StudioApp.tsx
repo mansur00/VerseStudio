@@ -13,10 +13,12 @@ import {
   ToolPalette,
   Teleprompter,
   UserMenu,
+  LiveSubtitle,
+  AudioTrackSelector,
   type ToolPaletteState,
   DEFAULT_WALLPAPERS,
 } from '@verse-studio/ui';
-import { getTranslation, type SupportedLanguage, type RecordingLayout } from '@verse-studio/shared';
+import { getTranslation, type SupportedLanguage, type RecordingLayout, type SubtitleMode } from '@verse-studio/shared';
 import {
   Monitor,
   Layout,
@@ -35,6 +37,9 @@ import {
   AlertTriangle,
   Move,
   Cloud,
+  Sparkles,
+  FileText,
+  Subtitles,
 } from 'lucide-react';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
@@ -54,6 +59,11 @@ import {
   LibraryView,
   PostStudioDriveModal,
 } from '../drive';
+import {
+  useAIStore,
+  ProcessingAiModal,
+  GuidePreviewModal,
+} from '../ai';
 
 export const StudioApp: React.FC = () => {
   // App State & Preferences
@@ -121,6 +131,10 @@ export const StudioApp: React.FC = () => {
   const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
   const [activeAccountModal, setActiveAccountModal] = useState<AccountModalType>(null);
 
+  // Phase 5 Bilingual AI State
+  const aiStore = useAIStore();
+  const [previewSubtitlesActive, setPreviewSubtitlesActive] = useState(true);
+
   // DOM References
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const previewVideoRef = useRef<HTMLVideoElement>(null);
@@ -169,6 +183,7 @@ export const StudioApp: React.FC = () => {
         },
         onTimeUpdate: (ms) => {
           setElapsedMs(ms);
+          useAIStore.getState().updateLiveCueForTimestamp(ms / 1000);
           miniControllerRef.current?.update(
             true,
             false,
@@ -362,6 +377,11 @@ export const StudioApp: React.FC = () => {
       setVideoDuration(durSecs);
       setTrimRange({ start: 0, end: durSecs });
       setView('post-studio');
+
+      // Auto-trigger AI processing if cues are not yet populated
+      if (useAIStore.getState().liveCues.length === 0) {
+        useAIStore.getState().startProcessingAI(`VerseStudio_${new Date().toISOString().slice(0, 10)}`, durSecs);
+      }
     }
   };
 
@@ -726,6 +746,28 @@ export const StudioApp: React.FC = () => {
             <div className="flex items-center gap-2 border-l border-[var(--color-border-subtle)] pl-4">
               <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={false} />
             </div>
+
+            {/* Phase 5: Bilingual Subtitles Mode Selector */}
+            <div className="flex items-center gap-2 border-l border-[var(--color-border-subtle)] pl-4">
+              <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider hidden xl:inline">
+                {t.recording.subtitles}:
+              </span>
+              <div className="flex items-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-0.5">
+                {(['bilingual', 'english-only', 'off'] as SubtitleMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => aiStore.setSubtitleMode(mode)}
+                    className={`px-2 py-1 text-xs rounded font-medium transition-all ${
+                      aiStore.subtitleMode === mode
+                        ? 'bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-semibold'
+                        : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                    }`}
+                  >
+                    {mode === 'bilingual' ? 'BN + EN' : mode === 'english-only' ? 'EN' : 'Off'}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Central Live Compositor Canvas Viewport */}
@@ -747,6 +789,24 @@ export const StudioApp: React.FC = () => {
                   isOpen={teleprompterOpen}
                   onClose={() => toggleTool('teleprompter')}
                   isBangla={lang === 'bn'}
+                />
+              </div>
+            )}
+
+            {/* Live Subtitle Overlay during recording (Screens 19, 20) */}
+            {(status === 'recording' || status === 'paused') && (
+              <div className="absolute bottom-6 inset-x-6 z-20 flex justify-center pointer-events-none">
+                <LiveSubtitle
+                  mode={aiStore.subtitleMode}
+                  banglaText={
+                    aiStore.currentLiveCue?.banglaText ||
+                    (status === 'recording' ? 'রেকর্ডিং এবং অডিও স্পিচ সনাক্ত হচ্ছে...' : undefined)
+                  }
+                  englishText={
+                    aiStore.currentLiveCue?.englishText ||
+                    (status === 'recording' ? 'Transcribing and translating live Bengali speech...' : undefined)
+                  }
+                  isListening={status === 'recording'}
                 />
               </div>
             )}
@@ -889,11 +949,40 @@ export const StudioApp: React.FC = () => {
               className="w-full h-full object-contain"
               onTimeUpdate={() => {
                 if (previewVideoRef.current) {
-                  setCurrentTime(previewVideoRef.current.currentTime);
+                  const t = previewVideoRef.current.currentTime;
+                  setCurrentTime(t);
+                  aiStore.updateLiveCueForTimestamp(t);
                 }
               }}
               onEnded={() => setIsPlaying(false)}
             />
+
+            {/* Subtitles CC Toggle on preview player */}
+            <div className="absolute top-4 right-4 z-20">
+              <button
+                type="button"
+                onClick={() => setPreviewSubtitlesActive((prev) => !prev)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold backdrop-blur-md transition-all ${
+                  previewSubtitlesActive
+                    ? 'bg-black/75 border-[var(--color-brand-default)] text-[var(--color-brand-default)] shadow-md'
+                    : 'bg-black/50 border-white/20 text-white/70 hover:text-white'
+                }`}
+              >
+                <Subtitles className="w-3.5 h-3.5" />
+                <span>CC {previewSubtitlesActive ? 'On' : 'Off'}</span>
+              </button>
+            </div>
+
+            {/* Subtitles Overlay over player */}
+            {previewSubtitlesActive && aiStore.currentLiveCue && (
+              <div className="absolute bottom-6 inset-x-6 z-10 flex justify-center pointer-events-none">
+                <LiveSubtitle
+                  mode={aiStore.subtitleMode}
+                  banglaText={aiStore.currentLiveCue.banglaText}
+                  englishText={aiStore.currentLiveCue.englishText}
+                />
+              </div>
+            )}
 
             {/* Big Center Play/Pause button */}
             <button
@@ -921,10 +1010,81 @@ export const StudioApp: React.FC = () => {
                 if (previewVideoRef.current) {
                   previewVideoRef.current.currentTime = time;
                   setCurrentTime(time);
+                  aiStore.updateLiveCueForTimestamp(time);
                 }
               }}
               onTrimChange={(start, end) => setTrimRange({ start, end })}
             />
+          </div>
+
+          {/* Audio Track Selector & AI Voice Dubbing (Screen 24) */}
+          <div className="bg-[var(--color-bg-surface)] p-5 rounded-xl border border-[var(--color-border-default)] space-y-3.5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-bold text-[var(--color-text-primary)] flex items-center gap-2">
+                  <Volume2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+                  <span>{t.postStudio.audioTracks.title}</span>
+                </h3>
+                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+                  Select your desired voiceover track for playback and export.
+                </p>
+              </div>
+
+              <Button
+                size="sm"
+                variant="secondary"
+                leadingIcon={<Sparkles className="w-4 h-4 text-[var(--color-brand-default)]" />}
+                onClick={() =>
+                  aiStore.startProcessingAI(
+                    `VerseStudio_${new Date().toISOString().slice(0, 10)}`,
+                    Math.round(videoDuration)
+                  )
+                }
+              >
+                {t.postStudio.generateAiVoice}
+              </Button>
+            </div>
+
+            <AudioTrackSelector
+              value={aiStore.selectedAudioTrack}
+              onChange={aiStore.setSelectedAudioTrack}
+            />
+          </div>
+
+          {/* Step-by-Step Guide & Subtitle Exports (Screens 24, 25) */}
+          <div className="bg-[var(--color-bg-surface)] p-5 rounded-xl border border-[var(--color-border-default)] flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-lg bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)]">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                  Step-by-Step Tutorial Guide & Subtitles
+                </h4>
+                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+                  Compiled automatically from recorded user clicks, navigation, and translated Bengali speech.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="secondary"
+                leadingIcon={<Subtitles className="w-4 h-4" />}
+                onClick={() => aiStore.exportSrtDownload()}
+              >
+                {t.postStudio.exportSrt}
+              </Button>
+              <Button
+                size="sm"
+                variant="primary"
+                leadingIcon={<FileText className="w-4 h-4" />}
+                onClick={() => aiStore.setIsGuideModalOpen(true)}
+              >
+                {t.postStudio.viewGuide}
+              </Button>
+            </div>
           </div>
 
           {/* Export Action Cards */}
@@ -1122,6 +1282,18 @@ export const StudioApp: React.FC = () => {
         durationSeconds={Math.round(videoDuration)}
         recordingName={`VerseStudio_4K_${new Date().toISOString().slice(0, 10)}`}
         lang={lang}
+      />
+
+      {/* Phase 5 Bilingual AI Modals */}
+      <ProcessingAiModal
+        open={aiStore.isProcessingModalOpen}
+        onOpenChange={aiStore.setIsProcessingModalOpen}
+        onUpgradeClick={() => setActiveAccountModal('upgrade')}
+      />
+
+      <GuidePreviewModal
+        open={aiStore.isGuideModalOpen}
+        onOpenChange={aiStore.setIsGuideModalOpen}
       />
     </div>
   );
