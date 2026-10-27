@@ -66,6 +66,12 @@ export interface DriveRecordingItem {
   fps: RecordingFPS;
 }
 
+export interface DriveQuota {
+  limitBytes: number;
+  usageBytes: number;
+  availableBytes: number;
+}
+
 export type UserPlan = 'free' | 'pro';
 
 export interface UserProfile {

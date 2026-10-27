@@ -85,6 +85,9 @@ export const en = {
     moveToTrash: "Move to Trash",
     movedToTrashSuccess: "Recording moved to Trash",
     undo: "Undo",
+    driveDisconnectedTitle: "Google Drive Disconnected",
+    driveDisconnectedDesc: "Connect your Google Drive account to sync and view your cloud recordings.",
+    reconnectDrive: "Reconnect Google Drive",
   },
   auth: {
     signUp: "Create Your Account",

@@ -123,16 +123,17 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Session persistence across extension restarts and browser restarts via `chrome.storage.local` / fallback
 - [x] Unit tests passing (11/11 auth tests green, 24/24 total tests passing)
 
-### Phase 4: Google Drive Storage & Sharing (Next Phase)
-- [ ] Google OAuth 2.0 via `chrome.identity.launchWebAuthFlow` (`drive.file` scope)
-- [ ] Auto-creation of `VerseStudio` dedicated root folder in Drive
-- [ ] 8MB chunked resumable upload engine with exponential backoff retry and cancel
-- [ ] Quota detection (`about.get`) with "Google Drive Full" error handling
-- [ ] Instant link sharing ("anyone with link can view"), QR code generation, clipboard copy
-- [ ] Library UI: Search, filter, Card States (Shared, Private, Uploading, Failed), Rename, Move to Trash with undo toast
-- [ ] Network interruption recovery test (2GB upload resume)
+### Phase 4: Google Drive Storage & Sharing (Completed)
+- [x] Google OAuth 2.0 via `chrome.identity.launchWebAuthFlow` (`drive.file` scope)
+- [x] Auto-creation of `VerseStudio` dedicated root folder in Drive
+- [x] 8MB chunked resumable upload engine with exponential backoff retry and cancel
+- [x] Quota detection (`about.get`) with "Google Drive Full" error handling
+- [x] Instant link sharing ("anyone with link can view"), QR code generation, clipboard copy
+- [x] Library UI: Search, filter, Card States (Shared, Private, Uploading, Failed), Rename, Move to Trash with undo toast
+- [x] Network interruption recovery test (resumable 308 range status query and resumption)
+- [x] Unit tests passing (6/6 drive tests green, 30/30 total tests passing)
 
-### Phase 5: Bilingual AI Studio (Screens 19, 22–24)
+### Phase 5: Bilingual AI Studio (Screens 19, 22–24) (Next Phase)
 - [ ] Real-time audio streaming to speech-to-text service
 - [ ] Live Bengali speech to English subtitle overlay (bilingual and English-only modes)
 - [ ] Post-recording AI English neural voice dubbing and mixed audio (20% Bangla / 80% English)

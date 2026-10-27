@@ -9,6 +9,8 @@ export interface ToastProps {
   variant?: ToastVariant;
   title: string;
   message?: string;
+  actionLabel?: string;
+  onAction?: () => void;
   onClose?: () => void;
   className?: string;
 }
@@ -17,6 +19,8 @@ export const Toast: React.FC<ToastProps> = ({
   variant = 'info',
   title,
   message,
+  actionLabel,
+  onAction,
   onClose,
   className,
 }) => {
@@ -39,7 +43,7 @@ export const Toast: React.FC<ToastProps> = ({
       role="status"
       aria-live="polite"
       className={cn(
-        'flex items-start gap-3 p-4 rounded-lg bg-[var(--color-bg-surface)] border shadow-lg',
+        'flex items-center gap-3 p-3.5 rounded-lg bg-[var(--color-bg-surface)] border shadow-xl',
         borders[variant],
         'transition-all duration-200 select-none max-w-sm w-full',
         className
@@ -47,13 +51,22 @@ export const Toast: React.FC<ToastProps> = ({
     >
       {icons[variant]}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-[var(--color-text-primary)]">{title}</p>
+        <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">{title}</p>
         {message && (
-          <p className="text-xs text-[var(--color-text-secondary)] mt-0.5 leading-relaxed">
+          <p className="text-xs text-[var(--color-text-secondary)] truncate">
             {message}
           </p>
         )}
       </div>
+      {actionLabel && onAction && (
+        <button
+          type="button"
+          onClick={onAction}
+          className="text-xs font-bold text-[var(--color-brand-default)] hover:underline shrink-0 px-2 py-1 rounded bg-[var(--color-bg-hover)]"
+        >
+          {actionLabel}
+        </button>
+      )}
       {onClose && (
         <button
           onClick={onClose}

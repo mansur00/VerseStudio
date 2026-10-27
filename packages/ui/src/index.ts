@@ -48,5 +48,9 @@ export { PlanCard } from './components/PlanCard/PlanCard';
 export type { PlanCardProps, PlanFeature } from './components/PlanCard/PlanCard';
 export { KpiCard } from './components/KpiCard/KpiCard';
 export type { KpiCardProps } from './components/KpiCard/KpiCard';
+export { RecordingCard } from './components/RecordingCard/RecordingCard';
+export type { RecordingCardProps } from './components/RecordingCard/RecordingCard';
+export { ShareLinkCard } from './components/ShareLinkCard/ShareLinkCard';
+export type { ShareLinkCardProps } from './components/ShareLinkCard/ShareLinkCard';
 export { cn } from './utils/cn';
 

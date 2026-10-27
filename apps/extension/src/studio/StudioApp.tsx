@@ -34,7 +34,7 @@ import {
   RotateCcw,
   AlertTriangle,
   Move,
-  Share2,
+  Cloud,
 } from 'lucide-react';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
@@ -49,13 +49,19 @@ import {
   type AccountModalType,
   type AuthModalView,
 } from '../auth';
+import {
+  useDriveStore,
+  LibraryView,
+  PostStudioDriveModal,
+} from '../drive';
 
 export const StudioApp: React.FC = () => {
   // App State & Preferences
   const [lang, setLang] = useState<SupportedLanguage>('en');
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [view, setView] = useState<'studio' | 'post-studio'>('studio');
+  const [view, setView] = useState<'studio' | 'post-studio' | 'library'>('studio');
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [showDriveUploadModal, setShowDriveUploadModal] = useState(false);
 
   // Engine & Device State
   const [engine, setEngine] = useState<CaptureEngine | null>(null);
@@ -228,6 +234,9 @@ export const StudioApp: React.FC = () => {
         setOnboardingModalOpen(true);
       }
     });
+
+    // Initialize Google Drive library
+    useDriveStore.getState().initialize();
 
     return () => {
       newEngine.dispose();
@@ -513,6 +522,16 @@ export const StudioApp: React.FC = () => {
             }`}
           >
             {t.postStudio.title.split(' ')[0]}
+          </button>
+          <button
+            onClick={() => setView('library')}
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+              view === 'library'
+                ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-sm'
+                : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+            }`}
+          >
+            Library
           </button>
         </div>
 
@@ -941,32 +960,42 @@ export const StudioApp: React.FC = () => {
               </div>
             </div>
 
-            {/* Google Drive Preview Card */}
-            <div className="bg-[var(--color-bg-surface)] p-5 rounded-xl border border-[var(--color-border-default)] flex flex-col justify-between">
+            {/* Google Drive Upload Card (Screens 24, 28-34) */}
+            <div className="bg-[var(--color-bg-surface)] p-5 rounded-xl border border-[var(--color-brand-default)] flex flex-col justify-between shadow-sm">
               <div>
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
                     {t.postStudio.saveDrive}
                   </h3>
-                  <StatusChip status="private" label="Ready for Phase 4" />
+                  <StatusChip status="shared" label="Google Drive Ready" />
                 </div>
                 <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-                  Upload seamlessly to your Google Drive (`VerseStudio` folder) and generate a shareable watch link.
+                  Upload directly to your personal Google Drive (<code className="font-mono text-[var(--color-brand-default)]">VerseStudio/</code> folder) and get an instant shareable watch link.
                 </p>
               </div>
 
               <div className="mt-4">
                 <Button
-                  variant="secondary"
+                  variant="primary"
                   size="sm"
-                  leadingIcon={<Share2 className="w-4 h-4" />}
-                  disabled
+                  leadingIcon={<Cloud className="w-4 h-4" />}
+                  onClick={() => setShowDriveUploadModal(true)}
                 >
-                  Connect Drive in Phase 4
+                  Save to Google Drive & Share
                 </Button>
               </div>
             </div>
           </div>
+        </main>
+      )}
+
+      {/* Library View (Screens 35 to 45) */}
+      {view === 'library' && (
+        <main className="flex-1 overflow-auto">
+          <LibraryView
+            lang={lang}
+            onNewRecording={() => setView('studio')}
+          />
         </main>
       )}
 
@@ -1082,6 +1111,17 @@ export const StudioApp: React.FC = () => {
         lang={lang}
         onOpenUpgrade={() => setActiveAccountModal('upgrade')}
         onOpenDelete={() => setActiveAccountModal('delete')}
+      />
+
+      {/* Phase 4 Google Drive Upload Modal */}
+      <PostStudioDriveModal
+        isOpen={showDriveUploadModal}
+        onClose={() => setShowDriveUploadModal(false)}
+        recordingId={currentRecordingId || 'rec_' + Date.now()}
+        recordingBlob={recordingBlob}
+        durationSeconds={Math.round(videoDuration)}
+        recordingName={`VerseStudio_4K_${new Date().toISOString().slice(0, 10)}`}
+        lang={lang}
       />
     </div>
   );

@@ -87,6 +87,9 @@ export const bn: Translations = {
     moveToTrash: "ট্র্যাশে স্থানান্তর",
     movedToTrashSuccess: "রেকর্ডিং ট্র্যাশে স্থানান্তর করা হয়েছে",
     undo: "পূর্বাবস্থায় ফেরান",
+    driveDisconnectedTitle: "গুগল ড্রাইভ বিচ্ছিন্ন",
+    driveDisconnectedDesc: "ক্লাউড রেকর্ডিং সিঙ্ক ও দেখতে আপনার গুগল ড্রাইভ অ্যাকাউন্ট সংযুক্ত করুন।",
+    reconnectDrive: "গুগল ড্রাইভ পুনরায় সংযুক্ত করুন",
   },
   auth: {
     signUp: "নতুন অ্যাকাউন্ট তৈরি করুন",
