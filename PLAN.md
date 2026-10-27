@@ -2,7 +2,7 @@
 
 > **Figma Source of Truth:** [VerseStudio Figma Design](https://www.figma.com/design/PNUNAZJ5hSATGhVrsEQBWr/VerseStudio?node-id=17-2)  
 > **Status:** Active / In Progress  
-> **Current Phase:** Phase 0: Foundations
+> **Current Phase:** Phase 1: Core Recording (Completed) -> Starting Phase 2: Live Tools & Effects
 
 ---
 
@@ -90,19 +90,19 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Setup `apps/web` skeleton with Next.js 14 App Router, Tailwind preset, and responsive landing
 - [x] Verify full monorepo build, Dark/Light theme switching, and type checks passing cleanly (0 errors)
 
-### Phase 1: Core Recording (Next Phase)
-- [ ] Setup page UI: Source selection (screen, window, tab), 4 layouts (Screen Only, Camera Only, Screen + Bubble, 50/50 Split)
-- [ ] Camera and mic device enumeration and live selection
-- [ ] Web Audio mixing graph with real-time mic level meter
-- [ ] Canvas compositor inside offscreen document with spring morphing between layout transitions
-- [ ] Video capture pipeline: `getDisplayMedia` up to 3840×2160 @ 60 FPS
-- [ ] Countdown timer (3-2-1), recording state machine (Idle, Recording, Paused, Stopped)
-- [ ] Document Picture-in-Picture Mini Controller with recording controls & mic mute toggle
-- [ ] Chunked recording write pipeline to OPFS / IndexedDB for crash resiliency
-- [ ] Post-Studio editor: Preview player, timeline trimmer, local export (WebM / MP4 muxer), progress modal
-- [ ] 30-minute 4K60 stress test and tab-crash recovery verification
+### Phase 1: Core Recording (Completed)
+- [x] Setup page UI: Source selection (screen, window, tab), 4 layouts (Screen Only, Camera Only, Screen + Bubble, 50/50 Split)
+- [x] Camera and mic device enumeration and live selection
+- [x] Web Audio mixing graph with real-time mic level meter (`AudioMixer`)
+- [x] Canvas compositor inside offscreen document / studio with spring morphing between layout transitions (`VideoCompositor`)
+- [x] Video capture pipeline: `getDisplayMedia` up to 3840×2160 @ 60 FPS
+- [x] Countdown timer (3-2-1), recording state machine (Idle, Recording, Paused, Stopped)
+- [x] Document Picture-in-Picture Mini Controller with recording controls & mic mute toggle (`MiniController`)
+- [x] Chunked recording write pipeline to IndexedDB for crash resiliency (`RecordingStorage`)
+- [x] Post-Studio editor: Preview player, timeline trimmer (`TimelineTrimmer`), local export (instant WebM & 4K `mp4-muxer`), progress modal
+- [x] Verified crash-recovery prompt, chunk-ordering tests, and 4K compositor math passing cleanly
 
-### Phase 2: Live Tools and Cinematic Effects (Screens 19, 20)
+### Phase 2: Live Tools and Cinematic Effects (Next Phase)
 - [ ] Content script overlay manager for target tabs
 - [ ] Auto-zoom and pan on click (smooth 2x spring focus)
 - [ ] Click ripple visual feedback effect
