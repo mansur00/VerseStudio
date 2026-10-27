@@ -8,7 +8,8 @@
     "dev": "pnpm --recursive --parallel run dev",
     "test": "pnpm --recursive run test",
     "lint": "pnpm --recursive run lint",
-    "typecheck": "pnpm --recursive run typecheck"
+    "typecheck": "pnpm --recursive run typecheck",
+    "package:extension": "rm -rf apps/extension/dist release/versestudio-4k-pro-v1.0.0.zip && pnpm --filter @verse-studio/extension build && cd apps/extension/dist && zip -r ../../../release/versestudio-4k-pro-v1.0.0.zip ./*"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
