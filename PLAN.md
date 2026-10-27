@@ -150,22 +150,23 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Real-time ingestion into Camera Bubble at 1080p 30FPS (`setCustomCameraStream`)
 - [x] Unit tests passing (6/6 phone camera tests green, 43/43 total tests passing)
 
-### Phase 7: App & Studio Settings (Screens 42–49) (Next Phase)
-- [ ] General: Language toggle (EN / BN), Theme (Dark / Light), Reduced Motion toggle
-- [ ] Recording: Resolution (4K, 1440p, 1080p), FPS (60, 30), Video format, audio bitrate, safe chunking
-- [ ] Effects & Shortcuts: Remappable global hotkeys with collision detection
-- [ ] Voice & AI: Subtitle language preferences, voice persona selection
-- [ ] Google Drive settings: Account status, storage usage bar, disconnect modal
+### Phase 7: App & Studio Settings (Screens 48–55) (Completed)
+- [x] General: Language toggle (EN / BN Hind Siliguri), Theme (Dark / Light), Reduced Motion toggle
+- [x] Recording: Resolution (4K, 1440p, 1080p), FPS (60, 30), Video format (WebM/MP4), audio bitrate, safe chunking interval
+- [x] Effects & Shortcuts: Remappable global hotkeys with keypress capture & collision conflict detection
+- [x] Voice & AI: Subtitle language preferences, voice persona selection, quota bar & upgrade modal trigger
+- [x] Google Drive settings: Account status, storage quota usage bar, disconnect confirmation modal
+- [x] Unit tests passing (6/6 settings tests green, 49/49 total tests passing)
 
-### Phase 8: Web Application & Admin Dashboard (Screens 40, 41, A01–A15)
-- [ ] Shared watch page (`/watch/[id]`): Google Drive stream integration, caption player, "Hosted on Google Drive" badge
-- [ ] Link Unavailable / Protected state handling
-- [ ] Admin Dashboard (`/admin`):
-  - [ ] A01: Overview metrics & KPI cards
+### Phase 8: Web Application & Admin Dashboard (Screens 40, 41, A01–A15) (In Progress)
+- [ ] Shared watch page (`/watch/[id]`): Google Drive stream integration, caption player (`.vtt`/`.srt` CC toggle), "Hosted on Google Drive" badge, "Open in Drive" action
+- [ ] Link Unavailable / Protected / Blocked state handling (Screen 41)
+- [ ] Admin Dashboard layout (`/admin`): Role-gated and 2FA-protected layout with admin sidebar
+  - [ ] A01: Overview metrics & KPI cards (Total recordings, Active users, AI minutes used, Drive storage managed)
   - [ ] A02–A06: User management, bulk actions, user details, suspend modal
-  - [ ] A07–A09: Recordings directory, moderation controls, share-page block
+  - [ ] A07–A09: Recordings directory, moderation controls, share-page block confirmation
   - [ ] A10–A11: Plans & billing overview, AI usage & cost calculator
-  - [ ] A12–A15: Drive limits, audit logs, admin roles & invites (2FA enforced)
+  - [ ] A12–A15: Drive limits, audit logs, admin roles & invites
 
 ### Phase 9: Hardening, Polish & Chrome Web Store Release
 - [ ] Performance audit: 60 FPS compositor loop memory profiling (zero leaks)

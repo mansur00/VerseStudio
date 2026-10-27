@@ -69,6 +69,10 @@ import {
   usePhoneCameraStore,
   PhoneCameraModal,
 } from '../phoneCamera';
+import {
+  useSettingsStore,
+  SettingsModal,
+} from '../settings';
 
 export const StudioApp: React.FC = () => {
   // App State & Preferences
@@ -260,6 +264,9 @@ export const StudioApp: React.FC = () => {
 
     // Initialize Google Drive library
     useDriveStore.getState().initialize();
+
+    // Initialize Studio Settings
+    useSettingsStore.getState().initialize();
 
     return () => {
       newEngine.dispose();
@@ -1246,36 +1253,15 @@ export const StudioApp: React.FC = () => {
         </div>
       </Modal>
 
-      {/* Settings Modal Placeholder */}
-      <Modal
+      {/* Phase 7 Studio Settings Modal (Screens 48 to 55) */}
+      <SettingsModal
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
-        title={t.settings.title}
-      >
-        <div className="py-2 flex flex-col gap-4">
-          <div className="flex items-center justify-between text-sm">
-            <span>{t.settings.language}</span>
-            <div className="flex gap-1">
-              <Button size="sm" variant={lang === 'en' ? 'primary' : 'ghost'} onClick={() => setLang('en')}>
-                English
-              </Button>
-              <Button size="sm" variant={lang === 'bn' ? 'primary' : 'ghost'} onClick={() => setLang('bn')}>
-                বাংলা
-              </Button>
-            </div>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span>{t.settings.theme}</span>
-            <Button
-              size="sm"
-              variant="secondary"
-              onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
-            >
-              {theme === 'dark' ? t.settings.dark : t.settings.light}
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        lang={lang}
+        onLanguageChange={setLang}
+        onThemeChange={setTheme}
+        onOpenUpgrade={() => setActiveAccountModal('upgrade')}
+      />
 
       {/* Phase 3 Auth & Onboarding Modals */}
       <AuthModal

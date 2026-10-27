@@ -174,6 +174,17 @@ export interface TwoFactorState {
 
 export type AppTheme = 'dark' | 'light';
 export type SupportedLanguage = 'en' | 'bn';
+export type VoicePersona = 'natural-female' | 'studio-male' | 'warm-narrator';
+
+export interface StudioShortcuts {
+  startStopRecording: string;
+  pauseResumeRecording: string;
+  toggleSpotlight: string;
+  toggleLaser: string;
+  toggleKeystrokes: string;
+  togglePrivacyBlur: string;
+  toggleTeleprompter: string;
+}
 
 export interface AppSettings {
   language: SupportedLanguage;
@@ -182,6 +193,34 @@ export interface AppSettings {
   resolution: RecordingResolution;
   fps: RecordingFPS;
   videoFormat: 'webm' | 'mp4';
+  audioBitrateKbps: number;
+  safeChunkDurationSeconds: number;
   enableAutoSaveDrive: boolean;
-  shortcuts: Record<string, string>;
+  shortcuts: StudioShortcuts;
+  aiVoicePersona: VoicePersona;
+  aiDefaultSubtitles: SubtitleMode;
 }
+
+export const DEFAULT_STUDIO_SETTINGS: AppSettings = {
+  language: 'en',
+  theme: 'dark',
+  reduceMotion: false,
+  resolution: '4k',
+  fps: 60,
+  videoFormat: 'webm',
+  audioBitrateKbps: 320,
+  safeChunkDurationSeconds: 5,
+  enableAutoSaveDrive: true,
+  shortcuts: {
+    startStopRecording: 'Alt+R',
+    pauseResumeRecording: 'Alt+Space',
+    toggleSpotlight: 'Alt+S',
+    toggleLaser: 'Alt+L',
+    toggleKeystrokes: 'Alt+K',
+    togglePrivacyBlur: 'Alt+P',
+    toggleTeleprompter: 'Alt+T',
+  },
+  aiVoicePersona: 'natural-female',
+  aiDefaultSubtitles: 'bilingual',
+};
+
