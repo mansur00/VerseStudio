@@ -26,4 +26,14 @@ export { CountdownOverlay } from './components/CountdownOverlay/CountdownOverlay
 export type { CountdownOverlayProps } from './components/CountdownOverlay/CountdownOverlay';
 export { TimelineTrimmer } from './components/TimelineTrimmer/TimelineTrimmer';
 export type { TimelineTrimmerProps } from './components/TimelineTrimmer/TimelineTrimmer';
+export { KeyboardShortcutPill } from './components/KeyboardShortcutPill/KeyboardShortcutPill';
+export type { KeyboardShortcutPillProps } from './components/KeyboardShortcutPill/KeyboardShortcutPill';
+export { Tooltip } from './components/Tooltip/Tooltip';
+export type { TooltipProps } from './components/Tooltip/Tooltip';
+export { Slider } from './components/Slider/Slider';
+export type { SliderProps } from './components/Slider/Slider';
+export { ToolPalette } from './components/ToolPalette/ToolPalette';
+export type { ToolPaletteProps, ToolPaletteState } from './components/ToolPalette/ToolPalette';
+export { Teleprompter } from './components/Teleprompter/Teleprompter';
+export type { TeleprompterProps } from './components/Teleprompter/Teleprompter';
 export { cn } from './utils/cn';

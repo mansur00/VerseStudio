@@ -2,7 +2,7 @@
 
 > **Figma Source of Truth:** [VerseStudio Figma Design](https://www.figma.com/design/PNUNAZJ5hSATGhVrsEQBWr/VerseStudio?node-id=17-2)  
 > **Status:** Active / In Progress  
-> **Current Phase:** Phase 1: Core Recording (Completed) -> Starting Phase 2: Live Tools & Effects
+> **Current Phase:** Phase 2: Live Tools and Cinematic Effects (Completed) -> Starting Phase 3: Accounts and Onboarding
 
 ---
 
@@ -102,18 +102,19 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Post-Studio editor: Preview player, timeline trimmer (`TimelineTrimmer`), local export (instant WebM & 4K `mp4-muxer`), progress modal
 - [x] Verified crash-recovery prompt, chunk-ordering tests, and 4K compositor math passing cleanly
 
-### Phase 2: Live Tools and Cinematic Effects (Next Phase)
-- [ ] Content script overlay manager for target tabs
-- [ ] Auto-zoom and pan on click (smooth 2x spring focus)
-- [ ] Click ripple visual feedback effect
-- [ ] Cursor spotlight (`Alt+S`) with dim background
-- [ ] Laser pen tool with 2-second decay trail
-- [ ] Keystroke HUD displaying modifier and key combinations
-- [ ] Privacy shield blur (draggable blur region over sensitive fields)
-- [ ] Floating Tool Palette & Teleprompter with speed control and Bengali script rendering
-- [ ] Advisory warning for recordings exceeding recommended durations
+### Phase 2: Live Tools and Cinematic Effects (Completed)
+- [x] Content script overlay manager for target tabs (`InTabOverlayManager`)
+- [x] Auto-zoom and pan on click (smooth 2x spring focus, respects reduced motion)
+- [x] Click ripple visual feedback effect (brand lime expanding pulse)
+- [x] Cursor spotlight (`Alt+S`) with dim background and radial gradient mask
+- [x] Laser pen tool (`Alt+L`) with 2-second decay trail on Canvas 2D
+- [x] Keystroke HUD (`Alt+K`) displaying modifier and key combinations
+- [x] Privacy shield blur (`Alt+P`) draggable frosted glass region
+- [x] Floating Tool Palette (`ToolPalette`) & Teleprompter (`Teleprompter`) with autoscroll, speed slider, and Bengali script support in Hind Siliguri
+- [x] Screen 22: Long recording advisory warning for recordings exceeding 30 minutes
+- [x] Unit tests passing with happy-dom (13/13 tests green)
 
-### Phase 3: Accounts and Onboarding (Screens 1–10, 41–52)
+### Phase 3: Accounts and Onboarding (Next Phase)
 - [ ] Authentication flows: Sign Up, form validation, email verification code
 - [ ] Onboarding wizard (Step 1 Setup -> Step 2 Google Drive -> Step 3 Permissions)
 - [ ] Permission request UI with denial recovery guidance

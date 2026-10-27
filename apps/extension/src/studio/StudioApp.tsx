@@ -10,6 +10,9 @@ import {
   WallpaperSwatch,
   CountdownOverlay,
   TimelineTrimmer,
+  ToolPalette,
+  Teleprompter,
+  type ToolPaletteState,
   DEFAULT_WALLPAPERS,
 } from '@verse-studio/ui';
 import { getTranslation, type SupportedLanguage, type RecordingLayout } from '@verse-studio/shared';
@@ -68,6 +71,18 @@ export const StudioApp: React.FC = () => {
 
   // Countdown Overlay
   const [showCountdown, setShowCountdown] = useState(false);
+
+  // Phase 2 Live Tools State
+  const [tools, setTools] = useState<ToolPaletteState>({
+    laser: false,
+    spotlight: false,
+    keystroke: true,
+    privacy: false,
+    autoZoom: true,
+    teleprompter: false,
+  });
+  const [teleprompterOpen, setTeleprompterOpen] = useState(false);
+  const [showLongRecordingWarning, setShowLongRecordingWarning] = useState(false);
 
   // Crash Recovery
   const [recoverableSession, setRecoverableSession] = useState<StoredRecordingMeta | null>(null);
@@ -245,6 +260,37 @@ export const StudioApp: React.FC = () => {
     }
   };
 
+  // Phase 2 Live Tools Toggle Handler
+  const toggleTool = (tool: keyof ToolPaletteState) => {
+    setTools((prev) => {
+      const nextVal = !prev[tool];
+      const nextTools = { ...prev, [tool]: nextVal };
+      if (tool === 'teleprompter') {
+        setTeleprompterOpen(nextVal);
+      }
+      // Broadcast to active tab content script
+      if (typeof chrome !== 'undefined' && chrome.tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
+          if (tab?.id) {
+            chrome.tabs.sendMessage(tab.id, {
+              type: 'TOGGLE_LIVE_TOOL',
+              tool,
+              state: nextVal,
+            }).catch(() => {});
+          }
+        });
+      }
+      return nextTools;
+    });
+  };
+
+  // Screen 22: Long Recording Advisory trigger (30+ minutes)
+  useEffect(() => {
+    if (elapsedMs >= 30 * 60 * 1000 && !showLongRecordingWarning) {
+      setShowLongRecordingWarning(true);
+    }
+  }, [elapsedMs, showLongRecordingWarning]);
+
   // Start Countdown and Recording
   const handleStartRecordingClick = () => {
     if (status === 'recording' || status === 'paused') {
@@ -368,6 +414,24 @@ export const StudioApp: React.FC = () => {
               Dismiss
             </Button>
           </div>
+        </div>
+      )}
+
+      {/* Screen 22: Long Recording Advisory Banner */}
+      {showLongRecordingWarning && (
+        <div className="bg-[var(--color-warning-subtle)] border-b border-[var(--color-warning-default)]/40 px-6 py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-medium text-[var(--color-warning-default)]">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>
+              <strong>Advisory:</strong> Recording duration has reached 30+ minutes. All chunks are continuously written to IndexedDB disk storage without RAM accumulation.
+            </span>
+          </div>
+          <button
+            onClick={() => setShowLongRecordingWarning(false)}
+            className="text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] px-2 py-1 rounded"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
@@ -586,17 +650,38 @@ export const StudioApp: React.FC = () => {
                 )}
               </div>
             </div>
+
+            {/* Phase 2: Live Tools Toolbar */}
+            <div className="flex items-center gap-2 border-l border-[var(--color-border-subtle)] pl-4">
+              <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={false} />
+            </div>
           </div>
 
           {/* Central Live Compositor Canvas Viewport */}
-          <div className="flex-1 relative flex items-center justify-center bg-[var(--color-bg-elevated)] rounded-2xl border border-[var(--color-border-default)] p-4 shadow-inner min-h-[420px]">
+          <div className="flex-1 relative flex items-center justify-center bg-[var(--color-bg-elevated)] rounded-2xl border border-[var(--color-border-default)] p-4 shadow-inner min-h-[420px] overflow-hidden">
             <div
               ref={canvasContainerRef}
               className="w-full h-full max-h-[640px] flex items-center justify-center"
             />
 
+            {/* Floating Live Tool Palette inside viewport */}
+            <div className="absolute top-6 right-6 z-20">
+              <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={true} />
+            </div>
+
+            {/* Floating Teleprompter inside viewport */}
+            {teleprompterOpen && (
+              <div className="absolute top-6 left-6 z-30">
+                <Teleprompter
+                  isOpen={teleprompterOpen}
+                  onClose={() => toggleTool('teleprompter')}
+                  isBangla={lang === 'bn'}
+                />
+              </div>
+            )}
+
             {/* In-viewport camera bubble drag instruction */}
-            {layout === 'screen-camera' && (
+            {layout === 'screen-camera' && !teleprompterOpen && (
               <div className="absolute bottom-6 left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[11px] text-[var(--color-text-secondary)] border border-white/10 pointer-events-none">
                 <Move className="w-3 h-3 text-[var(--color-brand-default)]" />
                 <span>Draggable Camera Bubble Enabled</span>
