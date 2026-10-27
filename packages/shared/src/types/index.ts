@@ -78,7 +78,32 @@ export interface UserProfile {
   aiMinutesLimit: number;
   googleDriveConnected: boolean;
   googleDriveEmail?: string;
+  twoFactorEnabled?: boolean;
   createdAt: string;
+}
+
+export interface UserSession {
+  user: UserProfile;
+  token: string;
+  refreshToken?: string;
+  expiresAt: number;
+}
+
+export interface UserDeviceSession {
+  id: string;
+  browser: string;
+  os: string;
+  ip: string;
+  location: string;
+  isCurrent: boolean;
+  lastActive: string;
+}
+
+export interface TwoFactorState {
+  enabled: boolean;
+  secret?: string;
+  qrCodeUri?: string;
+  backupCodes?: string[];
 }
 
 export type AppTheme = 'dark' | 'light';

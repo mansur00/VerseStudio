@@ -22,6 +22,33 @@ export const resetPasswordSchema = z.object({
   message: "Passwords do not match",
   path: ["confirmPassword"],
 });
+export const verifyEmailSchema = z.object({
+  code: z.string().regex(/^\d{6}$/, 'Verification code must be exactly 6 digits'),
+});
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  avatarUrl: z.string().url('Invalid avatar URL').optional().or(z.literal('')),
+});
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(8, 'Password must be at least 8 characters'),
+  confirmNewPassword: z.string().min(8, 'Password must be at least 8 characters'),
+}).refine((data) => data.newPassword === data.confirmNewPassword, {
+  message: "Passwords do not match",
+  path: ["confirmNewPassword"],
+});
+
+export const twoFactorSetupSchema = z.object({
+  code: z.string().regex(/^\d{6}$/, 'Authentication code must be 6 digits'),
+});
+
+export const deleteAccountSchema = z.object({
+  confirmation: z.literal('DELETE', {
+    errorMap: () => ({ message: 'Please type DELETE to confirm' }),
+  }),
+});
 
 export const appSettingsSchema = z.object({
   language: z.enum(['en', 'bn']),

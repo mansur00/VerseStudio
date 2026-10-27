@@ -36,4 +36,17 @@ export { ToolPalette } from './components/ToolPalette/ToolPalette';
 export type { ToolPaletteProps, ToolPaletteState } from './components/ToolPalette/ToolPalette';
 export { Teleprompter } from './components/Teleprompter/Teleprompter';
 export type { TeleprompterProps } from './components/Teleprompter/Teleprompter';
+export { Tabs, TabContent } from './components/Tabs/Tabs';
+export type { TabsProps, TabItem } from './components/Tabs/Tabs';
+export { Checkbox } from './components/Checkbox/Checkbox';
+export type { CheckboxProps } from './components/Checkbox/Checkbox';
+export { Avatar } from './components/Avatar/Avatar';
+export type { AvatarProps } from './components/Avatar/Avatar';
+export { UserMenu } from './components/UserMenu/UserMenu';
+export type { UserMenuProps } from './components/UserMenu/UserMenu';
+export { PlanCard } from './components/PlanCard/PlanCard';
+export type { PlanCardProps, PlanFeature } from './components/PlanCard/PlanCard';
+export { KpiCard } from './components/KpiCard/KpiCard';
+export type { KpiCardProps } from './components/KpiCard/KpiCard';
 export { cn } from './utils/cn';
+

@@ -2,7 +2,7 @@
 
 > **Figma Source of Truth:** [VerseStudio Figma Design](https://www.figma.com/design/PNUNAZJ5hSATGhVrsEQBWr/VerseStudio?node-id=17-2)  
 > **Status:** Active / In Progress  
-> **Current Phase:** Phase 2: Live Tools and Cinematic Effects (Completed) -> Starting Phase 3: Accounts and Onboarding
+> **Current Phase:** Phase 3: Accounts and Onboarding (Completed) -> Starting Phase 4: Google Drive Storage & Sharing
 
 ---
 
@@ -114,15 +114,16 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Screen 22: Long recording advisory warning for recordings exceeding 30 minutes
 - [x] Unit tests passing with happy-dom (13/13 tests green)
 
-### Phase 3: Accounts and Onboarding (Next Phase)
-- [ ] Authentication flows: Sign Up, form validation, email verification code
-- [ ] Onboarding wizard (Step 1 Setup -> Step 2 Google Drive -> Step 3 Permissions)
-- [ ] Permission request UI with denial recovery guidance
-- [ ] Sign In, Forgot Password, Reset Password with show/hide password
-- [ ] User Profile, Security (Password, 2FA, Active Sessions), Plan & Billing cards, Delete Account confirm modal
-- [ ] Session persistence across extension restarts and browser restarts
+### Phase 3: Accounts and Onboarding (Completed)
+- [x] Authentication flows: Sign Up, form validation, email verification code
+- [x] Onboarding wizard (Step 1 Setup -> Step 2 Google Drive -> Step 3 Permissions)
+- [x] Permission request UI with denial recovery guidance (Screen 18)
+- [x] Sign In, Forgot Password, Reset Password with show/hide password
+- [x] User Profile, Security (Password, 2FA, Active Sessions), Plan & Billing cards, Delete Account confirm modal
+- [x] Session persistence across extension restarts and browser restarts via `chrome.storage.local` / fallback
+- [x] Unit tests passing (11/11 auth tests green, 24/24 total tests passing)
 
-### Phase 4: Google Drive Storage & Sharing (Screens 5, 24–45)
+### Phase 4: Google Drive Storage & Sharing (Next Phase)
 - [ ] Google OAuth 2.0 via `chrome.identity.launchWebAuthFlow` (`drive.file` scope)
 - [ ] Auto-creation of `VerseStudio` dedicated root folder in Drive
 - [ ] 8MB chunked resumable upload engine with exponential backoff retry and cancel

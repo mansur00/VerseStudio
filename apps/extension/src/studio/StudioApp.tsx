@@ -12,6 +12,7 @@ import {
   TimelineTrimmer,
   ToolPalette,
   Teleprompter,
+  UserMenu,
   type ToolPaletteState,
   DEFAULT_WALLPAPERS,
 } from '@verse-studio/ui';
@@ -40,6 +41,14 @@ import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/capture
 import { RecordingStorage, StoredRecordingMeta } from '../recording/storage';
 import { ExportMuxer, ExportProgress } from '../recording/exportMuxer';
 import { MiniController } from '../recording/miniController';
+import {
+  useAuthStore,
+  AuthModal,
+  OnboardingModal,
+  AccountModals,
+  type AccountModalType,
+  type AuthModalView,
+} from '../auth';
 
 export const StudioApp: React.FC = () => {
   // App State & Preferences
@@ -98,6 +107,13 @@ export const StudioApp: React.FC = () => {
   // Modals & Exporting State
   const [exportProgress, setExportProgress] = useState<ExportProgress | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
+
+  // Phase 3 Auth & Onboarding State
+  const authStore = useAuthStore();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [authModalView, setAuthModalView] = useState<AuthModalView>('sign-in');
+  const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
+  const [activeAccountModal, setActiveAccountModal] = useState<AccountModalType>(null);
 
   // DOM References
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -202,6 +218,14 @@ export const StudioApp: React.FC = () => {
     RecordingStorage.checkRecoverableSession().then((session) => {
       if (session) {
         setRecoverableSession(session);
+      }
+    });
+
+    // Initialize Auth session
+    useAuthStore.getState().initialize().then(() => {
+      const s = useAuthStore.getState();
+      if (s.isAuthenticated && !s.isOnboarded) {
+        setOnboardingModalOpen(true);
       }
     });
 
@@ -525,6 +549,34 @@ export const StudioApp: React.FC = () => {
           >
             {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </IconButton>
+
+          {/* User Account Menu / Sign In */}
+          {authStore.isAuthenticated && authStore.user ? (
+            <UserMenu
+              user={{
+                name: authStore.user.name,
+                email: authStore.user.email,
+                avatarUrl: authStore.user.avatarUrl,
+                plan: authStore.user.plan,
+              }}
+              onOpenProfile={() => setActiveAccountModal('profile')}
+              onOpenSecurity={() => setActiveAccountModal('security')}
+              onOpenPlan={() => setActiveAccountModal('plan')}
+              onOpenHelp={() => setActiveAccountModal('help')}
+              onSignOut={() => authStore.signOut()}
+            />
+          ) : (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setAuthModalView('sign-in');
+                setAuthModalOpen(true);
+              }}
+            >
+              Sign In
+            </Button>
+          )}
 
           <IconButton
             variant="secondary"
@@ -1004,6 +1056,33 @@ export const StudioApp: React.FC = () => {
           </div>
         </div>
       </Modal>
+
+      {/* Phase 3 Auth & Onboarding Modals */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        initialView={authModalView}
+        lang={lang}
+        onSuccess={() => {
+          if (!authStore.isOnboarded) {
+            setOnboardingModalOpen(true);
+          }
+        }}
+      />
+
+      <OnboardingModal
+        isOpen={onboardingModalOpen}
+        onClose={() => setOnboardingModalOpen(false)}
+        lang={lang}
+      />
+
+      <AccountModals
+        activeModal={activeAccountModal}
+        onClose={() => setActiveAccountModal(null)}
+        lang={lang}
+        onOpenUpgrade={() => setActiveAccountModal('upgrade')}
+        onOpenDelete={() => setActiveAccountModal('delete')}
+      />
     </div>
   );
 };

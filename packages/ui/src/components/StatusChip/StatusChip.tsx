@@ -1,16 +1,17 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { Circle, Globe, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { Circle, Globe, Lock, Loader2, AlertCircle, Sparkles } from 'lucide-react';
 
-export type StatusType = 'recording' | 'shared' | 'private' | 'uploading' | 'failed' | 'active';
+export type StatusType = 'recording' | 'shared' | 'private' | 'uploading' | 'failed' | 'active' | 'pro' | 'default';
 
 export interface StatusChipProps {
   status: StatusType;
   label?: string;
+  size?: 'sm' | 'md';
   className?: string;
 }
 
-export const StatusChip: React.FC<StatusChipProps> = ({ status, label, className }) => {
+export const StatusChip: React.FC<StatusChipProps> = ({ status, label, size = 'md', className }) => {
   const configs = {
     recording: {
       defaultLabel: 'Recording',
@@ -54,6 +55,20 @@ export const StatusChip: React.FC<StatusChipProps> = ({ status, label, className
       text: 'text-[var(--color-success-default)]',
       border: 'border-[var(--color-success-default)]/30',
     },
+    pro: {
+      defaultLabel: 'PRO',
+      icon: <Sparkles className="w-3 h-3 text-[var(--color-brand-default)] fill-current" />,
+      bg: 'bg-[var(--color-brand-subtle)]',
+      text: 'text-[var(--color-brand-default)] font-bold',
+      border: 'border-[var(--color-brand-default)]/40',
+    },
+    default: {
+      defaultLabel: 'Active',
+      icon: null,
+      bg: 'bg-[var(--color-bg-hover)]',
+      text: 'text-[var(--color-text-secondary)]',
+      border: 'border-[var(--color-border-subtle)]',
+    },
   };
 
   const config = configs[status];
@@ -61,14 +76,15 @@ export const StatusChip: React.FC<StatusChipProps> = ({ status, label, className
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border select-none',
+        'inline-flex items-center gap-1.5 rounded-full font-medium border select-none',
+        size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs',
         config.bg,
         config.text,
         config.border,
         className
       )}
     >
-      <span aria-hidden="true">{config.icon}</span>
+      {config.icon ? <span aria-hidden="true">{config.icon}</span> : null}
       <span>{label || config.defaultLabel}</span>
     </span>
   );
