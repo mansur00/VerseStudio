@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Settings,
   Sliders,
@@ -14,6 +14,7 @@ import {
 import {
   Modal,
   Button,
+  Input,
   Tabs,
   Toggle,
   ProgressBar,
@@ -32,6 +33,7 @@ import {
 import { useSettingsStore, type SettingsTabId } from './settingsStore';
 import { useAuthStore } from '../auth/authStore';
 import { useDriveStore } from '../drive/driveStore';
+import { DriveService } from '../drive/driveService';
 
 export interface SettingsModalProps {
   open: boolean;
@@ -62,9 +64,18 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setRecordingShortcutKey,
   } = useSettingsStore();
 
-  const { user } = useAuthStore();
+  const authStore = useAuthStore();
+  const { user } = authStore;
   const { isConnected: isDriveConnected, quota, connectDrive, disconnectDrive } = useDriveStore();
   const [showDisconnectConfirm, setShowDisconnectConfirm] = useState(false);
+  const [customClientId, setCustomClientId] = useState('');
+  const [clientIdSaved, setClientIdSaved] = useState(false);
+
+  useEffect(() => {
+    DriveService.getClientId().then((id) => {
+      if (id) setCustomClientId(id);
+    });
+  }, []);
 
   const t = getTranslation(lang);
 
@@ -581,6 +592,40 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     />
                   </div>
 
+                  {/* Google OAuth Client Configuration (Custom or Default) */}
+                  <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-bold text-[var(--color-text-primary)]">
+                        Google Cloud OAuth Client ID
+                      </h4>
+                      <span className="text-[10px] text-[var(--color-text-tertiary)] font-mono">
+                        drive.file scope
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-[var(--color-text-secondary)]">
+                      Configure your Google Cloud Project OAuth Client ID to authenticate directly or use VerseStudio managed authentication.
+                    </p>
+                    <div className="flex items-center gap-2 pt-1">
+                      <Input
+                        value={customClientId}
+                        onChange={(e) => setCustomClientId(e.target.value)}
+                        placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+                        className="text-xs font-mono"
+                      />
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => {
+                          DriveService.setClientId(customClientId.trim());
+                          setClientIdSaved(true);
+                          setTimeout(() => setClientIdSaved(false), 2000);
+                        }}
+                      >
+                        {clientIdSaved ? 'Saved!' : 'Save'}
+                      </Button>
+                    </div>
+                  </div>
+
                   {/* Disconnect trigger */}
                   <div className="flex items-center justify-between p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
                     <div>
@@ -614,11 +659,43 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       Store massive 4K recordings directly in your private Drive folder without local storage limits.
                     </p>
                   </div>
+
+                  {/* Optional Custom Google OAuth Client ID before connecting */}
+                  <div className="p-3.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-left space-y-1.5 max-w-md mx-auto">
+                    <label className="text-[11px] font-bold text-[var(--color-text-primary)] block">
+                      Google OAuth Client ID (Optional)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={customClientId}
+                        onChange={(e) => setCustomClientId(e.target.value)}
+                        placeholder="Google Cloud Web Client ID"
+                        className="text-xs font-mono"
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => {
+                          DriveService.setClientId(customClientId.trim());
+                          setClientIdSaved(true);
+                          setTimeout(() => setClientIdSaved(false), 2000);
+                        }}
+                      >
+                        {clientIdSaved ? 'Saved' : 'Save'}
+                      </Button>
+                    </div>
+                  </div>
+
                   <Button
                     variant="primary"
                     size="md"
                     leadingIcon={<ExternalLink className="w-4 h-4" />}
-                    onClick={connectDrive}
+                    onClick={async () => {
+                      const success = await connectDrive();
+                      if (success) {
+                        await authStore.setDriveConnected(true);
+                      }
+                    }}
                   >
                     {t.settings.drive.connect}
                   </Button>
@@ -651,8 +728,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <Button
             variant="danger"
             size="sm"
-            onClick={() => {
-              disconnectDrive();
+            onClick={async () => {
+              await disconnectDrive();
+              await authStore.setDriveConnected(false);
               setShowDisconnectConfirm(false);
             }}
           >

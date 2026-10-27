@@ -30,6 +30,7 @@ interface AuthState {
   forgotPassword: (email: string) => Promise<{ success: boolean; error?: string }>;
   resetPassword: (password: string) => Promise<{ success: boolean; error?: string }>;
   completeOnboarding: (goal: string, driveConnected: boolean) => Promise<void>;
+  setDriveConnected: (connected: boolean) => Promise<void>;
   updateProfile: (name: string, avatarUrl?: string) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; error?: string }>;
   toggle2FA: (enabled: boolean, code?: string) => Promise<{ success: boolean; error?: string }>;
@@ -314,6 +315,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
     await writeStorage(ONBOARDED_KEY, true);
     set({ isOnboarded: true });
+  },
+
+  setDriveConnected: async (connected: boolean) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      const updatedUser: UserProfile = {
+        ...currentUser,
+        googleDriveConnected: connected,
+      };
+      const updatedSession = get().session ? { ...get().session!, user: updatedUser } : null;
+      await writeStorage(STORAGE_KEY, updatedSession);
+      set({ user: updatedUser, session: updatedSession });
+    }
   },
 
   updateProfile: async (name: string, avatarUrl?: string) => {

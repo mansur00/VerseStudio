@@ -132,6 +132,14 @@ export class RecordingStorage {
   /**
    * Deletes a recording and all its stored chunks to free local disk space.
    */
+  /**
+   * Retrieves all session records from IndexedDB.
+   */
+  static async getAllSessions(): Promise<StoredRecordingMeta[]> {
+    const db = await getDB();
+    return db.getAll('recordings');
+  }
+
   static async deleteSession(recordingId: string): Promise<void> {
     const db = await getDB();
     await db.delete('recordings', recordingId);
