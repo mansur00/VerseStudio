@@ -40,6 +40,7 @@ import {
   Sparkles,
   FileText,
   Subtitles,
+  Smartphone,
 } from 'lucide-react';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
@@ -64,6 +65,10 @@ import {
   ProcessingAiModal,
   GuidePreviewModal,
 } from '../ai';
+import {
+  usePhoneCameraStore,
+  PhoneCameraModal,
+} from '../phoneCamera';
 
 export const StudioApp: React.FC = () => {
   // App State & Preferences
@@ -134,6 +139,9 @@ export const StudioApp: React.FC = () => {
   // Phase 5 Bilingual AI State
   const aiStore = useAIStore();
   const [previewSubtitlesActive, setPreviewSubtitlesActive] = useState(true);
+
+  // Phase 6 Phone Camera State
+  const phoneCameraStore = usePhoneCameraStore();
 
   // DOM References
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -739,6 +747,29 @@ export const StudioApp: React.FC = () => {
                     ))}
                   </select>
                 )}
+
+                {/* Phone Camera Wireless WebRTC Option (Screens 14-16) */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (phoneCameraStore.status === 'connected' && phoneCameraStore.remoteStream) {
+                      phoneCameraStore.setIsModalOpen(true);
+                    } else {
+                      phoneCameraStore.startPairingSession();
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
+                    phoneCameraStore.isUsingPhoneCamera
+                      ? 'bg-[var(--color-brand-subtle)] border-[var(--color-brand-default)] text-[var(--color-brand-default)]'
+                      : 'bg-[var(--color-bg-hover)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                  }`}
+                  aria-label="Connect Smartphone Camera"
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">
+                    {phoneCameraStore.isUsingPhoneCamera ? 'Phone 1080p' : 'Phone'}
+                  </span>
+                </button>
               </div>
             </div>
 
@@ -1294,6 +1325,16 @@ export const StudioApp: React.FC = () => {
       <GuidePreviewModal
         open={aiStore.isGuideModalOpen}
         onOpenChange={aiStore.setIsGuideModalOpen}
+      />
+
+      {/* Phase 6 Phone Camera Modal */}
+      <PhoneCameraModal
+        open={phoneCameraStore.isModalOpen}
+        onOpenChange={phoneCameraStore.setIsModalOpen}
+        onUseAsCamera={(stream) => {
+          engine?.setCustomCameraStream(stream);
+          setCameraEnabled(true);
+        }}
       />
     </div>
   );

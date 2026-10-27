@@ -20,6 +20,21 @@ export type RecordingStatus =
 
 export type SourceType = 'screen' | 'window' | 'tab';
 
+export type PhoneCameraConnectionStatus = 'disconnected' | 'waiting' | 'connecting' | 'connected' | 'error';
+
+export interface PhoneCameraPeerInfo {
+  pairingCode: string;
+  streamUrl: string;
+  deviceName?: string;
+  resolution: '1080p' | '720p';
+  fps: number;
+  latencyMs: number;
+  batteryLevel?: number;
+  isStreaming: boolean;
+  status: PhoneCameraConnectionStatus;
+  errorMessage?: string;
+}
+
 export type AudioTrackOption = 
   | 'original-bangla' 
   | 'english-ai' 

@@ -1,0 +1,120 @@
+import { create } from 'zustand';
+import type { PhoneCameraPeerInfo, PhoneCameraConnectionStatus } from '@verse-studio/shared';
+import { PhoneCameraService } from './phoneCameraService';
+
+export interface PhoneCameraState {
+  status: PhoneCameraConnectionStatus;
+  pairingCode: string;
+  streamUrl: string;
+  peerInfo: PhoneCameraPeerInfo | null;
+  remoteStream: MediaStream | null;
+  isModalOpen: boolean;
+  isUsingPhoneCamera: boolean;
+
+  // Actions
+  startPairingSession: () => void;
+  connectSimulatedPhone: () => MediaStream;
+  disconnectPhone: () => void;
+  setIsModalOpen: (open: boolean) => void;
+  setUsingPhoneCamera: (using: boolean) => void;
+}
+
+let activeService: PhoneCameraService | null = null;
+
+export const usePhoneCameraStore = create<PhoneCameraState>((set, get) => ({
+  status: 'disconnected',
+  pairingCode: 'VS-8924',
+  streamUrl: 'https://versestudio.app/mobile-camera?pair=VS-8924',
+  peerInfo: null,
+  remoteStream: null,
+  isModalOpen: false,
+  isUsingPhoneCamera: false,
+
+  startPairingSession: () => {
+    if (activeService) {
+      activeService.disconnect();
+    }
+
+    const code = PhoneCameraService.generatePairingCode();
+    const streamUrl = `https://versestudio.app/mobile-camera?pair=${code}`;
+
+    const service = new PhoneCameraService(code, {
+      onStatusChange: (status) => set({ status }),
+      onConnected: (stream, peerInfo) => {
+        set({
+          status: 'connected',
+          remoteStream: stream,
+          peerInfo,
+        });
+      },
+      onDisconnected: () => {
+        set({
+          status: 'disconnected',
+          remoteStream: null,
+          peerInfo: null,
+          isUsingPhoneCamera: false,
+        });
+      },
+      onError: (err) => {
+        console.warn('Phone camera service error:', err);
+        set({ status: 'error' });
+      },
+    });
+
+    activeService = service;
+    service.startHost();
+
+    set({
+      status: 'waiting',
+      pairingCode: code,
+      streamUrl,
+      peerInfo: null,
+      remoteStream: null,
+      isModalOpen: true,
+    });
+  },
+
+  connectSimulatedPhone: () => {
+    if (!activeService) {
+      const code = get().pairingCode || PhoneCameraService.generatePairingCode();
+      activeService = new PhoneCameraService(code, {
+        onStatusChange: (status) => set({ status }),
+        onConnected: (stream, peerInfo) => {
+          set({
+            status: 'connected',
+            remoteStream: stream,
+            peerInfo,
+          });
+        },
+        onDisconnected: () => {
+          set({
+            status: 'disconnected',
+            remoteStream: null,
+            peerInfo: null,
+            isUsingPhoneCamera: false,
+          });
+        },
+      });
+    }
+
+    const stream = activeService.simulateConnection();
+    return stream;
+  },
+
+  disconnectPhone: () => {
+    if (activeService) {
+      activeService.disconnect();
+      activeService = null;
+    }
+
+    set({
+      status: 'disconnected',
+      remoteStream: null,
+      peerInfo: null,
+      isUsingPhoneCamera: false,
+    });
+  },
+
+  setIsModalOpen: (open) => set({ isModalOpen: open }),
+  setUsingPhoneCamera: (using) => set({ isUsingPhoneCamera: using }),
+}));

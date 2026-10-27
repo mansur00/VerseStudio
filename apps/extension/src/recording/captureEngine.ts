@@ -158,6 +158,20 @@ export class CaptureEngine {
   }
 
   /**
+   * Set custom camera stream (e.g. from wireless Phone Camera WebRTC)
+   */
+  public setCustomCameraStream(stream: MediaStream | null) {
+    if (this.cameraStream && this.cameraStream !== stream) {
+      this.cameraStream.getTracks().forEach((t) => t.stop());
+    }
+    this.cameraStream = stream;
+    this.compositor.setCameraSource(stream);
+    if (stream) {
+      this.compositor.start();
+    }
+  }
+
+  /**
    * Connect or reconnect Microphone
    */
   public async setMicrophone(enabled: boolean, deviceId?: string) {

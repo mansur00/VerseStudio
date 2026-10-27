@@ -143,13 +143,14 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] AI quota tracker and plan-tier enforcement (Free 30m / Pro 300m)
 - [x] Unit tests passing (7/7 AI tests green, 37/37 total tests passing)
 
-### Phase 6: Phone Camera Integration (Screens 14–16) (Next Phase)
-- [ ] WebRTC peer connection pipeline
-- [ ] Studio QR code pairing generator and signaling handshake
-- [ ] Mobile companion web page (`/mobile-camera`) with start/stop stream controls
-- [ ] Real-time ingestion into Camera Bubble at 1080p 30FPS with auto-reconnect
+### Phase 6: Phone Camera Integration (Screens 14–17) (Completed)
+- [x] WebRTC peer connection pipeline with auto-reconnect
+- [x] Studio QR code pairing generator and signaling handshake (`VS-XXXX`)
+- [x] Mobile companion web page (`/mobile-camera`) with start/stop stream controls, front/back camera flip, and wake-lock
+- [x] Real-time ingestion into Camera Bubble at 1080p 30FPS (`setCustomCameraStream`)
+- [x] Unit tests passing (6/6 phone camera tests green, 43/43 total tests passing)
 
-### Phase 7: App & Studio Settings (Screens 42–49)
+### Phase 7: App & Studio Settings (Screens 42–49) (Next Phase)
 - [ ] General: Language toggle (EN / BN), Theme (Dark / Light), Reduced Motion toggle
 - [ ] Recording: Resolution (4K, 1440p, 1080p), FPS (60, 30), Video format, audio bitrate, safe chunking
 - [ ] Effects & Shortcuts: Remappable global hotkeys with collision detection
