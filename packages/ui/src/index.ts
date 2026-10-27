@@ -56,5 +56,13 @@ export { LiveSubtitle } from './components/LiveSubtitle/LiveSubtitle';
 export type { LiveSubtitleProps } from './components/LiveSubtitle/LiveSubtitle';
 export { AudioTrackSelector } from './components/AudioTrackSelector/AudioTrackSelector';
 export type { AudioTrackSelectorProps } from './components/AudioTrackSelector/AudioTrackSelector';
+export { AdminNavItem } from './components/AdminNavItem/AdminNavItem';
+export type { AdminNavItemProps } from './components/AdminNavItem/AdminNavItem';
+export { Pagination } from './components/Pagination/Pagination';
+export type { PaginationProps } from './components/Pagination/Pagination';
+export { Select } from './components/Select/Select';
+export type { SelectProps, SelectOption } from './components/Select/Select';
+export { ChartLine, ChartBars } from './components/Chart/Chart';
+export type { ChartLineProps, ChartBarsProps, ChartDataPoint } from './components/Chart/Chart';
 export { cn } from './utils/cn';
 

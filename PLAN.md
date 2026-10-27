@@ -158,17 +158,18 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
 - [x] Google Drive settings: Account status, storage quota usage bar, disconnect confirmation modal
 - [x] Unit tests passing (6/6 settings tests green, 49/49 total tests passing)
 
-### Phase 8: Web Application & Admin Dashboard (Screens 40, 41, A01–A15) (In Progress)
-- [ ] Shared watch page (`/watch/[id]`): Google Drive stream integration, caption player (`.vtt`/`.srt` CC toggle), "Hosted on Google Drive" badge, "Open in Drive" action
-- [ ] Link Unavailable / Protected / Blocked state handling (Screen 41)
-- [ ] Admin Dashboard layout (`/admin`): Role-gated and 2FA-protected layout with admin sidebar
-  - [ ] A01: Overview metrics & KPI cards (Total recordings, Active users, AI minutes used, Drive storage managed)
-  - [ ] A02–A06: User management, bulk actions, user details, suspend modal
-  - [ ] A07–A09: Recordings directory, moderation controls, share-page block confirmation
-  - [ ] A10–A11: Plans & billing overview, AI usage & cost calculator
-  - [ ] A12–A15: Drive limits, audit logs, admin roles & invites
+### Phase 8: Web Application & Admin Dashboard (Screens 40, 41, A01–A15) (Completed)
+- [x] Shared watch page (`/watch/[id]`): Google Drive stream integration, caption player (`.vtt`/`.srt` CC toggle), "Hosted on Google Drive" badge, "Open in Drive" action
+- [x] Link Unavailable / Protected / Blocked state handling (Screen 41)
+- [x] Admin Dashboard layout (`/admin`): Role-gated and 2FA-protected layout with admin sidebar
+  - [x] A01: Overview metrics & KPI cards (Total recordings, Active users, AI minutes used, Drive storage managed)
+  - [x] A02–A06: User management, bulk actions, user details, suspend modal
+  - [x] A07–A09: Recordings directory, moderation controls, share-page block confirmation
+  - [x] A10–A11: Plans & billing overview, AI usage & cost calculator
+  - [x] A12–A15: Drive limits, audit logs, admin roles & invites
+- [x] Next.js 14 production build verified (14 static and dynamic routes compiled with 0 errors)
 
-### Phase 9: Hardening, Polish & Chrome Web Store Release
+### Phase 9: Hardening, Polish & Chrome Web Store Release (Next Phase)
 - [ ] Performance audit: 60 FPS compositor loop memory profiling (zero leaks)
 - [ ] Security audit: Strict CSP, sanitized content script communications, zero exposed secrets
 - [ ] WCAG 2.2 AA audit with NVDA / VoiceOver screen readers

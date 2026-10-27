@@ -224,3 +224,90 @@ export const DEFAULT_STUDIO_SETTINGS: AppSettings = {
   aiDefaultSubtitles: 'bilingual',
 };
 
+// Admin & Shared Watch Types
+export type AdminUserStatus = 'active' | 'suspended';
+
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+  plan: UserPlan;
+  status: AdminUserStatus;
+  createdAt: string;
+  recordingsCount: number;
+  driveStorageBytes: number;
+  aiMinutesUsed: number;
+  lastActive: string;
+}
+
+export interface AdminRecording {
+  id: string;
+  title: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  driveFileId: string;
+  shareUrl: string;
+  thumbnailUrl?: string;
+  durationSeconds: number;
+  resolution: RecordingResolution;
+  fps: RecordingFPS;
+  viewsCount: number;
+  status: 'active' | 'blocked';
+  createdAt: string;
+  hasSubtitles: boolean;
+  hasAiDub: boolean;
+}
+
+export interface ModerationReport {
+  id: string;
+  recordingId: string;
+  recordingTitle: string;
+  reportedByEmail: string;
+  reason: 'copyright' | 'inappropriate' | 'spam' | 'privacy_violation';
+  details: string;
+  status: 'pending' | 'resolved' | 'dismissed';
+  createdAt: string;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: string;
+  actorEmail: string;
+  action: string;
+  targetType: 'user' | 'recording' | 'plan' | 'admin';
+  targetId: string;
+  ipAddress: string;
+  details: string;
+}
+
+export interface AdminRoleMember {
+  id: string;
+  name: string;
+  email: string;
+  role: 'super_admin' | 'moderator' | 'support';
+  twoFactorEnabled: boolean;
+  addedAt: string;
+}
+
+export interface SharedRecordingData {
+  id: string;
+  title: string;
+  driveFileId: string;
+  driveEmbedUrl: string;
+  driveViewUrl: string;
+  durationSeconds: number;
+  resolution: RecordingResolution;
+  fps: RecordingFPS;
+  authorName: string;
+  authorAvatarUrl?: string;
+  createdAt: string;
+  viewsCount: number;
+  subtitlesVtt?: string;
+  subtitlesSrt?: string;
+  guideMarkdown?: string;
+  isBlocked?: boolean;
+  isPrivate?: boolean;
+}
+
