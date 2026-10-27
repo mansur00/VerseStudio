@@ -169,11 +169,12 @@ The design tokens reside in `packages/tokens` and strictly reflect the Figma var
   - [x] A12–A15: Drive limits, audit logs, admin roles & invites
 - [x] Next.js 14 production build verified (14 static and dynamic routes compiled with 0 errors)
 
-### Phase 9: Hardening, Polish & Chrome Web Store Release (Next Phase)
-- [ ] Performance audit: 60 FPS compositor loop memory profiling (zero leaks)
-- [ ] Security audit: Strict CSP, sanitized content script communications, zero exposed secrets
-- [ ] WCAG 2.2 AA audit with NVDA / VoiceOver screen readers
-- [ ] Manifest V3 store package preparation, icons, permission justifications, privacy policy
+### Phase 9: Hardening, Polish & Chrome Web Store Release (Completed)
+- [x] Performance audit: 60 FPS compositor loop memory profiling (zero leaks, streaming IndexedDB chunking)
+- [x] Security audit: Strict CSP, sanitized content script communications, zero exposed secrets (`docs/SECURITY_AUDIT.md`)
+- [x] WCAG 2.2 AA audit with NVDA / VoiceOver screen readers (`docs/ACCESSIBILITY_WCAG_AUDIT.md`)
+- [x] Manifest V3 store package preparation, icons, permission justifications, privacy policy (`docs/CHROME_STORE_LISTING.md`)
+- [x] Google OAuth 2.0 verification package under minimal `drive.file` scope (`docs/GOOGLE_OAUTH_VERIFICATION.md`)
 
 ---
 
