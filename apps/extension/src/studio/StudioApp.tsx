@@ -15,6 +15,7 @@ import {
   UserMenu,
   LiveSubtitle,
   AudioTrackSelector,
+  HugeIcon,
   type ToolPaletteState,
   DEFAULT_WALLPAPERS,
 } from '@verse-studio/ui';
@@ -26,31 +27,31 @@ import {
   type DriveRecordingItem,
 } from '@verse-studio/shared';
 import {
-  Monitor,
-  Layout,
-  Camera,
-  Layers,
-  Settings,
-  Sun,
-  Moon,
-  Volume2,
-  VolumeX,
-  Play,
-  Pause,
-  Download,
-  Trash2,
-  RotateCcw,
-  AlertTriangle,
-  Move,
-  Cloud,
-  Sparkles,
-  FileText,
-  Subtitles,
-  Smartphone,
-  SkipBack,
-  SkipForward,
-  Maximize,
-} from 'lucide-react';
+  MonitorIcon,
+  Layout01Icon,
+  Camera01Icon,
+  Layers01Icon,
+  Settings01Icon,
+  Sun01Icon,
+  Moon01Icon,
+  VolumeHighIcon,
+  VolumeOffIcon,
+  PlayIcon,
+  PauseIcon,
+  Download01Icon,
+  Delete01Icon,
+  RotateLeft01Icon,
+  Alert01Icon,
+  Move01Icon,
+  CloudIcon,
+  SparklesIcon,
+  File01Icon,
+  AiTranscribeAudioIcon,
+  SmartPhone01Icon,
+  GoBackward5SecIcon,
+  GoForward5SecIcon,
+  FullScreenIcon,
+} from '@hugeicons/core-free-icons';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
 import { RecordingStorage, StoredRecordingMeta } from '../recording/storage';
@@ -142,6 +143,7 @@ export const StudioApp: React.FC = () => {
 
   // Modals & Exporting State
   const [exportProgress, setExportProgress] = useState<ExportProgress | null>(null);
+  const exportAbortRef = useRef<AbortController | null>(null);
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   // Phase 3 Auth & Onboarding State
@@ -598,21 +600,50 @@ export const StudioApp: React.FC = () => {
   const handleExportWebM = async () => {
     if (!recordingBlob) return;
     const filename = `VerseStudio_4K_${Date.now()}`;
-    await ExportMuxer.exportWebM(recordingBlob, filename);
+    const controller = new AbortController();
+    exportAbortRef.current = controller;
+    setExportProgress({ stage: 'analyzing', percentage: 10 });
+    try {
+      await ExportMuxer.exportWebM(
+        recordingBlob,
+        filename,
+        trimRange,
+        (p) => setExportProgress(p),
+        controller.signal
+      );
+      setTimeout(() => setExportProgress(null), 1500);
+    } catch (e: any) {
+      if (e.name !== 'AbortError') {
+        console.error('WebM export failed:', e);
+      }
+      setExportProgress(null);
+    } finally {
+      exportAbortRef.current = null;
+    }
   };
 
   const handleExportMP4 = async () => {
     if (!recordingBlob) return;
     const filename = `VerseStudio_4K_${Date.now()}`;
+    const controller = new AbortController();
+    exportAbortRef.current = controller;
     setExportProgress({ stage: 'analyzing', percentage: 10 });
     try {
-      await ExportMuxer.exportMP4(recordingBlob, filename, (p) => {
-        setExportProgress(p);
-      });
+      await ExportMuxer.exportMP4(
+        recordingBlob,
+        filename,
+        trimRange,
+        (p) => setExportProgress(p),
+        controller.signal
+      );
       setTimeout(() => setExportProgress(null), 1500);
-    } catch (e) {
-      console.error('MP4 export failed:', e);
+    } catch (e: any) {
+      if (e.name !== 'AbortError') {
+        console.error('MP4 export failed:', e);
+      }
       setExportProgress(null);
+    } finally {
+      exportAbortRef.current = null;
     }
   };
 
@@ -641,8 +672,8 @@ export const StudioApp: React.FC = () => {
       {/* Recover Interrupted Recording Banner */}
       {recoverableSession && view === 'studio' && (
         <div className="bg-[var(--color-brand-subtle)] border-b border-[var(--color-brand-default)]/40 px-6 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-medium text-[var(--color-brand-default)]">
-            <AlertTriangle className="w-4 h-4" />
+          <div className="flex items-center gap-2 font-label-s text-[var(--color-brand-default)]">
+            <HugeIcon icon={Alert01Icon} size={16} />
             <span>Interrupted recording recovered from crash: {recoverableSession.name}</span>
           </div>
           <div className="flex items-center gap-2">
@@ -666,8 +697,8 @@ export const StudioApp: React.FC = () => {
       {/* Screen 22: Long Recording Advisory Banner */}
       {showLongRecordingWarning && (
         <div className="bg-[var(--color-warning-subtle)] border-b border-[var(--color-warning-default)]/40 px-6 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-medium text-[var(--color-warning-default)]">
-            <AlertTriangle className="w-4 h-4 shrink-0" />
+          <div className="flex items-center gap-2 font-label-s text-[var(--color-warning-default)]">
+            <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
             <span>
               <strong>Advisory:</strong> Recording duration has reached 30+ minutes. All chunks are continuously written to IndexedDB disk storage without RAM accumulation.
             </span>
@@ -781,7 +812,7 @@ export const StudioApp: React.FC = () => {
             aria-label="Toggle theme"
             onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? <HugeIcon icon={Sun01Icon} size={16} /> : <HugeIcon icon={Moon01Icon} size={16} />}
           </IconButton>
 
           {/* User Account Menu / Sign In */}
@@ -818,7 +849,7 @@ export const StudioApp: React.FC = () => {
             aria-label="Settings"
             onClick={() => setSettingsOpen(true)}
           >
-            <Settings className="w-4 h-4" />
+            <HugeIcon icon={Settings01Icon} size={16} />
           </IconButton>
         </div>
       </header>
@@ -834,7 +865,7 @@ export const StudioApp: React.FC = () => {
                 variant={hasScreenSource ? 'secondary' : 'primary'}
                 size="sm"
                 onClick={handleSelectScreen}
-                leadingIcon={<Monitor className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={MonitorIcon} size={16} />}
               >
                 <span className="hidden sm:inline">{hasScreenSource ? 'Display Connected' : t.setup.selectSource}</span>
                 <span className="sm:hidden">{hasScreenSource ? 'Screen' : 'Select'}</span>
@@ -847,7 +878,7 @@ export const StudioApp: React.FC = () => {
                   variant={layout === 'screen-only' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setLayout('screen-only')}
-                  leadingIcon={<Monitor className="w-3.5 h-3.5" />}
+                  leadingIcon={<HugeIcon icon={MonitorIcon} size={14} />}
                 >
                   <span className="hidden md:inline">{t.setup.layoutScreenOnly}</span>
                 </Button>
@@ -855,7 +886,7 @@ export const StudioApp: React.FC = () => {
                   variant={layout === 'screen-camera' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setLayout('screen-camera')}
-                  leadingIcon={<Layers className="w-3.5 h-3.5" />}
+                  leadingIcon={<HugeIcon icon={Layers01Icon} size={14} />}
                 >
                   <span className="hidden md:inline">{t.setup.layoutScreenCamera}</span>
                 </Button>
@@ -863,7 +894,7 @@ export const StudioApp: React.FC = () => {
                   variant={layout === 'split-50-50' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setLayout('split-50-50')}
-                  leadingIcon={<Layout className="w-3.5 h-3.5" />}
+                  leadingIcon={<HugeIcon icon={Layout01Icon} size={14} />}
                 >
                   <span className="hidden md:inline">{t.setup.layoutSplit}</span>
                 </Button>
@@ -871,7 +902,7 @@ export const StudioApp: React.FC = () => {
                   variant={layout === 'camera-only' ? 'primary' : 'ghost'}
                   size="sm"
                   onClick={() => setLayout('camera-only')}
-                  leadingIcon={<Camera className="w-3.5 h-3.5" />}
+                  leadingIcon={<HugeIcon icon={Camera01Icon} size={14} />}
                 >
                   <span className="hidden md:inline">{t.setup.layoutCameraOnly}</span>
                 </Button>
@@ -889,9 +920,9 @@ export const StudioApp: React.FC = () => {
                   onClick={handleToggleMic}
                 >
                   {micMuted ? (
-                    <VolumeX className="w-4 h-4 text-[var(--color-error-default)]" />
+                    <HugeIcon icon={VolumeOffIcon} size={16} className="text-[var(--color-error-default)]" />
                   ) : (
-                    <Volume2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+                    <HugeIcon icon={VolumeHighIcon} size={16} className="text-[var(--color-brand-default)]" />
                   )}
                 </IconButton>
                 <MicLevel level={micLevel} muted={micMuted} showIcon={false} />
@@ -919,7 +950,7 @@ export const StudioApp: React.FC = () => {
                   aria-label="Toggle camera"
                   onClick={handleToggleCamera}
                 >
-                  <Camera className="w-4 h-4" />
+                  <HugeIcon icon={Camera01Icon} size={16} />
                 </IconButton>
                 {cameraEnabled && availableCameras.length > 0 && (
                   <select
@@ -953,7 +984,7 @@ export const StudioApp: React.FC = () => {
                   }`}
                   aria-label="Connect Smartphone Camera"
                 >
-                  <Smartphone className="w-3.5 h-3.5" />
+                  <HugeIcon icon={SmartPhone01Icon} size={14} />
                   <span className="hidden sm:inline">
                     {phoneCameraStore.isUsingPhoneCamera ? 'Phone 1080p' : 'Phone'}
                   </span>
@@ -1032,8 +1063,8 @@ export const StudioApp: React.FC = () => {
 
             {/* In-viewport camera bubble drag instruction */}
             {layout === 'screen-camera' && !teleprompterOpen && (
-              <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md text-[11px] text-[var(--color-text-secondary)] border border-white/10 pointer-events-none">
-                <Move className="w-3 h-3 text-[var(--color-brand-default)]" />
+              <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md font-caption text-[var(--color-text-secondary)] border border-white/10 pointer-events-none">
+                <HugeIcon icon={Move01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span className="hidden sm:inline">Draggable Camera Bubble Enabled</span>
                 <span className="sm:hidden">Bubble Active</span>
               </div>
@@ -1136,10 +1167,10 @@ export const StudioApp: React.FC = () => {
         <main className="flex-1 flex flex-col p-3 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full gap-4 sm:gap-6 overflow-y-auto">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-xl font-bold text-[var(--color-text-primary)]">
+              <h2 className="font-h2 font-bold text-[var(--color-text-primary)]">
                 {t.postStudio.title}
               </h2>
-              <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+              <p className="font-body-s text-[var(--color-text-secondary)] mt-0.5">
                 Review your 4K 60FPS recording, trim boundaries, and export locally or to Google Drive.
               </p>
             </div>
@@ -1148,7 +1179,7 @@ export const StudioApp: React.FC = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                leadingIcon={<RotateCcw className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={RotateLeft01Icon} size={16} />}
                 onClick={() => setView('studio')}
               >
                 Record Another
@@ -1156,7 +1187,7 @@ export const StudioApp: React.FC = () => {
               <Button
                 variant="danger"
                 size="sm"
-                leadingIcon={<Trash2 className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={Delete01Icon} size={16} />}
                 onClick={() => setShowDiscardConfirm(true)}
               >
                 Discard
@@ -1211,23 +1242,23 @@ export const StudioApp: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPreviewMuted((prev) => !prev)}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-semibold backdrop-blur-md bg-black/60 border-white/20 text-white hover:bg-black/80 transition-all"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s backdrop-blur-md bg-black/60 border-white/20 text-white hover:bg-black/80 transition-all"
                 aria-label={previewMuted ? 'Unmute' : 'Mute'}
               >
-                {previewMuted ? <VolumeX className="w-3.5 h-3.5 text-[var(--color-record-default)]" /> : <Volume2 className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />}
+                {previewMuted ? <HugeIcon icon={VolumeOffIcon} size={14} className="text-[var(--color-record-default)]" /> : <HugeIcon icon={VolumeHighIcon} size={14} className="text-[var(--color-brand-default)]" />}
                 <span className="hidden sm:inline">{previewMuted ? 'Muted' : 'Audio'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPreviewSubtitlesActive((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border text-xs font-semibold backdrop-blur-md transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s backdrop-blur-md transition-all ${
                   previewSubtitlesActive
                     ? 'bg-black/75 border-[var(--color-brand-default)] text-[var(--color-brand-default)] shadow-md'
                     : 'bg-black/50 border-white/20 text-white/70 hover:text-white'
                 }`}
               >
-                <Subtitles className="w-3.5 h-3.5" />
+                <HugeIcon icon={AiTranscribeAudioIcon} size={14} />
                 <span>CC {previewSubtitlesActive ? 'On' : 'Off'}</span>
               </button>
             </div>
@@ -1254,9 +1285,9 @@ export const StudioApp: React.FC = () => {
             >
               <div className="w-14 sm:w-16 h-14 sm:h-16 rounded-full bg-[var(--color-brand-default)] flex items-center justify-center shadow-[var(--glow-brand)] group-hover:scale-105 transition-transform">
                 {isPlaying ? (
-                  <Pause className="w-7 sm:w-8 h-7 sm:h-8 fill-[var(--color-text-on-brand)] text-[var(--color-text-on-brand)]" />
+                  <HugeIcon icon={PauseIcon} size={28} className="fill-[var(--color-text-on-brand)] text-[var(--color-text-on-brand)]" />
                 ) : (
-                  <Play className="w-7 sm:w-8 h-7 sm:h-8 fill-[var(--color-text-on-brand)] text-[var(--color-text-on-brand)] ml-1" />
+                  <HugeIcon icon={PlayIcon} size={28} className="fill-[var(--color-text-on-brand)] text-[var(--color-text-on-brand)] ml-1" />
                 )}
               </div>
             </button>
@@ -1270,7 +1301,7 @@ export const StudioApp: React.FC = () => {
                   className="p-1 sm:p-1.5 rounded-md hover:bg-white/20 text-white transition-colors"
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
-                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                  {isPlaying ? <HugeIcon icon={PauseIcon} size={16} /> : <HugeIcon icon={PlayIcon} size={16} className="ml-0.5" />}
                 </button>
 
                 <button
@@ -1286,7 +1317,7 @@ export const StudioApp: React.FC = () => {
                   title="Rewind 5s"
                   aria-label="Rewind 5 seconds"
                 >
-                  <SkipBack className="w-4 h-4" />
+                  <HugeIcon icon={GoBackward5SecIcon} size={16} />
                 </button>
 
                 <button
@@ -1302,16 +1333,16 @@ export const StudioApp: React.FC = () => {
                   title="Forward 5s"
                   aria-label="Forward 5 seconds"
                 >
-                  <SkipForward className="w-4 h-4" />
+                  <HugeIcon icon={GoForward5SecIcon} size={16} />
                 </button>
 
-                <span className="font-mono text-xs text-white/90 ml-1 sm:ml-2">
+                <span className="font-code text-xs text-white/90 ml-1 sm:ml-2">
                   {formatTime(currentTime * 1000)} / {formatTime(videoDuration * 1000)}
                 </span>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono text-[var(--color-brand-default)] bg-black/60 px-2 py-0.5 rounded border border-white/10 hidden md:inline">
+                <span className="font-code text-[11px] text-[var(--color-brand-default)] bg-black/60 px-2 py-0.5 rounded border border-white/10 hidden md:inline">
                   Trim: {formatTime(trimRange.start * 1000)} - {formatTime((trimRange.end || videoDuration) * 1000)}
                 </span>
                 <button
@@ -1325,7 +1356,7 @@ export const StudioApp: React.FC = () => {
                   title="Fullscreen"
                   aria-label="Fullscreen"
                 >
-                  <Maximize className="w-4 h-4" />
+                  <HugeIcon icon={FullScreenIcon} size={16} />
                 </button>
               </div>
             </div>
@@ -1353,11 +1384,11 @@ export const StudioApp: React.FC = () => {
           <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] space-y-3.5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-bold text-[var(--color-text-primary)] flex items-center gap-2">
-                  <Volume2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+                <h3 className="font-h4 font-bold text-[var(--color-text-primary)] flex items-center gap-2">
+                  <HugeIcon icon={VolumeHighIcon} size={16} className="text-[var(--color-brand-default)]" />
                   <span>{t.postStudio.audioTracks.title}</span>
                 </h3>
-                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+                <p className="font-body-s text-[var(--color-text-secondary)] mt-0.5">
                   Select your desired voiceover track for playback and export.
                 </p>
               </div>
@@ -1365,7 +1396,7 @@ export const StudioApp: React.FC = () => {
               <Button
                 size="sm"
                 variant="secondary"
-                leadingIcon={<Sparkles className="w-4 h-4 text-[var(--color-brand-default)]" />}
+                leadingIcon={<HugeIcon icon={SparklesIcon} size={16} className="text-[var(--color-brand-default)]" />}
                 onClick={() =>
                   aiStore.startProcessingAI(
                     `VerseStudio_${new Date().toISOString().slice(0, 10)}`,
@@ -1387,13 +1418,13 @@ export const StudioApp: React.FC = () => {
           <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)]">
-                <FileText className="w-5 h-5" />
+                <HugeIcon icon={File01Icon} size={20} />
               </div>
               <div>
-                <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                <h4 className="font-label-m font-bold text-[var(--color-text-primary)]">
                   Step-by-Step Tutorial Guide & Subtitles
                 </h4>
-                <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
+                <p className="font-body-s text-[var(--color-text-secondary)] mt-0.5">
                   Compiled automatically from recorded user clicks, navigation, and translated Bengali speech.
                 </p>
               </div>
@@ -1403,7 +1434,7 @@ export const StudioApp: React.FC = () => {
               <Button
                 size="sm"
                 variant="secondary"
-                leadingIcon={<Subtitles className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={AiTranscribeAudioIcon} size={16} />}
                 onClick={() => aiStore.exportSrtDownload()}
               >
                 {t.postStudio.exportSrt}
@@ -1411,7 +1442,7 @@ export const StudioApp: React.FC = () => {
               <Button
                 size="sm"
                 variant="primary"
-                leadingIcon={<FileText className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={File01Icon} size={16} />}
                 onClick={() => aiStore.setIsGuideModalOpen(true)}
               >
                 {t.postStudio.viewGuide}
@@ -1424,10 +1455,10 @@ export const StudioApp: React.FC = () => {
             {/* Local Export */}
             <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] flex flex-col justify-between">
               <div>
-                <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
+                <h3 className="font-label-m font-bold text-[var(--color-text-primary)]">
                   {t.postStudio.exportLocal}
                 </h3>
-                <p className="text-xs text-[var(--color-text-secondary)] mt-1">
+                <p className="font-body-s text-[var(--color-text-secondary)] mt-1">
                   Download instantly in native 4K WebM or containerized MP4 format with audio sync.
                 </p>
               </div>
@@ -1436,7 +1467,7 @@ export const StudioApp: React.FC = () => {
                 <Button
                   variant="primary"
                   size="sm"
-                  leadingIcon={<Download className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={Download01Icon} size={16} />}
                   onClick={handleExportWebM}
                 >
                   Download WebM (Instant)
@@ -1444,7 +1475,7 @@ export const StudioApp: React.FC = () => {
                 <Button
                   variant="secondary"
                   size="sm"
-                  leadingIcon={<Download className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={Download01Icon} size={16} />}
                   onClick={handleExportMP4}
                 >
                   Export MP4 (4K)
@@ -1456,13 +1487,13 @@ export const StudioApp: React.FC = () => {
             <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-brand-default)] flex flex-col justify-between shadow-sm">
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-[var(--color-text-primary)]">
+                  <h3 className="font-label-m font-bold text-[var(--color-text-primary)]">
                     {t.postStudio.saveDrive}
                   </h3>
                   <StatusChip status="shared" label="Google Drive Ready" />
                 </div>
-                <p className="text-xs text-[var(--color-text-secondary)] mt-1">
-                  Upload directly to your personal Google Drive (<code className="font-mono text-[var(--color-brand-default)]">VerseStudio/</code> folder) and get an instant shareable watch link.
+                <p className="font-body-s text-[var(--color-text-secondary)] mt-1">
+                  Upload directly to your personal Google Drive (<code className="font-code text-[var(--color-brand-default)]">VerseStudio/</code> folder) and get an instant shareable watch link.
                 </p>
               </div>
 
@@ -1470,7 +1501,7 @@ export const StudioApp: React.FC = () => {
                 <Button
                   variant="primary"
                   size="sm"
-                  leadingIcon={<Cloud className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={CloudIcon} size={16} />}
                   onClick={() => setShowDriveUploadModal(true)}
                 >
                   Save to Google Drive & Share
@@ -1495,7 +1526,12 @@ export const StudioApp: React.FC = () => {
       {/* 4K Video Export Progress Modal (Screen 26) */}
       <Modal
         open={exportProgress !== null}
-        onOpenChange={() => {}}
+        onOpenChange={() => {
+          if (exportAbortRef.current) {
+            exportAbortRef.current.abort();
+          }
+          setExportProgress(null);
+        }}
         title="Exporting 4K 60FPS Video"
       >
         <div className="py-4 flex flex-col gap-4">
@@ -1514,6 +1550,20 @@ export const StudioApp: React.FC = () => {
           <p className="text-xs text-[var(--color-text-tertiary)]">
             Please keep this tab open while 4K video frames are containerized with full fidelity.
           </p>
+          <div className="flex justify-end pt-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                if (exportAbortRef.current) {
+                  exportAbortRef.current.abort();
+                }
+                setExportProgress(null);
+              }}
+            >
+              Cancel Export
+            </Button>
+          </div>
         </div>
       </Modal>
 
