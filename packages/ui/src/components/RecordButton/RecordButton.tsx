@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { Circle, Square, Pause } from 'lucide-react';
+import { StopIcon, PlayIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface RecordButtonProps {
   status: 'idle' | 'recording' | 'paused';
@@ -42,11 +43,11 @@ export const RecordButton: React.FC<RecordButtonProps> = ({
       )}
     >
       {isRecording ? (
-        <Square className="w-6 h-6 fill-white text-white rounded-sm" />
+        <HugeIcon icon={StopIcon} size={24} className="text-white fill-current" />
       ) : isPaused ? (
-        <Pause className="w-6 h-6 fill-white text-white" />
+        <HugeIcon icon={PlayIcon} size={24} className="text-white fill-current ml-0.5" />
       ) : (
-        <Circle className="w-6 h-6 fill-white text-white" />
+        <span className="w-5 h-5 rounded-full bg-white" />
       )}
     </button>
   );

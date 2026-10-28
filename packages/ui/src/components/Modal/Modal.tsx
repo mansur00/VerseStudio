@@ -2,7 +2,8 @@ import React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from '../../utils/cn';
 import { Button } from '../Button/Button';
-import { X } from 'lucide-react';
+import { HugeIcon } from '../HugeIcon';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
 
 export interface ModalProps {
   open: boolean;
@@ -58,11 +59,11 @@ export const Modal: React.FC<ModalProps> = ({
         >
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <DialogPrimitive.Title className="text-lg font-semibold text-[var(--color-text-primary)]">
+              <DialogPrimitive.Title className="font-h4 font-semibold text-[var(--color-text-primary)]">
                 {title}
               </DialogPrimitive.Title>
               {description ? (
-                <DialogPrimitive.Description className="text-sm text-[var(--color-text-secondary)]">
+                <DialogPrimitive.Description className="font-body-s text-[var(--color-text-secondary)]">
                   {description}
                 </DialogPrimitive.Description>
               ) : null}
@@ -70,10 +71,10 @@ export const Modal: React.FC<ModalProps> = ({
             <DialogPrimitive.Close asChild>
               <button
                 type="button"
-                className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] p-1 rounded-md transition-colors"
+                className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] p-1 rounded-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-canvas)]"
                 aria-label="Close dialog"
               >
-                <X className="w-5 h-5" />
+                <HugeIcon icon={Cancel01Icon} size={20} />
               </button>
             </DialogPrimitive.Close>
           </div>

@@ -4,17 +4,18 @@ import {
   Button,
   Input,
   Checkbox,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
-  Mail,
-  Lock,
-  User,
-  Eye,
-  EyeOff,
-  AlertCircle,
-  CheckCircle2,
-  KeyRound,
-} from 'lucide-react';
+  Mail01Icon,
+  LockIcon,
+  UserIcon,
+  ViewIcon,
+  ViewOffIcon,
+  AlertCircleIcon,
+  CheckmarkCircle01Icon,
+  Key01Icon,
+} from '@hugeicons/core-free-icons';
 import {
   signUpSchema,
   signInSchema,
@@ -285,7 +286,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             role="alert"
             className="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs font-medium animate-in fade-in-50"
           >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0 mt-0.5" />
             <div className="flex-1">{formError}</div>
           </div>
         )}
@@ -338,7 +339,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@domain.com"
-              leadingIcon={<Mail className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={Mail01Icon} size={16} />}
               error={fieldErrors.email}
               autoComplete="email"
               required
@@ -367,7 +368,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  leadingIcon={<Lock className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
                   error={fieldErrors.password}
                   autoComplete="current-password"
                   required
@@ -378,7 +379,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3 top-3 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <HugeIcon icon={ViewOffIcon} size={16} /> : <HugeIcon icon={ViewIcon} size={16} />}
                 </button>
               </div>
             </div>
@@ -450,7 +451,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Your full name"
-              leadingIcon={<User className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={UserIcon} size={16} />}
               error={fieldErrors.name}
               autoComplete="name"
               required
@@ -463,7 +464,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@domain.com"
-              leadingIcon={<Mail className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={Mail01Icon} size={16} />}
               error={fieldErrors.email}
               autoComplete="email"
               required
@@ -483,7 +484,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="At least 8 characters"
-                  leadingIcon={<Lock className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
                   error={fieldErrors.password}
                   autoComplete="new-password"
                   required
@@ -494,7 +495,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3 top-3 text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  {showPassword ? <HugeIcon icon={ViewOffIcon} size={16} /> : <HugeIcon icon={ViewIcon} size={16} />}
                 </button>
               </div>
             </div>
@@ -551,7 +552,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={verificationCode}
               onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
               placeholder="123456"
-              leadingIcon={<KeyRound className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={Key01Icon} size={16} />}
               error={fieldErrors.code}
               className="font-mono text-center tracking-widest text-lg"
               autoFocus
@@ -599,7 +600,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@domain.com"
-              leadingIcon={<Mail className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={Mail01Icon} size={16} />}
               error={fieldErrors.email}
               required
               autoFocus
@@ -630,7 +631,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         {view === 'reset-sent' && (
           <div className="space-y-4 text-center py-2">
             <div className="w-12 h-12 rounded-full bg-[var(--color-success-subtle)] text-[var(--color-success-default)] flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-6 h-6" />
+              <HugeIcon icon={CheckmarkCircle01Icon} size={24} />
             </div>
             <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
               We have dispatched an email containing your password reset link. Please check your inbox and spam folder.
@@ -664,7 +665,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 8 characters"
-              leadingIcon={<Lock className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
               error={fieldErrors.password}
               required
               autoFocus
@@ -677,7 +678,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm your new password"
-              leadingIcon={<Lock className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
               error={fieldErrors.confirmPassword}
               required
             />

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import {
-  Smartphone,
-  Copy,
-  Check,
-  ExternalLink,
-  Wifi,
-  Sparkles,
-  Zap,
-  BatteryCharging,
-  Video,
-} from 'lucide-react';
-import { Modal, Button, StatusChip } from '@verse-studio/ui';
+  SmartPhone01Icon,
+  Copy01Icon,
+  Tick01Icon,
+  ArrowUpRight01Icon,
+  Wifi01Icon,
+  SparklesIcon,
+  FlashIcon,
+  BatteryCharging01Icon,
+  VideoReplayIcon,
+} from '@hugeicons/core-free-icons';
+import { Modal, Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 import { usePhoneCameraStore } from './phoneCameraStore';
 
 export interface PhoneCameraModalProps {
@@ -142,14 +142,14 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/40 text-[var(--color-brand-default)]">
-                    <Smartphone className="w-6 h-6" />
+                    <HugeIcon icon={SmartPhone01Icon} size={24} />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                    <h4 className="font-label-m font-bold text-[var(--color-text-primary)]">
                       {peerInfo?.deviceName || 'Apple iPhone 15 Pro'}
                     </h4>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[11px] text-[var(--color-text-secondary)] font-medium">
+                      <span className="font-caption text-[var(--color-text-secondary)] font-medium">
                         Paired with {pairingCode}
                       </span>
                     </div>
@@ -160,17 +160,17 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
               </div>
 
               {/* Connection diagnostics badges */}
-              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--color-border-subtle)] text-xs">
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[var(--color-border-subtle)] font-caption">
                 <div className="flex items-center gap-1.5 text-[var(--color-text-secondary)]">
-                  <Wifi className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                  <HugeIcon icon={Wifi01Icon} size={14} className="text-[var(--color-brand-default)]" />
                   <span>Latency: {peerInfo?.latencyMs || 18}ms</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[var(--color-text-secondary)]">
-                  <Zap className="w-3.5 h-3.5 text-[var(--color-accent-laser)]" />
+                  <HugeIcon icon={FlashIcon} size={14} className="text-[var(--color-accent-laser)]" />
                   <span>Quality: Excellent</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[var(--color-text-secondary)]">
-                  <BatteryCharging className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                  <HugeIcon icon={BatteryCharging01Icon} size={14} className="text-[var(--color-brand-default)]" />
                   <span>Battery: {peerInfo?.batteryLevel || 90}%</span>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
                 <Button
                   variant="primary"
                   size="sm"
-                  leadingIcon={<Video className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={VideoReplayIcon} size={16} />}
                   onClick={handleUseCamera}
                 >
                   Use as Studio Camera
@@ -213,11 +213,11 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
               {/* Instructions & 6-digit code */}
               <div className="flex-1 space-y-3 text-center sm:text-left">
                 <div>
-                  <span className="text-[11px] uppercase tracking-wider font-bold text-[var(--color-text-secondary)]">
+                  <span className="font-caption uppercase tracking-wider font-bold text-[var(--color-text-secondary)]">
                     Pairing Code
                   </span>
                   <div className="flex items-center justify-center sm:justify-start gap-2 mt-1">
-                    <span className="font-mono text-2xl font-black text-[var(--color-brand-default)] tracking-wider px-3 py-1 bg-[var(--color-bg-elevated)] rounded-lg border border-[var(--color-border-subtle)]">
+                    <span className="font-timer text-2xl font-black text-[var(--color-brand-default)] tracking-wider px-3 py-1 bg-[var(--color-bg-elevated)] rounded-lg border border-[var(--color-border-subtle)]">
                       {pairingCode}
                     </span>
                     <button
@@ -226,20 +226,20 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
                       className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]"
                       aria-label="Copy Pairing Code"
                     >
-                      {copiedCode ? <Check className="w-4 h-4 text-[var(--color-brand-default)]" /> : <Copy className="w-4 h-4" />}
+                      {copiedCode ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Copy01Icon} size={16} />}
                     </button>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[11px] uppercase tracking-wider font-bold text-[var(--color-text-secondary)]">
+                  <span className="font-caption uppercase tracking-wider font-bold text-[var(--color-text-secondary)]">
                     Mobile Stream URL
                   </span>
                   <div className="flex items-center justify-center sm:justify-start gap-1.5 mt-1">
                     <input
                       readOnly
                       value={streamUrl}
-                      className="text-xs font-mono bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] px-2.5 py-1.5 rounded-md border border-[var(--color-border-subtle)] w-full max-w-[200px] truncate"
+                      className="font-code text-xs bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] px-2.5 py-1.5 rounded-md border border-[var(--color-border-subtle)] w-full max-w-[200px] truncate"
                     />
                     <button
                       type="button"
@@ -247,7 +247,7 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
                       className="p-1.5 rounded-md bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]"
                       aria-label="Copy Mobile URL"
                     >
-                      {copiedUrl ? <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" /> : <Copy className="w-3.5 h-3.5" />}
+                      {copiedUrl ? <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Copy01Icon} size={14} />}
                     </button>
                     <a
                       href={streamUrl}
@@ -256,7 +256,7 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
                       className="p-1.5 rounded-md bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]"
                       aria-label="Open in new tab"
                     >
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <HugeIcon icon={ArrowUpRight01Icon} size={14} />
                     </a>
                   </div>
                 </div>
@@ -264,10 +264,10 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
             </div>
 
             {/* Waiting status indicator */}
-            <div className="p-3 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-between text-xs">
+            <div className="p-3 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-between font-body-s">
               <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                 <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-brand-default)] animate-ping" />
-                <span className="font-medium">Waiting for smartphone to connect...</span>
+                <span className="font-medium font-label-s">Waiting for smartphone to connect...</span>
               </div>
 
               {/* Dev/demo simulation trigger */}
@@ -277,16 +277,16 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
                   const simStream = connectSimulatedPhone();
                   onUseAsCamera?.(simStream);
                 }}
-                className="text-[11px] font-semibold text-[var(--color-brand-default)] hover:underline flex items-center gap-1"
+                className="font-caption font-semibold text-[var(--color-brand-default)] hover:underline flex items-center gap-1"
               >
-                <Sparkles className="w-3 h-3" />
+                <HugeIcon icon={SparklesIcon} size={12} />
                 <span>Simulate Connection</span>
               </button>
             </div>
 
             {/* Wi-Fi advisory notice */}
-            <p className="text-[11px] text-[var(--color-text-tertiary)] flex items-center gap-1.5 justify-center">
-              <Wifi className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+            <p className="font-caption text-[var(--color-text-tertiary)] flex items-center gap-1.5 justify-center">
+              <HugeIcon icon={Wifi01Icon} size={14} className="text-[var(--color-brand-default)]" />
               <span>Ensure both devices are on the same Wi-Fi network for optimal latency.</span>
             </p>
 

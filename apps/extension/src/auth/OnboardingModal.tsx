@@ -3,19 +3,20 @@ import {
   Modal,
   Button,
   StatusChip,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
-  Sparkles,
-  Cloud,
-  CheckCircle2,
-  AlertTriangle,
-  Monitor,
-  Mic,
-  Camera,
-  ArrowRight,
-  ShieldCheck,
-  RefreshCw,
-} from 'lucide-react';
+  SparklesIcon,
+  CloudIcon,
+  CheckmarkCircle01Icon,
+  Alert01Icon,
+  ComputerIcon,
+  Mic01Icon,
+  Camera01Icon,
+  ArrowRight01Icon,
+  Shield01Icon,
+  RotateLeft01Icon,
+} from '@hugeicons/core-free-icons';
 import { getTranslation, type SupportedLanguage } from '@verse-studio/shared';
 import { useAuthStore } from './authStore';
 
@@ -179,23 +180,22 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   id: 'tutorials',
                   title: t.onboarding.goalTutorials,
                   desc: 'High-definition software tutorials with auto-zoom and cursor spotlight',
-                  icon: Sparkles,
+                  icon: SparklesIcon,
                 },
                 {
                   id: 'meetings',
                   title: t.onboarding.goalMeetings,
                   desc: 'Quick asynchronous video messages with teleprompter and instant sharing',
-                  icon: Monitor,
+                  icon: ComputerIcon,
                 },
                 {
                   id: 'content',
                   title: t.onboarding.goalContent,
                   desc: 'YouTube, course lectures, and demos with bilingual Bangla AI subtitles',
-                  icon: Camera,
+                  icon: Camera01Icon,
                 },
               ].map((item) => {
                 const isSelected = selectedGoal === item.id;
-                const Icon = item.icon;
                 return (
                   <button
                     key={item.id}
@@ -214,7 +214,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                           : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)]'
                       }`}
                     >
-                      <Icon className="w-5 h-5" />
+                      <HugeIcon icon={item.icon} size={20} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold text-[var(--color-text-primary)]">
@@ -233,7 +233,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               variant="primary"
               className="w-full mt-2"
               onClick={() => setStep(2)}
-              trailingIcon={<ArrowRight className="w-4 h-4" />}
+              trailingIcon={<HugeIcon icon={ArrowRight01Icon} size={16} />}
             >
               Continue to Step 2
             </Button>
@@ -246,7 +246,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] space-y-3">
               <div className="flex items-center gap-3">
                 <div className="p-2.5 rounded-lg bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] shrink-0">
-                  <Cloud className="w-6 h-6" />
+                  <HugeIcon icon={CloudIcon} size={24} />
                 </div>
                 <div>
                   <h4 className="text-sm font-semibold text-[var(--color-text-primary)]">
@@ -260,15 +260,15 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
 
               <div className="text-xs text-[var(--color-text-secondary)] space-y-1.5 pl-1">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--color-success-default)] shrink-0" />
+                  <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-success-default)] shrink-0" />
                   <span>Unlimited 4K storage backed by your Google account</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--color-success-default)] shrink-0" />
+                  <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-success-default)] shrink-0" />
                   <span>Never stored on external third-party media servers</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[var(--color-success-default)] shrink-0" />
+                  <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-success-default)] shrink-0" />
                   <span>Instant sharable viewing links with one-click permissions</span>
                 </div>
               </div>
@@ -277,7 +277,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
             {driveConnected ? (
               <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-success-subtle)] border border-[var(--color-success-default)] text-[var(--color-success-default)]">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 shrink-0" />
+                  <HugeIcon icon={CheckmarkCircle01Icon} size={20} className="shrink-0" />
                   <span className="text-xs font-semibold">Google Drive Connected Successfully</span>
                 </div>
                 <StatusChip status="active" label="Active" size="sm" />
@@ -289,7 +289,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 onClick={handleConnectDrive}
                 disabled={isConnectingDrive}
               >
-                <Cloud className="w-4 h-4" />
+                <HugeIcon icon={CloudIcon} size={16} />
                 <span>{isConnectingDrive ? 'Connecting to Google...' : t.onboarding.connectDrive}</span>
               </Button>
             )}
@@ -307,7 +307,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 variant={driveConnected ? 'primary' : 'secondary'}
                 size="sm"
                 onClick={() => setStep(3)}
-                trailingIcon={<ArrowRight className="w-4 h-4" />}
+                trailingIcon={<HugeIcon icon={ArrowRight01Icon} size={16} />}
               >
                 Continue to Permissions
               </Button>
@@ -323,7 +323,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <div className="flex items-center justify-between p-3.5 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-primary)]">
-                    <Monitor className="w-4 h-4" />
+                    <HugeIcon icon={ComputerIcon} size={16} />
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-[var(--color-text-primary)]">
@@ -345,7 +345,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <div className="flex items-center justify-between p-3.5 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-primary)]">
-                    <Mic className="w-4 h-4" />
+                    <HugeIcon icon={Mic01Icon} size={16} />
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-[var(--color-text-primary)]">
@@ -367,7 +367,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
               <div className="flex items-center justify-between p-3.5 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-primary)]">
-                    <Camera className="w-4 h-4" />
+                    <HugeIcon icon={Camera01Icon} size={16} />
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-[var(--color-text-primary)]">
@@ -391,7 +391,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 variant="primary"
                 className="w-full mt-2"
                 onClick={handleComplete}
-                trailingIcon={<ShieldCheck className="w-4 h-4" />}
+                trailingIcon={<HugeIcon icon={Shield01Icon} size={16} />}
               >
                 {t.onboarding.launchStudio}
               </Button>
@@ -401,7 +401,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                 className="w-full mt-2"
                 onClick={handleRequestPermissions}
                 disabled={isCheckingPermissions}
-                trailingIcon={<ArrowRight className="w-4 h-4" />}
+                trailingIcon={<HugeIcon icon={ArrowRight01Icon} size={16} />}
               >
                 {isCheckingPermissions ? 'Requesting Permissions...' : t.onboarding.grantPermissions}
               </Button>
@@ -414,7 +414,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
           <div className="space-y-4">
             <div className="p-3.5 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] space-y-2">
               <div className="flex items-center gap-2 font-semibold text-xs">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
                 <span>Camera or Microphone Access Blocked</span>
               </div>
               <p className="text-xs text-[var(--color-text-secondary)]">
@@ -458,7 +458,7 @@ export const OnboardingModal: React.FC<OnboardingModalProps> = ({
                   setStep(3);
                   handleRequestPermissions();
                 }}
-                leadingIcon={<RefreshCw className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={RotateLeft01Icon} size={16} />}
               >
                 {t.permissions.retry}
               </Button>

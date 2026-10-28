@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { CheckCircle2, AlertTriangle, AlertCircle, Info, X } from 'lucide-react';
+import { InformationCircleIcon, CheckmarkCircle01Icon, Alert01Icon, AlertCircleIcon, Cancel01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export type ToastVariant = 'info' | 'success' | 'warning' | 'error';
 
@@ -25,10 +26,10 @@ export const Toast: React.FC<ToastProps> = ({
   className,
 }) => {
   const icons = {
-    info: <Info className="w-5 h-5 text-sky-400 shrink-0" aria-hidden="true" />,
-    success: <CheckCircle2 className="w-5 h-5 text-[var(--color-success-default)] shrink-0" aria-hidden="true" />,
-    warning: <AlertTriangle className="w-5 h-5 text-[var(--color-warning-default)] shrink-0" aria-hidden="true" />,
-    error: <AlertCircle className="w-5 h-5 text-[var(--color-error-default)] shrink-0" aria-hidden="true" />,
+    info: <HugeIcon icon={InformationCircleIcon} size={20} className="text-sky-400 shrink-0" />,
+    success: <HugeIcon icon={CheckmarkCircle01Icon} size={20} className="text-[var(--color-success-default)] shrink-0" />,
+    warning: <HugeIcon icon={Alert01Icon} size={20} className="text-[var(--color-warning-default)] shrink-0" />,
+    error: <HugeIcon icon={AlertCircleIcon} size={20} className="text-[var(--color-error-default)] shrink-0" />,
   };
 
   const borders = {
@@ -51,9 +52,9 @@ export const Toast: React.FC<ToastProps> = ({
     >
       {icons[variant]}
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-[var(--color-text-primary)] truncate">{title}</p>
+        <p className="font-label-m font-semibold text-[var(--color-text-primary)] truncate">{title}</p>
         {message && (
-          <p className="text-xs text-[var(--color-text-secondary)] truncate">
+          <p className="font-body-s text-[var(--color-text-secondary)] truncate">
             {message}
           </p>
         )}
@@ -62,7 +63,7 @@ export const Toast: React.FC<ToastProps> = ({
         <button
           type="button"
           onClick={onAction}
-          className="text-xs font-bold text-[var(--color-brand-default)] hover:underline shrink-0 px-2 py-1 rounded bg-[var(--color-bg-hover)]"
+          className="font-label-s font-bold text-[var(--color-brand-default)] hover:underline shrink-0 px-2 py-1 rounded bg-[var(--color-bg-hover)]"
         >
           {actionLabel}
         </button>
@@ -73,7 +74,7 @@ export const Toast: React.FC<ToastProps> = ({
           className="text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] transition-colors p-0.5 rounded"
           aria-label="Dismiss toast"
         >
-          <X className="w-4 h-4" />
+          <HugeIcon icon={Cancel01Icon} size={16} />
         </button>
       )}
     </div>

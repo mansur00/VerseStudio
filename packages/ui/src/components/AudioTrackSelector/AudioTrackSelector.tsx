@@ -1,5 +1,5 @@
-import React from 'react';
-import { Mic, Sparkles, SlidersHorizontal, Check } from 'lucide-react';
+import { Mic01Icon, SparklesIcon, PreferenceHorizontalIcon, Tick01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import type { AudioTrackOption } from '@verse-studio/shared';
 
 export interface AudioTrackSelectorProps {
@@ -23,21 +23,21 @@ const TRACKS: TrackOptionConfig[] = [
     title: 'Original Bangla',
     badge: 'Raw Mic',
     description: 'Pristine original microphone audio recording without AI synthesis.',
-    icon: <Mic className="w-5 h-5 text-[var(--color-text-secondary)]" />,
+    icon: <HugeIcon icon={Mic01Icon} size={20} className="text-[var(--color-text-secondary)]" />,
   },
   {
     id: 'english-ai',
     title: 'English AI Voice',
     badge: 'Neural 100%',
     description: 'Full studio-grade neural voiceover translated directly from Bengali speech.',
-    icon: <Sparkles className="w-5 h-5 text-[var(--color-brand-default)]" />,
+    icon: <HugeIcon icon={SparklesIcon} size={20} className="text-[var(--color-brand-default)]" />,
   },
   {
     id: 'mixed',
     title: 'Bilingual Mix',
     badge: '20% BN / 80% EN',
     description: 'Subtle original Bangla audio ducked underneath crisp English AI translation.',
-    icon: <SlidersHorizontal className="w-5 h-5 text-[var(--color-accent-laser)]" />,
+    icon: <HugeIcon icon={PreferenceHorizontalIcon} size={20} className="text-[var(--color-accent-laser)]" />,
   },
 ];
 
@@ -82,10 +82,10 @@ export const AudioTrackSelector: React.FC<AudioTrackSelectorProps> = ({
                   {t.icon}
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                  <h4 className="font-label-m font-bold text-[var(--color-text-primary)]">
                     {t.title}
                   </h4>
-                  <span className="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] mt-0.5">
+                  <span className="inline-block font-caption font-bold px-1.5 py-0.5 rounded uppercase tracking-wider bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] mt-0.5">
                     {t.badge}
                   </span>
                 </div>
@@ -93,12 +93,12 @@ export const AudioTrackSelector: React.FC<AudioTrackSelectorProps> = ({
 
               {isSelected && (
                 <div className="w-5 h-5 rounded-full bg-[var(--color-brand-default)] flex items-center justify-center shrink-0">
-                  <Check className="w-3.5 h-3.5 text-[var(--color-text-on-brand)] stroke-[3]" />
+                  <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-text-on-brand)]" />
                 </div>
               )}
             </div>
 
-            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="font-body-s text-[var(--color-text-secondary)] leading-relaxed">
               {t.description}
             </p>
           </button>

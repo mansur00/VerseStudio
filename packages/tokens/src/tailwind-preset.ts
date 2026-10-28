@@ -106,6 +106,21 @@ export const verseTokens = {
     out: 'var(--ease-out)',
     in: 'var(--ease-in)',
   },
+  fontSize: {
+    display: ['48px', { lineHeight: '56px', fontWeight: '700', letterSpacing: '-0.02em' }],
+    h1: ['36px', { lineHeight: '44px', fontWeight: '700', letterSpacing: '-0.015em' }],
+    h2: ['30px', { lineHeight: '38px', fontWeight: '600', letterSpacing: '-0.01em' }],
+    h3: ['24px', { lineHeight: '32px', fontWeight: '600' }],
+    h4: ['20px', { lineHeight: '28px', fontWeight: '600' }],
+    'body-l': ['18px', { lineHeight: '28px', fontWeight: '400' }],
+    'body-m': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+    'body-s': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+    caption: ['12px', { lineHeight: '16px', fontWeight: '400' }],
+    'label-m': ['14px', { lineHeight: '20px', fontWeight: '500' }],
+    'label-s': ['12px', { lineHeight: '16px', fontWeight: '500' }],
+    timer: ['32px', { lineHeight: '40px', fontWeight: '700' }],
+    code: ['14px', { lineHeight: '20px', fontWeight: '400' }],
+  },
 };
 
 export const tailwindPreset = {

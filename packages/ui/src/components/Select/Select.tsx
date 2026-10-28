@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { ChevronDown } from 'lucide-react';
+import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface SelectOption {
   value: string;
@@ -34,7 +35,7 @@ export const Select: React.FC<SelectProps> = ({
       {label && (
         <label
           htmlFor={generatedId}
-          className="text-xs font-medium text-[var(--color-text-secondary)] select-none"
+          className="font-label-s text-[var(--color-text-secondary)] select-none"
         >
           {label}
         </label>
@@ -53,7 +54,7 @@ export const Select: React.FC<SelectProps> = ({
               : undefined
           }
           className={cn(
-            'w-full appearance-none rounded-xl px-3.5 py-2.5 text-sm bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] border border-[var(--color-border-input)] pr-10 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+            'w-full appearance-none rounded-xl px-3.5 py-2.5 font-body-s bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] border border-[var(--color-border-input)] pr-10 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-border-focus)] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed',
             error && 'border-[var(--color-error-default)] focus:ring-[var(--color-error-default)]',
             className
           )}
@@ -64,22 +65,24 @@ export const Select: React.FC<SelectProps> = ({
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
-              className="bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] py-1"
+              className="bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] py-1 font-body-s"
             >
               {opt.label}
             </option>
           ))}
         </select>
 
-        <ChevronDown className="w-4 h-4 text-[var(--color-text-tertiary)] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <span className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-text-tertiary)] flex items-center">
+          <HugeIcon icon={ArrowDown01Icon} size={18} />
+        </span>
       </div>
 
       {error ? (
-        <p id={`${generatedId}-error`} className="text-xs text-[var(--color-error-default)]">
+        <p id={`${generatedId}-error`} className="font-caption text-[var(--color-error-default)]">
           {error}
         </p>
       ) : helperText ? (
-        <p id={`${generatedId}-helper`} className="text-xs text-[var(--color-text-tertiary)]">
+        <p id={`${generatedId}-helper`} className="font-caption text-[var(--color-text-tertiary)]">
           {helperText}
         </p>
       ) : null}

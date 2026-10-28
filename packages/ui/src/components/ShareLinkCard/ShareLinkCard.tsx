@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
-  Copy,
-  Check,
-  Globe,
-  Lock,
-  ExternalLink,
-  QrCode,
-} from 'lucide-react';
+  Copy01Icon,
+  Tick01Icon,
+  GlobeIcon,
+  LockIcon,
+  ArrowUpRight01Icon,
+  QrCodeIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { Button } from '../Button/Button';
 import { cn } from '../../utils/cn';
 
@@ -56,13 +57,17 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
                 : 'bg-[var(--color-bg-hover)] text-[var(--color-text-secondary)]'
             )}
           >
-            {isPublic ? <Globe className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
+            {isPublic ? (
+              <HugeIcon icon={GlobeIcon} size={16} />
+            ) : (
+              <HugeIcon icon={LockIcon} size={16} />
+            )}
           </div>
           <div>
-            <div className="text-xs font-semibold text-[var(--color-text-primary)]">
+            <div className="font-label-s font-semibold text-[var(--color-text-primary)]">
               {isPublic ? 'Anyone with the link can view' : 'Restricted (Only you)'}
             </div>
-            <div className="text-[11px] text-[var(--color-text-tertiary)]">
+            <div className="font-caption text-[var(--color-text-tertiary)]">
               {isPublic
                 ? 'Recipients can stream without signing in'
                 : 'Sign-in required to view this file'}
@@ -84,7 +89,7 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
 
       {/* Copy Link Input Bar */}
       <div className="space-y-1.5">
-        <label className="text-xs font-medium text-[var(--color-text-secondary)]">
+        <label className="font-label-s text-[var(--color-text-secondary)]">
           Public Share Link
         </label>
         <div className="flex items-center gap-2">
@@ -94,8 +99,8 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
             value={shareUrl}
             onClick={(e) => (e.target as HTMLInputElement).select()}
             className={cn(
-              'flex-1 px-3 py-2 text-xs font-mono rounded-lg border outline-none truncate',
-              'bg-[var(--color-bg-elevated)] border-[var(--color-border-default)] text-[var(--color-text-primary)]',
+              'flex-1 px-3 py-2 font-code rounded-lg border outline-none truncate',
+              'bg-[var(--color-bg-elevated)] border-[var(--color-border-input)] text-[var(--color-text-primary)]',
               'focus:border-[var(--color-brand-default)] select-all'
             )}
           />
@@ -104,7 +109,7 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
             variant={copied ? 'secondary' : 'primary'}
             onClick={handleCopy}
             className="shrink-0"
-            leadingIcon={copied ? <Check className="w-4 h-4 text-[var(--color-success-default)]" /> : <Copy className="w-4 h-4" />}
+            leadingIcon={copied ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-success-default)]" /> : <HugeIcon icon={Copy01Icon} size={16} />}
           >
             {copied ? 'Copied' : 'Copy'}
           </Button>
@@ -116,9 +121,9 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
         <button
           type="button"
           onClick={() => setShowQr(!showQr)}
-          className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          className="flex items-center gap-1.5 font-label-s text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
         >
-          <QrCode className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+          <HugeIcon icon={QrCodeIcon} size={16} className="text-[var(--color-brand-default)]" />
           <span>{showQr ? 'Hide QR Code' : 'Show QR Code'}</span>
         </button>
 
@@ -126,9 +131,9 @@ export const ShareLinkCard: React.FC<ShareLinkCardProps> = ({
           <button
             type="button"
             onClick={onOpenInDrive}
-            className="flex items-center gap-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+            className="flex items-center gap-1.5 font-label-s text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
+            <HugeIcon icon={ArrowUpRight01Icon} size={16} />
             <span>Open in Google Drive</span>
           </button>
         )}

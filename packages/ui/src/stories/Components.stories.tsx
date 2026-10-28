@@ -3,7 +3,8 @@ import { Input } from '../components/Input/Input';
 import { Toggle } from '../components/Toggle/Toggle';
 import { StatusChip } from '../components/StatusChip/StatusChip';
 import { RecordButton } from '../components/RecordButton/RecordButton';
-import { Mail, Lock } from 'lucide-react';
+import { Mail01Icon, LockIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../components/HugeIcon';
 
 export default {
   title: 'Foundations/Components',
@@ -20,13 +21,13 @@ export const InputAndToggleStories = () => {
         <Input
           label="Email Address"
           placeholder="name@example.com"
-          leadingIcon={<Mail className="w-4 h-4" />}
+          leadingIcon={<HugeIcon icon={Mail01Icon} size={16} />}
           hint="We will send your verification code here"
         />
         <Input
           label="Password"
           type="password"
-          leadingIcon={<Lock className="w-4 h-4" />}
+          leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
           error="Password must be at least 8 characters"
         />
       </div>

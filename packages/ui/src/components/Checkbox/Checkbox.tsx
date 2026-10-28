@@ -1,6 +1,7 @@
 import React, { forwardRef, useId } from 'react';
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox';
-import { Check, Minus } from 'lucide-react';
+import { Tick01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { cn } from '../../utils/cn';
 
 export interface CheckboxProps {
@@ -44,9 +45,9 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
         >
           <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
             {checked === 'indeterminate' ? (
-              <Minus className="h-3 w-3 stroke-[2.5]" />
+              <span className="w-2 h-0.5 bg-current rounded-full" />
             ) : (
-              <Check className="h-3 w-3 stroke-[2.5]" />
+              <HugeIcon icon={Tick01Icon} size={12} />
             )}
           </CheckboxPrimitive.Indicator>
         </CheckboxPrimitive.Root>

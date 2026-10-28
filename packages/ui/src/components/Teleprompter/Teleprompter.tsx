@@ -3,16 +3,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { cn } from '../../utils/cn';
 import {
-  Play,
-  Pause,
-  RotateCcw,
-  X,
-  GripVertical,
-  Type,
-  Gauge,
-  Edit3,
-  Check,
-} from 'lucide-react';
+  PlayIcon,
+  PauseIcon,
+  RotateLeft01Icon,
+  Cancel01Icon,
+  GripVerticalIcon,
+  TextFontIcon,
+  DashboardSpeed01Icon,
+  Edit01Icon,
+  Tick01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { Slider } from '../Slider/Slider';
 
 export interface TeleprompterProps {
@@ -118,12 +119,12 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
       {/* Teleprompter Header */}
       <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-hover)]/40">
         <div className="flex items-center gap-2">
-          <GripVertical className="w-4 h-4 text-[var(--color-text-tertiary)] cursor-grab" />
-          <span className="text-xs font-bold text-[var(--color-text-primary)]">
+          <HugeIcon icon={GripVerticalIcon} size={16} className="text-[var(--color-text-tertiary)] cursor-grab" />
+          <span className="font-label-s font-bold text-[var(--color-text-primary)]">
             Teleprompter
           </span>
           {isBangla && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-bangla font-semibold">
+            <span className="font-caption px-1.5 py-0.5 rounded bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-bangla font-semibold">
               বাংলা
             </span>
           )}
@@ -136,7 +137,7 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
             title={isEditing ? 'Save Script' : 'Edit Script'}
             className="p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
           >
-            {isEditing ? <Check className="w-3.5 h-3.5" /> : <Edit3 className="w-3.5 h-3.5" />}
+            {isEditing ? <HugeIcon icon={Tick01Icon} size={14} /> : <HugeIcon icon={Edit01Icon} size={14} />}
           </button>
           <button
             type="button"
@@ -144,7 +145,7 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
             aria-label="Close teleprompter"
             className="p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
           >
-            <X className="w-3.5 h-3.5" />
+            <HugeIcon icon={Cancel01Icon} size={14} />
           </button>
         </div>
       </div>
@@ -158,7 +159,7 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
           <textarea
             value={script}
             onChange={(e) => setScript(e.target.value)}
-            className="w-full h-full bg-transparent text-sm text-[var(--color-text-primary)] resize-none focus:outline-none font-sans"
+            className="w-full h-full bg-transparent font-body-s text-[var(--color-text-primary)] resize-none focus:outline-none font-sans"
             placeholder="Type or paste your teleprompter script here..."
           />
         ) : (
@@ -191,13 +192,13 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
       {/* Control Footer */}
       <div className="p-3 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col gap-2.5">
         {/* Sliders: Speed and Font Size */}
-        <div className="grid grid-cols-2 gap-3 text-[11px] text-[var(--color-text-secondary)]">
+        <div className="grid grid-cols-2 gap-3 font-caption text-[var(--color-text-secondary)]">
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="flex items-center gap-1">
-                <Gauge className="w-3 h-3" /> Speed
+                <HugeIcon icon={DashboardSpeed01Icon} size={12} /> Speed
               </span>
-              <span className="font-mono">{speed[0]}</span>
+              <span className="font-code">{speed[0]}</span>
             </div>
             <Slider
               value={speed}
@@ -212,9 +213,9 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
           <div>
             <div className="flex items-center justify-between mb-1">
               <span className="flex items-center gap-1">
-                <Type className="w-3 h-3" /> Size
+                <HugeIcon icon={TextFontIcon} size={12} /> Size
               </span>
-              <span className="font-mono">{fontSize[0]}px</span>
+              <span className="font-code">{fontSize[0]}px</span>
             </div>
             <Slider
               value={fontSize}
@@ -232,24 +233,24 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 font-label-s rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors"
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            <HugeIcon icon={RotateLeft01Icon} size={14} />
             Reset
           </button>
 
           <button
             type="button"
             onClick={() => setIsScrolling(!isScrolling)}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] text-xs font-bold shadow-[var(--glow-brand)] active:scale-95 transition-transform"
+            className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-label-s font-bold shadow-[var(--glow-brand)] active:scale-95 transition-transform"
           >
             {isScrolling ? (
               <>
-                <Pause className="w-3.5 h-3.5 fill-current" /> Pause
+                <HugeIcon icon={PauseIcon} size={14} /> Pause
               </>
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 fill-current" /> Start Scroll
+                <HugeIcon icon={PlayIcon} size={14} /> Start Scroll
               </>
             )}
           </button>

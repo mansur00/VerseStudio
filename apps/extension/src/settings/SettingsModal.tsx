@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Settings,
-  Sliders,
-  Keyboard,
-  Sparkles,
-  Cloud,
-  Check,
-  AlertTriangle,
-  RotateCcw,
-  Volume2,
-  ExternalLink,
-} from 'lucide-react';
+  Settings01Icon,
+  PreferenceHorizontalIcon,
+  KeyboardIcon,
+  SparklesIcon,
+  CloudIcon,
+  Tick01Icon,
+  Alert01Icon,
+  RotateLeft01Icon,
+  VolumeHighIcon,
+  ArrowUpRight01Icon,
+} from '@hugeicons/core-free-icons';
 import {
   Modal,
   Button,
@@ -20,6 +20,7 @@ import {
   ProgressBar,
   KeyboardShortcutPill,
   StatusChip,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
   getTranslation,
@@ -125,11 +126,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Settings Tabs Header */}
           <Tabs
             items={[
-              { id: 'general', label: t.settings.tabs.general, icon: <Settings className="w-3.5 h-3.5" /> },
-              { id: 'recording', label: t.settings.tabs.recording, icon: <Sliders className="w-3.5 h-3.5" /> },
-              { id: 'shortcuts', label: t.settings.tabs.shortcuts, icon: <Keyboard className="w-3.5 h-3.5" /> },
-              { id: 'voiceAi', label: t.settings.tabs.voiceAi, icon: <Sparkles className="w-3.5 h-3.5" /> },
-              { id: 'googleDrive', label: t.settings.tabs.googleDrive, icon: <Cloud className="w-3.5 h-3.5" /> },
+              { id: 'general', label: t.settings.tabs.general, icon: <HugeIcon icon={Settings01Icon} size={14} /> },
+              { id: 'recording', label: t.settings.tabs.recording, icon: <HugeIcon icon={PreferenceHorizontalIcon} size={14} /> },
+              { id: 'shortcuts', label: t.settings.tabs.shortcuts, icon: <HugeIcon icon={KeyboardIcon} size={14} /> },
+              { id: 'voiceAi', label: t.settings.tabs.voiceAi, icon: <HugeIcon icon={SparklesIcon} size={14} /> },
+              { id: 'googleDrive', label: t.settings.tabs.googleDrive, icon: <HugeIcon icon={CloudIcon} size={14} /> },
             ]}
             value={activeTab}
             onValueChange={(val) => setActiveTab(val as SettingsTabId)}
@@ -372,7 +373,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <Button
                   size="sm"
                   variant="ghost"
-                  leadingIcon={<RotateCcw className="w-3.5 h-3.5" />}
+                  leadingIcon={<HugeIcon icon={RotateLeft01Icon} size={14} />}
                   onClick={resetShortcutsToDefaults}
                 >
                   {t.settings.shortcuts.resetDefaults}
@@ -382,7 +383,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               {/* Conflict warning */}
               {shortcutConflict && (
                 <div className="p-3 rounded-xl border border-[var(--color-warning-default)]/40 bg-[var(--color-warning-subtle)] flex items-center gap-2.5 text-xs text-[var(--color-warning-default)]">
-                  <AlertTriangle className="w-4 h-4 shrink-0" />
+                  <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
                   <span>{shortcutConflict}</span>
                 </div>
               )}
@@ -440,7 +441,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex items-center justify-between gap-4">
                 <div>
                   <h4 className="text-sm font-bold text-[var(--color-text-primary)] flex items-center gap-2">
-                    <Volume2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+                    <HugeIcon icon={VolumeHighIcon} size={16} className="text-[var(--color-brand-default)]" />
                     <span>{t.settings.voiceAi.persona}</span>
                   </h4>
                   <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
@@ -484,7 +485,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="text-sm font-bold text-[var(--color-text-primary)] flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-[var(--color-brand-default)]" />
+                      <HugeIcon icon={SparklesIcon} size={16} className="text-[var(--color-brand-default)]" />
                       <span>{t.settings.voiceAi.quotaTitle}</span>
                     </h4>
                     <p className="text-xs text-[var(--color-text-secondary)] mt-0.5">
@@ -534,14 +535,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="p-2.5 rounded-xl bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)]">
-                          <Cloud className="w-5 h-5" />
+                          <HugeIcon icon={CloudIcon} size={20} />
                         </div>
                         <div>
                           <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
                             {user?.googleDriveEmail || user?.email || 'drive.user@gmail.com'}
                           </h4>
                           <span className="text-xs text-[var(--color-brand-default)] font-medium flex items-center gap-1 mt-0.5">
-                            <Check className="w-3.5 h-3.5" />
+                            <HugeIcon icon={Tick01Icon} size={14} />
                             <span>{t.settings.drive.connectedStatus}</span>
                           </span>
                         </div>
@@ -649,7 +650,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 /* Disconnected State (Screen 53) */
                 <div className="p-6 rounded-xl border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] text-center space-y-4">
                   <div className="w-12 h-12 rounded-2xl bg-[var(--color-bg-hover)] border border-[var(--color-border-subtle)] flex items-center justify-center mx-auto text-[var(--color-brand-default)]">
-                    <Cloud className="w-6 h-6" />
+                    <HugeIcon icon={CloudIcon} size={24} />
                   </div>
                   <div>
                     <h4 className="text-base font-bold text-[var(--color-text-primary)]">
@@ -689,7 +690,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <Button
                     variant="primary"
                     size="md"
-                    leadingIcon={<ExternalLink className="w-4 h-4" />}
+                    leadingIcon={<HugeIcon icon={ArrowUpRight01Icon} size={16} />}
                     onClick={async () => {
                       const success = await connectDrive();
                       if (success) {

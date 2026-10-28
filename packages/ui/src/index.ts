@@ -64,5 +64,7 @@ export { Select } from './components/Select/Select';
 export type { SelectProps, SelectOption } from './components/Select/Select';
 export { ChartLine, ChartBars } from './components/Chart/Chart';
 export type { ChartLineProps, ChartBarsProps, ChartDataPoint } from './components/Chart/Chart';
+export { HugeIcon } from './components/HugeIcon';
+export type { HugeIconProps } from './components/HugeIcon';
 export { cn } from './utils/cn';
 

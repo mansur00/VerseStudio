@@ -1,5 +1,6 @@
 import React from 'react';
-import { Check, Sparkles } from 'lucide-react';
+import { Tick01Icon, SparklesIcon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { Button } from '../Button/Button';
 import { StatusChip } from '../StatusChip/StatusChip';
 import { cn } from '../../utils/cn';
@@ -52,8 +53,8 @@ export const PlanCard: React.FC<PlanCardProps> = ({
     >
       {isPopular && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="flex items-center gap-1 px-3 py-1 bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] text-xs font-bold uppercase tracking-wider rounded-full shadow-sm">
-            <Sparkles className="w-3 h-3 fill-current" />
+          <span className="flex items-center gap-1 px-3 py-1 bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-caption font-bold uppercase tracking-wider rounded-full shadow-sm">
+            <HugeIcon icon={SparklesIcon} size={14} className="fill-current" />
             Most Popular
           </span>
         </div>
@@ -61,7 +62,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-xl font-bold text-[var(--color-text-primary)]">
+          <h3 className="font-h3 font-bold text-[var(--color-text-primary)]">
             {name}
           </h3>
           {isCurrentPlan && (
@@ -69,16 +70,16 @@ export const PlanCard: React.FC<PlanCardProps> = ({
           )}
         </div>
 
-        <p className="text-xs text-[var(--color-text-secondary)] min-h-[32px] mb-4">
+        <p className="font-body-s text-[var(--color-text-secondary)] min-h-[32px] mb-4">
           {description}
         </p>
 
         <div className="flex items-baseline gap-1 mb-6">
-          <span className="text-3xl font-extrabold text-[var(--color-text-primary)]">
+          <span className="font-h1 font-extrabold text-[var(--color-text-primary)]">
             {price}
           </span>
           {period && (
-            <span className="text-xs text-[var(--color-text-tertiary)]">
+            <span className="font-caption text-[var(--color-text-tertiary)]">
               {period}
             </span>
           )}
@@ -86,7 +87,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 
         {/* Feature List */}
         <div className="space-y-2.5 pt-4 border-t border-[var(--color-border-subtle)]">
-          <p className="text-xs font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
+          <p className="font-caption font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
             What's included:
           </p>
           <ul className="space-y-2">
@@ -94,20 +95,20 @@ export const PlanCard: React.FC<PlanCardProps> = ({
               <li
                 key={idx}
                 className={cn(
-                  'flex items-start gap-2.5 text-xs',
+                  'flex items-start gap-2.5 font-label-s',
                   feature.included
                     ? 'text-[var(--color-text-primary)]'
                     : 'text-[var(--color-text-disabled)] line-through'
                 )}
               >
-                <Check
-                  className={cn(
-                    'w-4 h-4 shrink-0 mt-0.5',
-                    feature.included
-                      ? 'text-[var(--color-brand-default)]'
-                      : 'text-[var(--color-text-disabled)]'
-                  )}
-                />
+                <span className={cn(
+                  'shrink-0 mt-0.5',
+                  feature.included
+                    ? 'text-[var(--color-brand-default)]'
+                    : 'text-[var(--color-text-disabled)]'
+                )}>
+                  <HugeIcon icon={Tick01Icon} size={16} />
+                </span>
                 <span className={feature.highlight ? 'font-medium text-[var(--color-brand-default)]' : ''}>
                   {feature.text}
                 </span>

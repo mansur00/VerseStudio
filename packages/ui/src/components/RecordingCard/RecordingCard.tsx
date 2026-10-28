@@ -1,16 +1,17 @@
 import React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import {
-  MoreVertical,
-  ExternalLink,
-  Share2,
-  Edit2,
-  Trash2,
-  Play,
-  Globe,
-  Lock,
-  RefreshCw,
-} from 'lucide-react';
+  MoreVerticalIcon,
+  ArrowUpRight01Icon,
+  Share01Icon,
+  Edit01Icon,
+  Delete01Icon,
+  PlayIcon,
+  GlobeIcon,
+  LockIcon,
+  RotateLeft01Icon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { StatusChip } from '../StatusChip/StatusChip';
 import { ProgressBar } from '../ProgressBar/ProgressBar';
 import { cn } from '../../utils/cn';
@@ -83,7 +84,7 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[var(--color-bg-elevated)] to-[var(--color-bg-hover)] text-[var(--color-text-tertiary)]">
             <div className="w-10 h-10 rounded-full bg-[var(--color-bg-surface)]/80 flex items-center justify-center text-[var(--color-text-primary)] shadow-sm backdrop-blur-sm group-hover:scale-110 group-hover:text-[var(--color-brand-default)] transition-all">
-              <Play className="w-4 h-4 fill-current ml-0.5" />
+              <HugeIcon icon={PlayIcon} size={18} className="ml-0.5" />
             </div>
           </div>
         )}
@@ -104,13 +105,13 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
             size="sm"
           />
 
-          <span className="font-mono text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/60 text-white backdrop-blur-sm border border-white/10 uppercase">
+          <span className="font-code text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/60 text-white backdrop-blur-sm border border-white/10 uppercase">
             {item.resolution} {item.fps}FPS
           </span>
         </div>
 
         {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-white font-mono text-[11px] font-medium backdrop-blur-sm">
+        <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-white font-code text-[11px] font-medium backdrop-blur-sm">
           {formatDuration(item.durationSeconds)}
         </div>
       </div>
@@ -128,14 +129,14 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
 
       {/* Failed Upload Retry banner */}
       {isFailed && (
-        <div className="px-3 py-1.5 flex items-center justify-between bg-[var(--color-error-subtle)] border-b border-[var(--color-error-default)]/30 text-[var(--color-error-default)] text-xs">
+        <div className="px-3 py-1.5 flex items-center justify-between bg-[var(--color-error-subtle)] border-b border-[var(--color-error-default)]/30 text-[var(--color-error-default)] font-caption">
           <span>Upload interrupted</span>
           <button
             type="button"
             onClick={() => onRetryUpload?.(item)}
             className="flex items-center gap-1 font-semibold hover:underline"
           >
-            <RefreshCw className="w-3 h-3" />
+            <HugeIcon icon={RotateLeft01Icon} size={14} />
             <span>Retry</span>
           </button>
         </div>
@@ -147,11 +148,11 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
           <h3
             title={item.name}
             onClick={() => !isUploading && onPlay?.(item)}
-            className="text-xs font-semibold text-[var(--color-text-primary)] truncate cursor-pointer hover:text-[var(--color-brand-default)] transition-colors"
+            className="font-label-m font-semibold text-[var(--color-text-primary)] truncate cursor-pointer hover:text-[var(--color-brand-default)] transition-colors"
           >
             {item.name}
           </h3>
-          <div className="flex items-center gap-2 mt-1 text-[11px] text-[var(--color-text-tertiary)]">
+          <div className="flex items-center gap-2 mt-1 font-caption text-[var(--color-text-tertiary)]">
             <span>{item.createdAt}</span>
             <span>•</span>
             <span>{formatBytes(item.sizeBytes)}</span>
@@ -170,7 +171,7 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
               )}
               aria-label={`Options for ${item.name}`}
             >
-              <MoreVertical className="w-4 h-4" />
+              <HugeIcon icon={MoreVerticalIcon} size={16} />
             </button>
           </DropdownMenuPrimitive.Trigger>
 
@@ -187,33 +188,33 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
               {item.driveFileId && (
                 <DropdownMenuPrimitive.Item
                   onSelect={() => onOpenDrive?.(item)}
-                  className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+                  className="flex items-center gap-2 px-2.5 py-1.5 font-label-s rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+                  <HugeIcon icon={ArrowUpRight01Icon} size={14} className="text-[var(--color-text-tertiary)]" />
                   <span>Open in Drive</span>
                 </DropdownMenuPrimitive.Item>
               )}
 
               <DropdownMenuPrimitive.Item
                 onSelect={() => onShare?.(item)}
-                className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+                className="flex items-center gap-2 px-2.5 py-1.5 font-label-s rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
               >
-                <Share2 className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+                <HugeIcon icon={Share01Icon} size={14} className="text-[var(--color-text-tertiary)]" />
                 <span>Share & QR Code</span>
               </DropdownMenuPrimitive.Item>
 
               <DropdownMenuPrimitive.Item
                 onSelect={() => onToggleVisibility?.(item)}
-                className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+                className="flex items-center gap-2 px-2.5 py-1.5 font-label-s rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
               >
                 {item.status === 'shared' ? (
                   <>
-                    <Lock className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+                    <HugeIcon icon={LockIcon} size={14} className="text-[var(--color-text-tertiary)]" />
                     <span>Make Private</span>
                   </>
                 ) : (
                   <>
-                    <Globe className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+                    <HugeIcon icon={GlobeIcon} size={14} className="text-[var(--color-text-tertiary)]" />
                     <span>Make Public</span>
                   </>
                 )}
@@ -221,9 +222,9 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
 
               <DropdownMenuPrimitive.Item
                 onSelect={() => onRename?.(item)}
-                className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+                className="flex items-center gap-2 px-2.5 py-1.5 font-label-s rounded-lg cursor-pointer outline-none text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
               >
-                <Edit2 className="w-3.5 h-3.5 text-[var(--color-text-tertiary)]" />
+                <HugeIcon icon={Edit01Icon} size={14} className="text-[var(--color-text-tertiary)]" />
                 <span>Rename</span>
               </DropdownMenuPrimitive.Item>
 
@@ -231,9 +232,9 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
 
               <DropdownMenuPrimitive.Item
                 onSelect={() => onMoveToTrash?.(item)}
-                className="flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium rounded-lg cursor-pointer outline-none text-[var(--color-danger-default)] hover:bg-[var(--color-danger-default)]/10"
+                className="flex items-center gap-2 px-2.5 py-1.5 font-label-s rounded-lg cursor-pointer outline-none text-[var(--color-danger-default)] hover:bg-[var(--color-danger-default)]/10"
               >
-                <Trash2 className="w-3.5 h-3.5" />
+                <HugeIcon icon={Delete01Icon} size={14} />
                 <span>Move to Trash</span>
               </DropdownMenuPrimitive.Item>
             </DropdownMenuPrimitive.Content>

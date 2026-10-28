@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic01Icon, MicOff01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface MicLevelProps {
   level: number; // 0 to 100
@@ -29,9 +30,9 @@ export const MicLevel: React.FC<MicLevelProps> = ({
       {showIcon && (
         <span className="text-[var(--color-text-secondary)]">
           {muted ? (
-            <MicOff className="w-4 h-4 text-[var(--color-error-default)]" />
+            <HugeIcon icon={MicOff01Icon} size={16} className="text-[var(--color-error-default)]" />
           ) : (
-            <Mic className="w-4 h-4 text-[var(--color-text-primary)]" />
+            <HugeIcon icon={Mic01Icon} size={16} className="text-[var(--color-text-primary)]" />
           )}
         </span>
       )}

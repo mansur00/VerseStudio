@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface PaginationProps {
   currentPage: number;
@@ -51,7 +52,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       className={cn('flex flex-col sm:flex-row items-center justify-between gap-4 py-3 select-none', className)}
     >
       {showDetails && totalItems !== undefined ? (
-        <span className="text-xs text-[var(--color-text-tertiary)]">
+        <span className="font-caption text-[var(--color-text-tertiary)]">
           Showing <span className="text-[var(--color-text-primary)] font-medium">{startItem}</span> to{' '}
           <span className="text-[var(--color-text-primary)] font-medium">{endItem}</span> of{' '}
           <span className="text-[var(--color-text-primary)] font-medium">{totalItems}</span> results
@@ -68,14 +69,14 @@ export const Pagination: React.FC<PaginationProps> = ({
           aria-label="Previous Page"
           className="p-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] disabled:opacity-40 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <HugeIcon icon={ArrowLeft01Icon} size={16} />
         </button>
 
         <div className="flex items-center gap-1">
           {getPages().map((page, idx) => {
             if (page === 'ellipsis') {
               return (
-                <span key={`ellipsis-${idx}`} className="px-2 text-xs text-[var(--color-text-tertiary)]">
+                <span key={`ellipsis-${idx}`} className="px-2 font-caption text-[var(--color-text-tertiary)]">
                   …
                 </span>
               );
@@ -89,7 +90,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 onClick={() => onPageChange(page)}
                 aria-current={isCurrent ? 'page' : undefined}
                 className={cn(
-                  'min-w-[32px] h-8 px-2 rounded-lg text-xs font-medium transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]',
+                  'min-w-[32px] h-8 px-2 rounded-lg font-label-s transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]',
                   isCurrent
                     ? 'bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold shadow-sm'
                     : 'bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
@@ -108,7 +109,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           aria-label="Next Page"
           className="p-1.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] disabled:opacity-40 disabled:pointer-events-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]"
         >
-          <ChevronRight className="w-4 h-4" />
+          <HugeIcon icon={ArrowRight01Icon} size={16} />
         </button>
       </div>
     </nav>

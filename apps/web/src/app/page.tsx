@@ -1,5 +1,10 @@
-import { Button } from '@verse-studio/ui';
-import { Monitor, Cloud, Sparkles, ShieldCheck } from 'lucide-react';
+import { Button, HugeIcon } from '@verse-studio/ui';
+import {
+  ComputerIcon,
+  CloudIcon,
+  SparklesIcon,
+  Shield01Icon,
+} from '@hugeicons/core-free-icons';
 
 export default function HomePage() {
   return (
@@ -25,7 +30,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <main className="max-w-5xl mx-auto px-6 py-20 text-center flex flex-col items-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)] text-xs font-semibold mb-8">
-          <Sparkles className="w-3.5 h-3.5" />
+          <HugeIcon icon={SparklesIcon} size={14} />
           Next-Gen 4K 60FPS Screen Recording Studio
         </div>
 
@@ -49,7 +54,7 @@ export default function HomePage() {
         {/* Feature Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20 text-left w-full">
           <div className="p-6 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
-            <Monitor className="w-8 h-8 text-[var(--color-brand-default)] mb-4" />
+            <HugeIcon icon={ComputerIcon} size={32} className="text-[var(--color-brand-default)] mb-4" />
             <h3 className="text-base font-bold text-[var(--color-text-primary)]">4K 60FPS Studio</h3>
             <p className="text-sm text-[var(--color-text-secondary)] mt-2">
               Fluid 60FPS capture with spring layout morphing, draggable face bubble, and live presentation tools.
@@ -57,7 +62,7 @@ export default function HomePage() {
           </div>
 
           <div className="p-6 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
-            <Sparkles className="w-8 h-8 text-[var(--color-brand-default)] mb-4" />
+            <HugeIcon icon={SparklesIcon} size={32} className="text-[var(--color-brand-default)] mb-4" />
             <h3 className="text-base font-bold text-[var(--color-text-primary)]">Bilingual AI Dubbing</h3>
             <p className="text-sm text-[var(--color-text-secondary)] mt-2">
               Live Bangla-to-English subtitles and 1-click English neural voice dubbing or 20/80 background mix.
@@ -65,7 +70,7 @@ export default function HomePage() {
           </div>
 
           <div className="p-6 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)]">
-            <Cloud className="w-8 h-8 text-[var(--color-brand-default)] mb-4" />
+            <HugeIcon icon={CloudIcon} size={32} className="text-[var(--color-brand-default)] mb-4" />
             <h3 className="text-base font-bold text-[var(--color-text-primary)]">Zero Storage Lock-in</h3>
             <p className="text-sm text-[var(--color-text-secondary)] mt-2">
               Resumable chunked upload straight to your personal Google Drive with instant shareable links.
@@ -78,7 +83,7 @@ export default function HomePage() {
       <footer className="border-t border-[var(--color-border-subtle)] py-8 px-8 text-center text-xs text-[var(--color-text-tertiary)] flex justify-between items-center">
         <span>© 2026 VerseStudio 4K Pro. All rights reserved.</span>
         <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-[var(--color-success-default)]" />
+          <HugeIcon icon={Shield01Icon} size={16} className="text-[var(--color-success-default)]" />
           <span>WCAG 2.2 AA Accessible • Google Drive File Scope Verified</span>
         </div>
       </footer>

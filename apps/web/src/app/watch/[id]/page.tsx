@@ -4,27 +4,27 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import {
-  ExternalLink,
-  Share2,
-  Download,
-  FileText,
-  Subtitles,
-  Check,
-  AlertTriangle,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Maximize2,
-  Eye,
-  Calendar,
-  Lock,
-  ArrowLeft,
-  Sparkles,
-  HelpCircle,
-  HardDrive
-} from 'lucide-react';
-import { Button, StatusChip } from '@verse-studio/ui';
+  ArrowUpRight01Icon,
+  Share01Icon,
+  Download01Icon,
+  File01Icon,
+  SubtitleIcon,
+  Tick01Icon,
+  Alert01Icon,
+  PlayIcon,
+  PauseIcon,
+  VolumeHighIcon,
+  VolumeOffIcon,
+  Maximize01Icon,
+  ViewIcon,
+  Calendar01Icon,
+  LockIcon,
+  ArrowLeft01Icon,
+  SparklesIcon,
+  HelpCircleIcon,
+  HardDriveIcon,
+} from '@hugeicons/core-free-icons';
+import { Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 import { SharedRecordingData } from '@verse-studio/shared';
 import { MOCK_SHARED_RECORDINGS } from '../../../data/mockSharedRecordings';
 
@@ -89,9 +89,9 @@ export default function SharedWatchPage() {
         <main className="max-w-md mx-auto text-center py-12">
           <div className="w-16 h-16 rounded-2xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)]/30 text-[var(--color-error-default)] flex items-center justify-center mx-auto mb-6 shadow-lg">
             {recording.isBlocked ? (
-              <AlertTriangle className="w-8 h-8" />
+              <HugeIcon icon={Alert01Icon} size={32} />
             ) : (
-              <Lock className="w-8 h-8" />
+              <HugeIcon icon={LockIcon} size={32} />
             )}
           </div>
 
@@ -108,13 +108,13 @@ export default function SharedWatchPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/" className="w-full sm:w-auto">
               <Button variant="primary" className="w-full flex items-center justify-center gap-2">
-                <ArrowLeft className="w-4 h-4" />
+                <HugeIcon icon={ArrowLeft01Icon} size={16} />
                 Return to VerseStudio
               </Button>
             </Link>
             <Link href="https://support.google.com/drive" target="_blank" className="w-full sm:w-auto">
               <Button variant="ghost" className="w-full flex items-center justify-center gap-2">
-                <HelpCircle className="w-4 h-4" />
+                <HugeIcon icon={HelpCircleIcon} size={16} />
                 Help Center
               </Button>
             </Link>
@@ -180,7 +180,7 @@ export default function SharedWatchPage() {
 
           {/* Hosted on Google Drive Badge */}
           <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] text-xs font-medium text-[var(--color-text-secondary)]">
-            <HardDrive className="w-3.5 h-3.5 text-blue-400" />
+            <HugeIcon icon={HardDriveIcon} size={14} className="text-blue-400" />
             <span>Hosted on Google Drive</span>
           </div>
         </div>
@@ -202,7 +202,7 @@ export default function SharedWatchPage() {
             onClick={handleCopyLink}
             className="flex items-center gap-1.5"
           >
-            {copiedLink ? <Check className="w-4 h-4 text-[var(--color-brand-default)]" /> : <Share2 className="w-4 h-4" />}
+            {copiedLink ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Share01Icon} size={16} />}
             <span className="hidden sm:inline">{copiedLink ? 'Link Copied!' : 'Share'}</span>
           </Button>
 
@@ -218,7 +218,7 @@ export default function SharedWatchPage() {
               size="sm"
               className="flex items-center gap-1.5"
             >
-              <ExternalLink className="w-4 h-4" />
+              <HugeIcon icon={ArrowUpRight01Icon} size={16} />
               <span>Open in Drive</span>
             </Button>
           </a>
@@ -245,7 +245,7 @@ export default function SharedWatchPage() {
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1B1C21] via-[#222329] to-[#292A31] flex items-center justify-center">
                   <div className="text-center p-6">
                     <div className="w-20 h-20 rounded-full bg-[var(--color-brand-default)]/10 border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)] flex items-center justify-center mx-auto mb-4 cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsPlaying(!isPlaying)}>
-                      {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 translate-x-0.5" />}
+                      {isPlaying ? <HugeIcon icon={PauseIcon} size={32} /> : <HugeIcon icon={PlayIcon} size={32} className="translate-x-0.5" />}
                     </div>
                     <p className="text-sm font-medium text-[var(--color-text-secondary)]">
                       {isPlaying ? 'Streaming from Google Drive (4K 60FPS)' : 'Click to stream 4K recording'}
@@ -276,7 +276,7 @@ export default function SharedWatchPage() {
                       className="p-1.5 rounded-lg text-white hover:text-[var(--color-brand-default)] transition-colors"
                       aria-label={isPlaying ? 'Pause' : 'Play'}
                     >
-                      {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                      {isPlaying ? <HugeIcon icon={PauseIcon} size={20} /> : <HugeIcon icon={PlayIcon} size={20} />}
                     </button>
 
                     <button
@@ -285,7 +285,7 @@ export default function SharedWatchPage() {
                       className="p-1.5 rounded-lg text-white hover:text-[var(--color-brand-default)] transition-colors"
                       aria-label={isMuted ? 'Unmute' : 'Mute'}
                     >
-                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                      {isMuted ? <HugeIcon icon={VolumeOffIcon} size={20} /> : <HugeIcon icon={VolumeHighIcon} size={20} />}
                     </button>
 
                     <span className="text-xs font-mono text-white/80">
@@ -314,7 +314,7 @@ export default function SharedWatchPage() {
                       className="p-1.5 rounded-lg text-white hover:text-[var(--color-brand-default)] transition-colors"
                       aria-label="Fullscreen"
                     >
-                      <Maximize2 className="w-4 h-4" />
+                      <HugeIcon icon={Maximize01Icon} size={16} />
                     </button>
                   </div>
                 </div>
@@ -331,11 +331,11 @@ export default function SharedWatchPage() {
                 </h1>
                 <div className="flex items-center gap-4 mt-2 text-xs text-[var(--color-text-secondary)]">
                   <div className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
+                    <HugeIcon icon={Calendar01Icon} size={14} />
                     <span>{new Date(recording.createdAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5" />
+                    <HugeIcon icon={ViewIcon} size={14} />
                     <span>{recording.viewsCount.toLocaleString()} views</span>
                   </div>
                   <span className="px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-mono font-semibold border border-[var(--color-brand-default)]/30">
@@ -352,7 +352,7 @@ export default function SharedWatchPage() {
                   onClick={handleDownloadSrt}
                   className="flex items-center gap-1.5 text-xs"
                 >
-                  <Subtitles className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                  <HugeIcon icon={SubtitleIcon} size={14} className="text-[var(--color-brand-default)]" />
                   <span>.SRT Subtitles</span>
                 </Button>
                 <Button
@@ -361,7 +361,7 @@ export default function SharedWatchPage() {
                   onClick={handleDownloadGuide}
                   className="flex items-center gap-1.5 text-xs"
                 >
-                  <Download className="w-3.5 h-3.5" />
+                  <HugeIcon icon={Download01Icon} size={14} />
                   <span>Tutorial .MD</span>
                 </Button>
               </div>
@@ -393,7 +393,7 @@ export default function SharedWatchPage() {
           <div className="p-5 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col h-full">
             <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border-subtle)] mb-4">
               <div className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={File01Icon} size={16} className="text-[var(--color-brand-default)]" />
                 <h2 className="text-sm font-bold tracking-tight">Step-by-Step AI Guide</h2>
               </div>
               <button
@@ -401,7 +401,7 @@ export default function SharedWatchPage() {
                 onClick={handleDownloadGuide}
                 className="text-xs font-semibold text-[var(--color-brand-default)] hover:underline flex items-center gap-1"
               >
-                <Download className="w-3.5 h-3.5" />
+                <HugeIcon icon={Download01Icon} size={14} />
                 Download
               </button>
             </div>
@@ -409,7 +409,7 @@ export default function SharedWatchPage() {
             <div className="flex-1 overflow-y-auto max-h-[560px] pr-2 space-y-4 text-xs leading-relaxed text-[var(--color-text-secondary)] font-sans">
               <div className="p-3 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] mb-3">
                 <div className="flex items-center gap-2 text-[var(--color-brand-default)] font-semibold mb-1">
-                  <Sparkles className="w-3.5 h-3.5" />
+                  <HugeIcon icon={SparklesIcon} size={14} />
                   <span>Automated AI Compilation</span>
                 </div>
                 <p className="text-[11px] text-[var(--color-text-tertiary)]">

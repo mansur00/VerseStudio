@@ -5,14 +5,15 @@ import {
   ProgressBar,
   ShareLinkCard,
   StatusChip,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
-  Cloud,
-  AlertCircle,
-  AlertTriangle,
-  RefreshCw,
-  ExternalLink,
-} from 'lucide-react';
+  CloudIcon,
+  AlertCircleIcon,
+  Alert01Icon,
+  RotateLeft01Icon,
+  ArrowUpRight01Icon,
+} from '@hugeicons/core-free-icons';
 import type { SupportedLanguage } from '@verse-studio/shared';
 import { useDriveStore } from './driveStore';
 
@@ -144,20 +145,20 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
             {connectError && (
               <div
                 role="alert"
-                className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs font-medium"
+                className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] font-label-s"
               >
-                <AlertCircle className="w-4 h-4 shrink-0" />
+                <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0" />
                 <span>{connectError}</span>
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-2 text-xs text-[var(--color-text-secondary)]">
-              <div className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)]">
-                <Cloud className="w-4 h-4 text-[var(--color-brand-default)]" />
+            <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-2 font-body-s text-[var(--color-text-secondary)]">
+              <div className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)] font-label-s">
+                <HugeIcon icon={CloudIcon} size={16} className="text-[var(--color-brand-default)]" />
                 <span>Zero Cloud Storage Fees</span>
               </div>
               <p>
-                VerseStudio streams and saves recordings straight to your own Google Drive using per-file permissions (<code className="font-mono text-[var(--color-brand-default)]">drive.file</code>). We never hold or store your media.
+                VerseStudio streams and saves recordings straight to your own Google Drive using per-file permissions (<code className="font-code text-[var(--color-brand-default)]">drive.file</code>). We never hold or store your media.
               </p>
             </div>
 
@@ -171,7 +172,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 onClick={handleConnect}
                 disabled={isDriveConnecting}
               >
-                <Cloud className="w-4 h-4" />
+                <HugeIcon icon={CloudIcon} size={16} />
                 <span>{isDriveConnecting ? 'Connecting...' : 'Connect Google Drive'}</span>
               </Button>
             </div>
@@ -182,11 +183,11 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
         {!shareUrl && isConnected && isUploading && activeUpload && (
           <div className="space-y-4 py-2">
             <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-3">
-              <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center justify-between font-label-s">
                 <span className="font-semibold text-[var(--color-text-primary)] truncate max-w-[200px]">
                   {activeUpload.name}
                 </span>
-                <span className="font-mono font-medium text-[var(--color-text-secondary)]">
+                <span className="font-code font-medium text-[var(--color-text-secondary)]">
                   {formatBytes(activeUpload.uploadedBytes)} / {formatBytes(activeUpload.totalBytes)}
                 </span>
               </div>
@@ -197,7 +198,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 showPercentage={true}
               />
 
-              <div className="flex items-center justify-between text-[11px] text-[var(--color-text-tertiary)] pt-1">
+              <div className="flex items-center justify-between font-caption text-[var(--color-text-tertiary)] pt-1">
                 <span>Resumable 8 MB chunk pipeline</span>
                 <span>{activeUpload.progress}% uploaded</span>
               </div>
@@ -217,11 +218,11 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
         {!shareUrl && isConnected && !isUploading && isDriveFull && (
           <div className="space-y-4">
             <div className="p-4 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] space-y-2">
-              <div className="flex items-center gap-2 font-semibold text-xs">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
+              <div className="flex items-center gap-2 font-semibold font-label-s">
+                <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
                 <span>Google Drive Storage Quota Exceeded</span>
               </div>
-              <p className="text-xs text-[var(--color-text-secondary)]">
+              <p className="font-body-s text-[var(--color-text-secondary)]">
                 Your Google Drive does not have enough remaining bytes to complete this 4K export. Free up space on Drive or upgrade your Google One tier.
               </p>
             </div>
@@ -234,7 +235,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 variant="primary"
                 className="flex-1"
                 onClick={() => window.open('https://one.google.com/storage', '_blank')}
-                trailingIcon={<ExternalLink className="w-3.5 h-3.5" />}
+                trailingIcon={<HugeIcon icon={ArrowUpRight01Icon} size={14} />}
               >
                 Manage Drive Storage
               </Button>
@@ -245,12 +246,12 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
         {/* ================= SCREEN 33: UPLOAD FAILED WITH RETRY ================= */}
         {!shareUrl && isConnected && !isUploading && error && !isDriveFull && (
           <div className="space-y-4">
-            <div className="p-3.5 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs font-medium space-y-1">
+            <div className="p-3.5 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] font-label-s space-y-1">
               <div className="flex items-center gap-1.5 font-semibold">
-                <AlertCircle className="w-4 h-4 shrink-0" />
+                <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0" />
                 <span>Upload Failed</span>
               </div>
-              <p className="text-[var(--color-text-secondary)]">
+              <p className="font-body-s text-[var(--color-text-secondary)]">
                 {error}. Your progress is saved and will resume from the last sent 8 MB chunk.
               </p>
             </div>
@@ -263,7 +264,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 variant="primary"
                 className="flex-1"
                 onClick={handleStartUpload}
-                leadingIcon={<RefreshCw className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={RotateLeft01Icon} size={16} />}
               >
                 Resume Upload
               </Button>
@@ -277,14 +278,14 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
             <div className="p-3.5 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-lg bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)]">
-                  <Cloud className="w-4 h-4" />
+                  <HugeIcon icon={CloudIcon} size={16} />
                 </div>
                 <div>
-                  <div className="text-xs font-semibold text-[var(--color-text-primary)]">
+                  <div className="font-label-s font-semibold text-[var(--color-text-primary)]">
                     Google Drive Connected
                   </div>
-                  <div className="text-[11px] text-[var(--color-text-secondary)]">
-                    Target folder: <span className="font-mono text-[var(--color-brand-default)]">VerseStudio/</span>
+                  <div className="font-caption text-[var(--color-text-secondary)]">
+                    Target folder: <span className="font-code text-[var(--color-brand-default)]">VerseStudio/</span>
                   </div>
                 </div>
               </div>
@@ -292,7 +293,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
             </div>
 
             {recordingBlob && (
-              <div className="text-xs text-[var(--color-text-secondary)] flex items-center justify-between px-1">
+              <div className="font-body-s text-[var(--color-text-secondary)] flex items-center justify-between px-1">
                 <span>File size: <strong className="text-[var(--color-text-primary)]">{formatBytes(recordingBlob.size)}</strong></span>
                 <span>Format: <strong>MP4 4K 60FPS</strong></span>
               </div>
@@ -306,7 +307,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 variant="primary"
                 className="flex-1"
                 onClick={handleStartUpload}
-                leadingIcon={<Cloud className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={CloudIcon} size={16} />}
               >
                 Upload to Google Drive
               </Button>

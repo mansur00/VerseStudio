@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import { cn } from '../../utils/cn';
-import { X } from 'lucide-react';
+import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface CountdownOverlayProps {
   initialCount?: number;
@@ -78,7 +79,7 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
           onClick={onCancel}
           className="mt-8 flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--color-bg-elevated)] hover:bg-[var(--color-bg-hover)] text-xs font-semibold text-[var(--color-text-primary)] border border-[var(--color-border-default)] transition-all active:scale-95"
         >
-          <X className="w-3.5 h-3.5" />
+          <HugeIcon icon={Cancel01Icon} size={14} />
           Cancel Countdown
         </button>
       </div>

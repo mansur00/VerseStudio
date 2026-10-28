@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
-import { Copy, Download, Check, Printer, Sparkles, Clock, MousePointer } from 'lucide-react';
-import { Modal, Button, Tabs } from '@verse-studio/ui';
+import {
+  Copy01Icon,
+  Download01Icon,
+  Tick01Icon,
+  PrinterIcon,
+  SparklesIcon,
+  Time02Icon,
+  Cursor01Icon,
+} from '@hugeicons/core-free-icons';
+import { Modal, Button, Tabs, HugeIcon } from '@verse-studio/ui';
 import { useAIStore } from './aiStore';
 
 export interface GuidePreviewModalProps {
@@ -45,11 +53,11 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
         {/* Header toolbar */}
         <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-[var(--color-border-subtle)]">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-[var(--color-text-primary)]">
+            <span className="font-label-s font-bold text-[var(--color-text-primary)]">
               {steps.length} Steps Generated
             </span>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-semibold flex items-center gap-1">
-              <Sparkles className="w-3 h-3" />
+            <span className="font-caption px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-semibold flex items-center gap-1">
+              <HugeIcon icon={SparklesIcon} size={12} />
               AI Synthesized
             </span>
           </div>
@@ -58,7 +66,7 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              leadingIcon={copied ? <Check className="w-4 h-4 text-[var(--color-brand-default)]" /> : <Copy className="w-4 h-4" />}
+              leadingIcon={copied ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Copy01Icon} size={16} />}
               onClick={handleCopyMarkdown}
             >
               {copied ? 'Copied!' : 'Copy Markdown'}
@@ -66,7 +74,7 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
             <Button
               variant="secondary"
               size="sm"
-              leadingIcon={<Download className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={Download01Icon} size={16} />}
               onClick={() => exportGuideMarkdownDownload(`${generatedGuide?.title || 'Tutorial-Guide'}.md`)}
             >
               Download .md
@@ -74,7 +82,7 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
             <Button
               variant="ghost"
               size="sm"
-              leadingIcon={<Printer className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={PrinterIcon} size={16} />}
               onClick={handlePrint}
             >
               PDF / Print
@@ -96,7 +104,7 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
         {activeTab === 'formatted' && (
           <div className="space-y-3.5 max-h-[460px] overflow-y-auto pr-1">
             {steps.length === 0 ? (
-              <div className="text-center py-12 text-[var(--color-text-secondary)] text-xs">
+              <div className="text-center py-12 text-[var(--color-text-secondary)] font-body-s">
                 No interactive steps detected. Click interactions and translated audio cues will appear here.
               </div>
             ) : (
@@ -107,28 +115,28 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-md bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold text-xs flex items-center justify-center shrink-0">
+                      <span className="w-6 h-6 rounded-md bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold font-caption flex items-center justify-center shrink-0">
                         {step.stepNumber}
                       </span>
-                      <h4 className="text-sm font-bold text-[var(--color-text-primary)]">
+                      <h4 className="font-label-m font-bold text-[var(--color-text-primary)]">
                         {step.title}
                       </h4>
                     </div>
 
-                    <span className="font-mono text-xs text-[var(--color-text-tertiary)] bg-[var(--color-bg-hover)] px-2 py-0.5 rounded border border-[var(--color-border-subtle)] flex items-center gap-1 shrink-0">
-                      <Clock className="w-3 h-3" />
+                    <span className="font-code text-xs text-[var(--color-text-tertiary)] bg-[var(--color-bg-hover)] px-2 py-0.5 rounded border border-[var(--color-border-subtle)] flex items-center gap-1 shrink-0">
+                      <HugeIcon icon={Time02Icon} size={12} />
                       {step.timeFormatted}
                     </span>
                   </div>
 
-                  <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed flex items-start gap-2">
-                    <MousePointer className="w-3.5 h-3.5 text-[var(--color-accent-laser)] shrink-0 mt-0.5" />
+                  <p className="font-body-s text-[var(--color-text-secondary)] leading-relaxed flex items-start gap-2">
+                    <HugeIcon icon={Cursor01Icon} size={14} className="text-[var(--color-accent-laser)] shrink-0 mt-0.5" />
                     <span>{step.description}</span>
                   </p>
 
                   {step.englishTranscript && (
-                    <div className="p-2.5 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] text-xs text-[var(--color-text-primary)] font-medium">
-                      <span className="text-[10px] uppercase font-bold text-[var(--color-brand-default)] block mb-0.5">
+                    <div className="p-2.5 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] font-body-s text-[var(--color-text-primary)] font-medium">
+                      <span className="font-caption uppercase font-bold text-[var(--color-brand-default)] block mb-0.5">
                         Spoken Narration (English):
                       </span>
                       &ldquo;{step.englishTranscript}&rdquo;
@@ -136,7 +144,7 @@ export const GuidePreviewModal: React.FC<GuidePreviewModalProps> = ({
                   )}
 
                   {step.banglaTranscript && (
-                    <div className="px-2.5 py-1 text-xs text-[var(--color-text-tertiary)] font-bangla">
+                    <div className="px-2.5 py-1 font-body-s text-[var(--color-text-tertiary)] font-bangla">
                       মূল বাংলা: &ldquo;{step.banglaTranscript}&rdquo;
                     </div>
                   )}

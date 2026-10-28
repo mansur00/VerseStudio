@@ -3,14 +3,15 @@
 import React from 'react';
 import { cn } from '../../utils/cn';
 import {
-  Crosshair,
-  SunMedium,
-  KeyRound,
-  EyeOff,
-  ZoomIn,
-  FileText,
-  GripVertical,
-} from 'lucide-react';
+  Target01Icon,
+  Sun01Icon,
+  Key01Icon,
+  ViewOffIcon,
+  ZoomInAreaIcon,
+  File01Icon,
+  GripVerticalIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 import { Tooltip } from '../Tooltip/Tooltip';
 
 export interface ToolPaletteState {
@@ -47,10 +48,10 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
     >
       {showGrip && (
         <span
-          className="cursor-grab text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] px-1 active:cursor-grabbing"
+          className="cursor-grab text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] px-1 active:cursor-grabbing flex items-center"
           aria-hidden="true"
         >
-          <GripVertical className="w-4 h-4" />
+          <HugeIcon icon={GripVerticalIcon} size={16} />
         </span>
       )}
 
@@ -68,7 +69,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <Crosshair className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={Target01Icon} size={18} />
         </button>
       </Tooltip>
 
@@ -86,7 +87,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <SunMedium className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={Sun01Icon} size={18} />
         </button>
       </Tooltip>
 
@@ -104,7 +105,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <KeyRound className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={Key01Icon} size={18} />
         </button>
       </Tooltip>
 
@@ -122,7 +123,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <EyeOff className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={ViewOffIcon} size={18} />
         </button>
       </Tooltip>
 
@@ -140,7 +141,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <ZoomIn className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={ZoomInAreaIcon} size={18} />
         </button>
       </Tooltip>
 
@@ -160,7 +161,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
               : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]'
           )}
         >
-          <FileText className="w-4 h-4 stroke-[2.2]" />
+          <HugeIcon icon={File01Icon} size={18} />
         </button>
       </Tooltip>
     </div>

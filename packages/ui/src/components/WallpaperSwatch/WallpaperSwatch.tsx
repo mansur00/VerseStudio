@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { Check } from 'lucide-react';
+import { Tick01Icon } from '@hugeicons/core-free-icons';
+import { HugeIcon } from '../HugeIcon';
 
 export interface WallpaperOption {
   id: string;
@@ -89,7 +90,7 @@ export const WallpaperSwatch: React.FC<WallpaperSwatchProps> = ({
           >
             {isSelected && (
               <span className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <Check className="w-4 h-4 text-white stroke-[2.5]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-white" />
               </span>
             )}
           </button>

@@ -179,3 +179,47 @@ body {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+
+/* Figma Typography Scale Classes */
+.font-display { font-size: 48px; line-height: 56px; font-weight: 700; letter-spacing: -0.02em; }
+.font-h1 { font-size: 36px; line-height: 44px; font-weight: 700; letter-spacing: -0.015em; }
+.font-h2 { font-size: 30px; line-height: 38px; font-weight: 600; letter-spacing: -0.01em; }
+.font-h3 { font-size: 24px; line-height: 32px; font-weight: 600; }
+.font-h4 { font-size: 20px; line-height: 28px; font-weight: 600; }
+.font-body-l { font-size: 18px; line-height: 28px; font-weight: 400; }
+.font-body-m { font-size: 16px; line-height: 24px; font-weight: 400; }
+.font-body-s { font-size: 14px; line-height: 20px; font-weight: 400; }
+.font-caption { font-size: 12px; line-height: 16px; font-weight: 400; }
+.font-label-m { font-size: 14px; line-height: 20px; font-weight: 500; }
+.font-label-s { font-size: 12px; line-height: 16px; font-weight: 500; }
+.font-timer { font-size: 32px; line-height: 40px; font-family: var(--font-mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+.font-code { font-size: 14px; line-height: 20px; font-family: var(--font-mono); }
+
+/* Bangla Typography Specific Overrides */
+[lang="bn"] .font-h1,
+[lang="bn"] .font-h2,
+[lang="bn"] .font-h3 {
+  font-size: 24px;
+  line-height: 36px;
+  font-family: var(--font-bangla);
+}
+
+[lang="bn"] .font-h4 {
+  font-size: 20px;
+  line-height: 32px;
+  font-family: var(--font-bangla);
+}
+
+[lang="bn"] .font-body-l,
+[lang="bn"] .font-body-m,
+[lang="bn"] .font-body-s {
+  font-size: 16px;
+  line-height: 26px;
+  font-family: var(--font-bangla);
+}
+
+[lang="bn"] .font-caption {
+  font-size: 14px;
+  line-height: 22px;
+  font-family: var(--font-bangla);
+}

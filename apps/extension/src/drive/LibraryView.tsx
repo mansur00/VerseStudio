@@ -7,14 +7,15 @@ import {
   Modal,
   Toast,
   ProgressBar,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
-  Search,
-  Cloud,
-  CloudOff,
-  Video,
-  Plus,
-} from 'lucide-react';
+  Search01Icon,
+  CloudIcon,
+  CloudOffIcon,
+  VideoReplayIcon,
+  PlusSignIcon,
+} from '@hugeicons/core-free-icons';
 import { getTranslation, type SupportedLanguage, type DriveRecordingItem } from '@verse-studio/shared';
 import { useDriveStore } from './driveStore';
 
@@ -134,7 +135,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
               variant="primary"
               size="sm"
               onClick={onNewRecording}
-              leadingIcon={<Plus className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={PlusSignIcon} size={16} />}
             >
               New Recording
             </Button>
@@ -146,20 +147,20 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
       {!isConnected && (
         <div className="flex-1 flex flex-col items-center justify-center p-12 rounded-2xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface)] text-center space-y-4 max-w-md mx-auto my-auto">
           <div className="w-16 h-16 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] flex items-center justify-center">
-            <CloudOff className="w-8 h-8" />
+            <HugeIcon icon={CloudOffIcon} size={32} />
           </div>
           <div className="space-y-1">
-            <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+            <h2 className="font-h4 font-bold text-[var(--color-text-primary)]">
               {t.library.driveDisconnectedTitle}
             </h2>
-            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+            <p className="font-body-s text-[var(--color-text-secondary)] leading-relaxed">
               {t.library.driveDisconnectedDesc}
             </p>
           </div>
           <Button
             variant="primary"
             onClick={() => connectDrive()}
-            leadingIcon={<Cloud className="w-4 h-4" />}
+            leadingIcon={<HugeIcon icon={CloudIcon} size={16} />}
           >
             {t.library.reconnectDrive}
           </Button>
@@ -179,7 +180,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search recordings..."
-                leadingIcon={<Search className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={Search01Icon} size={16} />}
               />
             </div>
 
@@ -190,7 +191,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                   key={filter}
                   type="button"
                   onClick={() => setFilterStatus(filter)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
+                  className={`px-3 py-1.5 rounded-lg font-label-s capitalize transition-all ${
                     filterStatus === filter
                       ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-sm'
                       : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
@@ -224,13 +225,13 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
           {!isLoading && recordings.length === 0 && (
             <div className="flex-1 flex flex-col items-center justify-center p-12 rounded-2xl border border-dashed border-[var(--color-border-default)] bg-[var(--color-bg-surface)] text-center space-y-4 my-auto">
               <div className="w-14 h-14 rounded-full bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] flex items-center justify-center">
-                <Video className="w-7 h-7" />
+                <HugeIcon icon={VideoReplayIcon} size={28} />
               </div>
               <div className="space-y-1">
-                <h2 className="text-base font-bold text-[var(--color-text-primary)]">
+                <h2 className="font-h4 font-bold text-[var(--color-text-primary)]">
                   {t.library.emptyTitle}
                 </h2>
-                <p className="text-xs text-[var(--color-text-secondary)] max-w-sm">
+                <p className="font-body-s text-[var(--color-text-secondary)] max-w-sm">
                   {t.library.emptySubtitle}
                 </p>
               </div>
@@ -239,7 +240,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
                   variant="primary"
                   size="sm"
                   onClick={onNewRecording}
-                  leadingIcon={<Plus className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={PlusSignIcon} size={16} />}
                 >
                   Start Recording
                 </Button>
@@ -250,12 +251,12 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
           {/* ================= SCREEN 39: NO SEARCH RESULTS ================= */}
           {!isLoading && recordings.length > 0 && filteredRecordings.length === 0 && (
             <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-3 my-auto">
-              <Search className="w-10 h-10 text-[var(--color-text-tertiary)]" />
+              <HugeIcon icon={Search01Icon} size={40} className="text-[var(--color-text-tertiary)]" />
               <div className="space-y-1">
-                <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+                <h3 className="font-label-m font-semibold text-[var(--color-text-primary)]">
                   No recordings found
                 </h3>
-                <p className="text-xs text-[var(--color-text-secondary)]">
+                <p className="font-body-s text-[var(--color-text-secondary)]">
                   No video matches &quot;{searchQuery}&quot;. Try another search term or reset filters.
                 </p>
               </div>

@@ -8,21 +8,22 @@ import {
   PlanCard,
   Avatar,
   StatusChip,
+  HugeIcon,
 } from '@verse-studio/ui';
 import {
-  User,
-  HelpCircle,
-  AlertTriangle,
-  Lock,
-  Smartphone,
-  Laptop,
-  CheckCircle2,
-  ExternalLink,
-  MessageSquare,
-  Sparkles,
-  ChevronDown,
-  ChevronUp,
-} from 'lucide-react';
+  UserIcon,
+  HelpCircleIcon,
+  Alert01Icon,
+  LockIcon,
+  SmartPhone01Icon,
+  ComputerIcon,
+  CheckmarkCircle01Icon,
+  ArrowUpRight01Icon,
+  Message01Icon,
+  SparklesIcon,
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+} from '@hugeicons/core-free-icons';
 import {
   changePasswordSchema,
   updateProfileSchema,
@@ -223,7 +224,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                 role="status"
                 className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-success-subtle)] border border-[var(--color-success-default)] text-[var(--color-success-default)] text-xs font-medium"
               >
-                <CheckCircle2 className="w-4 h-4 shrink-0" />
+                <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="shrink-0" />
                 <span>Profile updated successfully</span>
               </div>
             )}
@@ -251,7 +252,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
               value={profileName}
               onChange={(e) => setProfileName(e.target.value)}
               placeholder="Your full name"
-              leadingIcon={<User className="w-4 h-4" />}
+              leadingIcon={<HugeIcon icon={UserIcon} size={16} />}
               required
             />
 
@@ -308,7 +309,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="••••••••"
-                leadingIcon={<Lock className="w-4 h-4" />}
+                leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
                 required
               />
 
@@ -320,7 +321,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="At least 8 characters"
-                  leadingIcon={<Lock className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
                   required
                 />
                 <Input
@@ -330,7 +331,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Confirm new password"
-                  leadingIcon={<Lock className="w-4 h-4" />}
+                  leadingIcon={<HugeIcon icon={LockIcon} size={16} />}
                   required
                 />
               </div>
@@ -363,7 +364,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
               {showTotpPrompt && (
                 <div className="p-3.5 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] space-y-3 mt-3 animate-in fade-in-50">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-text-primary)]">
-                    <Smartphone className="w-4 h-4 text-[var(--color-brand-default)]" />
+                    <HugeIcon icon={SmartPhone01Icon} size={16} className="text-[var(--color-brand-default)]" />
                     <span>Authenticator App Setup</span>
                   </div>
                   <p className="text-xs text-[var(--color-text-secondary)]">
@@ -403,7 +404,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                   >
                     <div className="flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-primary)]">
-                        <Laptop className="w-4 h-4" />
+                        <HugeIcon icon={ComputerIcon} size={16} />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -486,7 +487,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                       onClose();
                       onOpenUpgrade?.();
                     }}
-                    trailingIcon={<Sparkles className="w-3.5 h-3.5" />}
+                    trailingIcon={<HugeIcon icon={SparklesIcon} size={14} />}
                   >
                     {t.account.upgradeToPro}
                   </Button>
@@ -521,7 +522,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
             <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)]">
               <div className="flex items-center gap-2.5">
                 <div className="p-2 rounded-lg bg-[var(--color-bg-hover)] text-[var(--color-text-primary)]">
-                  <ExternalLink className="w-4 h-4" />
+                  <HugeIcon icon={ArrowUpRight01Icon} size={16} />
                 </div>
                 <div>
                   <div className="text-xs font-semibold text-[var(--color-text-primary)]">
@@ -635,7 +636,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
           <div className="space-y-4 pt-1">
             <div className="p-3.5 rounded-xl bg-[var(--color-danger-default)]/10 border border-[var(--color-danger-default)] text-[var(--color-danger-default)] space-y-2">
               <div className="flex items-center gap-2 font-semibold text-xs">
-                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
                 <span>Irreversible Action</span>
               </div>
               <p className="text-xs text-[var(--color-text-secondary)]">
@@ -695,7 +696,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                 rel="noreferrer"
                 className="flex items-center gap-2.5 p-3 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] hover:bg-[var(--color-bg-hover)] transition-colors text-xs font-semibold text-[var(--color-text-primary)]"
               >
-                <MessageSquare className="w-4 h-4 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Message01Icon} size={16} className="text-[var(--color-brand-default)]" />
                 <span>Join Discord</span>
               </a>
 
@@ -703,7 +704,7 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                 href="mailto:support@versestudio.app"
                 className="flex items-center gap-2.5 p-3 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] hover:bg-[var(--color-bg-hover)] transition-colors text-xs font-semibold text-[var(--color-text-primary)]"
               >
-                <HelpCircle className="w-4 h-4 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={HelpCircleIcon} size={16} className="text-[var(--color-brand-default)]" />
                 <span>Email Support</span>
               </a>
             </div>
@@ -763,9 +764,9 @@ export const AccountModals: React.FC<AccountModalsProps> = ({
                     >
                       <span>{faq.q}</span>
                       {isOpen ? (
-                        <ChevronUp className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+                        <HugeIcon icon={ArrowUp01Icon} size={16} className="text-[var(--color-text-tertiary)]" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-[var(--color-text-tertiary)]" />
+                        <HugeIcon icon={ArrowDown01Icon} size={16} className="text-[var(--color-text-tertiary)]" />
                       )}
                     </button>
                     {isOpen && (

@@ -1,6 +1,13 @@
 import React from 'react';
-import { Sparkles, CheckCircle2, AlertCircle, Volume2, FileText, Languages } from 'lucide-react';
-import { Modal, ProgressBar, Button } from '@verse-studio/ui';
+import {
+  SparklesIcon,
+  CheckmarkCircle01Icon,
+  AlertCircleIcon,
+  VolumeHighIcon,
+  File01Icon,
+  AiTranslateIcon,
+} from '@hugeicons/core-free-icons';
+import { Modal, ProgressBar, Button, HugeIcon } from '@verse-studio/ui';
 import { useAIStore } from './aiStore';
 import { useAuthStore } from '../auth/authStore';
 
@@ -26,7 +33,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
       id: 'transcribing',
       label: 'Bengali Audio Speech Recognition',
       desc: 'Accurately transcribing native Bengali speech into text...',
-      icon: <Languages className="w-4 h-4" />,
+      icon: <HugeIcon icon={AiTranslateIcon} size={16} />,
       active: processingState.status === 'transcribing',
       done: processingState.progress > 30,
     },
@@ -34,7 +41,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
       id: 'translating',
       label: 'English Translation & Alignment',
       desc: 'Translating Bengali idioms and context into clean English...',
-      icon: <Sparkles className="w-4 h-4" />,
+      icon: <HugeIcon icon={SparklesIcon} size={16} />,
       active: processingState.status === 'translating',
       done: processingState.progress > 60,
     },
@@ -42,7 +49,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
       id: 'generating-voice',
       label: 'English Neural Voice Synthesis',
       desc: 'Synthesizing studio-grade natural voiceover audio...',
-      icon: <Volume2 className="w-4 h-4" />,
+      icon: <HugeIcon icon={VolumeHighIcon} size={16} />,
       active: processingState.status === 'generating-voice',
       done: processingState.progress > 85,
     },
@@ -50,7 +57,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
       id: 'generating-guide',
       label: 'Step-by-Step Guide Assembly',
       desc: 'Aligning click timestamps with translated spoken guidance...',
-      icon: <FileText className="w-4 h-4" />,
+      icon: <HugeIcon icon={File01Icon} size={16} />,
       active: processingState.status === 'generating-guide',
       done: isCompleted,
     },
@@ -73,12 +80,12 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
         {/* Quota Exceeded Alert */}
         {quotaExceededWarning && (
           <div className="p-4 rounded-xl border border-[var(--color-warning-default)]/40 bg-[var(--color-warning-subtle)] flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-[var(--color-warning-default)] shrink-0 mt-0.5" />
+            <HugeIcon icon={AlertCircleIcon} size={20} className="text-[var(--color-warning-default)] shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h4 className="text-xs font-bold text-[var(--color-warning-default)]">
+              <h4 className="font-label-s font-bold text-[var(--color-warning-default)]">
                 AI Minutes Quota Exceeded
               </h4>
-              <p className="text-xs text-[var(--color-text-secondary)] mt-1">
+              <p className="font-body-s text-[var(--color-text-secondary)] mt-1">
                 You have used {user?.aiMinutesUsed || 30} of {user?.aiMinutesLimit || 30} minutes on your current plan.
                 Upgrade to Pro for 300 monthly minutes.
               </p>
@@ -102,7 +109,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
         {/* Progress Bar & Status Text */}
         {!quotaExceededWarning && (
           <div>
-            <div className="flex items-center justify-between text-xs font-semibold mb-2">
+            <div className="flex items-center justify-between font-label-s mb-2">
               <span className="text-[var(--color-text-primary)]">
                 {isCompleted
                   ? 'All AI Assets Ready'
@@ -110,7 +117,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
                   ? 'Processing Failed'
                   : processingState.activeStepText || 'Processing...'}
               </span>
-              <span className="font-mono text-[var(--color-brand-default)]">
+              <span className="font-code text-[var(--color-brand-default)]">
                 {processingState.progress}%
               </span>
             </div>
@@ -147,10 +154,10 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
                   {s.icon}
                 </div>
                 <div>
-                  <h5 className="text-xs font-bold text-[var(--color-text-primary)]">
+                  <h5 className="font-label-s font-bold text-[var(--color-text-primary)]">
                     {s.label}
                   </h5>
-                  <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
+                  <p className="font-caption text-[var(--color-text-secondary)] mt-0.5">
                     {s.desc}
                   </p>
                 </div>
@@ -158,7 +165,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
 
               <div>
                 {s.done ? (
-                  <CheckCircle2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+                  <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-brand-default)]" />
                 ) : s.active ? (
                   <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-brand-default)] block animate-ping" />
                 ) : null}
