@@ -105,6 +105,7 @@ export const StudioApp: React.FC = () => {
   const [availableMics, setAvailableMics] = useState<DeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string>('');
   const [selectedMic, setSelectedMic] = useState<string>('');
+  const [streamSettings, setStreamSettings] = useState<MediaTrackSettings | null>(null);
 
   // Compositor Styling State
   const [layout, setLayout] = useState<RecordingLayout>('screen-camera');
@@ -238,6 +239,7 @@ export const StudioApp: React.FC = () => {
           );
         },
         onMicLevel: (lvl) => setMicLevel(lvl),
+        onStreamSettings: (settings) => setStreamSettings(settings),
         onError: (err) => console.error('[Engine Error]', err),
       }
     );
@@ -735,8 +737,21 @@ export const StudioApp: React.FC = () => {
                   }
                 />
                 <span className="text-xs text-[var(--color-text-tertiary)] font-mono font-medium hidden sm:inline">
-                  4K 60FPS
+                  {streamSettings?.height
+                    ? streamSettings.height >= 2160
+                      ? '4K 60FPS'
+                      : streamSettings.height >= 1440
+                      ? '1440p 60FPS'
+                      : streamSettings.height >= 1080
+                      ? '1080p 60FPS'
+                      : `${streamSettings.width}x${streamSettings.height}`
+                    : '4K 60FPS'}
                 </span>
+                {streamSettings && streamSettings.height && streamSettings.height < 2160 && (
+                  <span className="text-[10px] text-[var(--color-warning-default)] hidden lg:inline font-mono">
+                    (Negotiated: {streamSettings.width}x{streamSettings.height})
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -979,10 +994,10 @@ export const StudioApp: React.FC = () => {
                   }}
                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
                     phoneCameraStore.isUsingPhoneCamera
-                      ? 'bg-[var(--color-brand-subtle)] border-[var(--color-brand-default)] text-[var(--color-brand-default)]'
+                      ? 'bg-[var(--color-brand-default)] border-[var(--color-brand-default)] text-[var(--color-text-on-brand)]'
                       : 'bg-[var(--color-bg-hover)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                   }`}
-                  aria-label="Connect Smartphone Camera"
+                  aria-label="Phone Camera"
                 >
                   <HugeIcon icon={SmartPhone01Icon} size={14} />
                   <span className="hidden sm:inline">
@@ -1034,12 +1049,16 @@ export const StudioApp: React.FC = () => {
 
             {/* Floating Teleprompter inside viewport */}
             {teleprompterOpen && (
-              <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-30">
+              <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-30 flex flex-col gap-2">
                 <Teleprompter
                   isOpen={teleprompterOpen}
                   onClose={() => toggleTool('teleprompter')}
                   isBangla={lang === 'bn'}
                 />
+                <div className="px-3 py-1.5 rounded-lg bg-amber-950/80 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-1.5 backdrop-blur-md max-w-sm">
+                  <HugeIcon icon={Alert01Icon} size={14} className="text-amber-400 shrink-0" />
+                  <span>Entire Screen capture records all on-screen overlays. Use Window or Tab capture to exclude prompter.</span>
+                </div>
               </div>
             )}
 
@@ -1102,7 +1121,7 @@ export const StudioApp: React.FC = () => {
                       onClick={() => setPadding(px)}
                       className={`px-2 sm:px-2.5 py-1 text-xs rounded-md border font-mono transition-all ${
                         padding === px
-                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-bold'
+                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold'
                           : 'border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-default)]'
                       }`}
                     >
@@ -1124,7 +1143,7 @@ export const StudioApp: React.FC = () => {
                       onClick={() => setRadius(r)}
                       className={`px-2 sm:px-2.5 py-1 text-xs rounded-md border font-mono transition-all ${
                         radius === r
-                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-bold'
+                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold'
                           : 'border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-default)]'
                       }`}
                     >

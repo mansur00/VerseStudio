@@ -19,6 +19,7 @@ export interface CaptureEngineListeners {
   onStatusChange?: (status: RecordingStatus) => void;
   onTimeUpdate?: (elapsedMs: number) => void;
   onMicLevel?: (level: number) => void;
+  onStreamSettings?: (settings: MediaTrackSettings) => void;
   onError?: (err: Error) => void;
 }
 
@@ -110,6 +111,7 @@ export class CaptureEngine {
       // Handle user stopping stream from browser floating bar
       const videoTrack = this.screenStream.getVideoTracks()[0];
       if (videoTrack) {
+        this.listeners.onStreamSettings?.(videoTrack.getSettings());
         videoTrack.addEventListener('ended', () => {
           if (this.status === 'recording' || this.status === 'paused') {
             this.stopRecording();
