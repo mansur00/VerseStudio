@@ -1,0 +1,1969 @@
+{
+  "fileKey": "PNUNAZJ5hSATGhVrsEQBWr",
+  "fileName": "VerseStudio",
+  "lastModified": "2026-10-28T10:48:33Z",
+  "version": "2414751680911017554",
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "Foundations",
+      "childCount": 1
+    },
+    {
+      "id": "8:2",
+      "name": "Icons",
+      "childCount": 1
+    },
+    {
+      "id": "5:2",
+      "name": "Core Components",
+      "childCount": 35
+    },
+    {
+      "id": "10:2",
+      "name": "Studio Components",
+      "childCount": 29
+    },
+    {
+      "id": "45:2",
+      "name": "Account & Admin Components",
+      "childCount": 21
+    },
+    {
+      "id": "17:2",
+      "name": "Screens",
+      "childCount": 82
+    },
+    {
+      "id": "52:3806",
+      "name": "Admin Dashboard",
+      "childCount": 27
+    }
+  ],
+  "screens": [
+    {
+      "id": "17:3",
+      "name": "12 Setup / Setup - Capture",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "17:211",
+      "name": "20 Recording / Recording",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "27:257",
+      "name": "24 Post-Studio / Post-Studio",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "27:524",
+      "name": "34 Post-Studio / Share Link",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "29:649",
+      "name": "49 Settings / Recording",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "29:799",
+      "name": "38 Library / Library",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "29:988",
+      "name": "35 Library / Library - Empty (first time)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "36:1075",
+      "name": "13 Setup / Setup - Camera",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "36:1313",
+      "name": "14 Setup / Setup - Look",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "36:1555",
+      "name": "15 Setup / Phone Pairing - Waiting",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "36:1829",
+      "name": "16 Setup / Phone Pairing - Connected",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:1257",
+      "name": "06 Onboarding / Permissions (Step 3 of 3)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:1357",
+      "name": "18 Setup / Permission Denied",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:1602",
+      "name": "19 Recording / Countdown",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:1804",
+      "name": "21 Recording / Recording Paused",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:1998",
+      "name": "22 Recording / Long Recording Warning",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:2220",
+      "name": "23 Post-Studio / Processing AI Voice",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "40:2471",
+      "name": "27 Post-Studio / Discard Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:2316",
+      "name": "25 Post-Studio / Guide Preview",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:2624",
+      "name": "31 Post-Studio / Uploading to Google Drive",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:2875",
+      "name": "40 Library / Card Menu",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:3128",
+      "name": "39 Library / Library - No Results",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:3308",
+      "name": "37 Library / Library - Loading",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "41:3501",
+      "name": "44 Library / Move to Trash Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "42:2907",
+      "name": "48 Settings / General",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "42:3097",
+      "name": "50 Settings / Effects and Shortcuts",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "42:3318",
+      "name": "51 Settings / Voice and AI",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "42:3533",
+      "name": "52 Settings / Google Drive (connected)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "44:3079",
+      "name": "46 Recipient / Shared Watch Page",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "44:3181",
+      "name": "17 Setup / Phone Camera (mobile)",
+      "type": "FRAME",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "id": "44:3216",
+      "name": "47 Recipient / Link Unavailable",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3415",
+      "name": "07 Sign In / Sign In",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3516",
+      "name": "08 Sign In / Sign In - Error",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3593",
+      "name": "01 Onboarding / Sign Up",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3688",
+      "name": "02 Onboarding / Sign Up - Validation Error",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3774",
+      "name": "09 Sign In / Forgot Password",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3830",
+      "name": "10 Sign In / Reset Email Sent",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3890",
+      "name": "11 Sign In / Reset Password",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:3949",
+      "name": "03 Onboarding / Verify Email",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "47:4008",
+      "name": "04 Onboarding / Onboarding (Step 1 of 3)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "51:3419",
+      "name": "57 Account / Profile",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "51:3641",
+      "name": "58 Account / Security",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "51:3861",
+      "name": "59 Account / Plan and Billing",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "51:4058",
+      "name": "60 Account / Upgrade Plan",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "51:4195",
+      "name": "61 Account / Delete Account Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "51:4325",
+      "name": "56 Account / User Menu",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:3806",
+      "name": "26 Post-Studio / Exporting 4K",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:4063",
+      "name": "32 Post-Studio / Google Drive Full",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:4329",
+      "name": "33 Post-Studio / Upload Failed",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:4583",
+      "name": "41 Library / Share Settings",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:4813",
+      "name": "42 Library / QR Code",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "61:5176",
+      "name": "43 Library / Rename Recording",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:4909",
+      "name": "05 Onboarding / Connect Google Drive (Step 2 of 3)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:5021",
+      "name": "28 Post-Studio / Connect Drive Prompt (not connected)",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:5302",
+      "name": "30 Post-Studio / Drive Connected",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:5537",
+      "name": "29 Post-Studio / Drive Connection Failed",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:5799",
+      "name": "36 Library / Library - Drive Disconnected",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "66:5904",
+      "name": "53 Settings / Google Drive - Not Connected",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "66:6036",
+      "name": "54 Settings / Google Drive - Reconnect Needed",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "66:6174",
+      "name": "55 Settings / Disconnect Drive Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "82:5653",
+      "name": "45 Library / Library - Moved to Trash",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "82:5832",
+      "name": "62 Account / Help and Support",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "83:5777",
+      "name": "VerseStudio - App screens in user journey order",
+      "type": "TEXT",
+      "width": 1084,
+      "height": 56
+    },
+    {
+      "id": "83:5778",
+      "name": "62 screens. Recordings are saved to the user's own Google Drive. Start at section 1 for a new user.",
+      "type": "TEXT",
+      "width": 838,
+      "height": 28
+    },
+    {
+      "id": "83:5779",
+      "name": "1 · Onboarding (new user)",
+      "type": "TEXT",
+      "width": 440,
+      "height": 44
+    },
+    {
+      "id": "83:5780",
+      "name": "Sign up, verify email, preferences, Google Drive and permissions",
+      "type": "TEXT",
+      "width": 547,
+      "height": 28
+    },
+    {
+      "id": "83:5781",
+      "name": "2 · Sign in and password recovery",
+      "type": "TEXT",
+      "width": 573,
+      "height": 44
+    },
+    {
+      "id": "83:5782",
+      "name": "Returning users",
+      "type": "TEXT",
+      "width": 134,
+      "height": 28
+    },
+    {
+      "id": "83:5783",
+      "name": "3 · Recording setup",
+      "type": "TEXT",
+      "width": 331,
+      "height": 44
+    },
+    {
+      "id": "83:5784",
+      "name": "Source, camera, look, phone camera pairing",
+      "type": "TEXT",
+      "width": 374,
+      "height": 28
+    },
+    {
+      "id": "83:5785",
+      "name": "4 · Recording",
+      "type": "TEXT",
+      "width": 226,
+      "height": 44
+    },
+    {
+      "id": "83:5786",
+      "name": "Countdown, live tools, pause, long recording warning",
+      "type": "TEXT",
+      "width": 451,
+      "height": 28
+    },
+    {
+      "id": "83:5787",
+      "name": "5 · Post-Studio, export and save to Google Drive",
+      "type": "TEXT",
+      "width": 815,
+      "height": 44
+    },
+    {
+      "id": "83:5788",
+      "name": "AI voice, trim, guide, download, first-time Drive connect, upload, share link",
+      "type": "TEXT",
+      "width": 632,
+      "height": 28
+    },
+    {
+      "id": "83:5789",
+      "name": "6 · Library (files in your Google Drive)",
+      "type": "TEXT",
+      "width": 632,
+      "height": 44
+    },
+    {
+      "id": "83:5790",
+      "name": "Recordings list, upload statuses, states and actions",
+      "type": "TEXT",
+      "width": 437,
+      "height": 28
+    },
+    {
+      "id": "83:5791",
+      "name": "7 · Recipient and shared link",
+      "type": "TEXT",
+      "width": 476,
+      "height": 44
+    },
+    {
+      "id": "83:5792",
+      "name": "What people with the link see",
+      "type": "TEXT",
+      "width": 251,
+      "height": 28
+    },
+    {
+      "id": "83:5793",
+      "name": "8 · Settings",
+      "type": "TEXT",
+      "width": 194,
+      "height": 44
+    },
+    {
+      "id": "83:5794",
+      "name": "Same order as the sidebar. Google Drive has four states",
+      "type": "TEXT",
+      "width": 475,
+      "height": 28
+    },
+    {
+      "id": "83:5795",
+      "name": "9 · Account, billing and help",
+      "type": "TEXT",
+      "width": 470,
+      "height": 44
+    },
+    {
+      "id": "83:5796",
+      "name": "Profile, security, plan, upgrade and help",
+      "type": "TEXT",
+      "width": 337,
+      "height": 28
+    }
+  ],
+  "adminScreens": [
+    {
+      "id": "52:4076",
+      "name": "A01 Dashboard / Overview",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1560
+    },
+    {
+      "id": "52:4490",
+      "name": "A02 Users / Users",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1120
+    },
+    {
+      "id": "52:5021",
+      "name": "A03 Users / Users - Bulk Selection",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1120
+    },
+    {
+      "id": "52:5575",
+      "name": "A04 Users / Users - No Results",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1120
+    },
+    {
+      "id": "53:769",
+      "name": "A05 Users / User Detail",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1400
+    },
+    {
+      "id": "53:1181",
+      "name": "A07 Content / Recordings",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1120
+    },
+    {
+      "id": "53:1675",
+      "name": "A10 Money / Plans and Billing",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1260
+    },
+    {
+      "id": "53:2100",
+      "name": "A11 Money / AI Usage and Costs",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1420
+    },
+    {
+      "id": "55:1547",
+      "name": "A12 Platform / Drive and Limits",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "55:1874",
+      "name": "A08 Content / Moderation",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "55:2197",
+      "name": "A13 Platform / Audit Log",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1120
+    },
+    {
+      "id": "55:2551",
+      "name": "A14 Platform / Admin Settings and Roles",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1300
+    },
+    {
+      "id": "55:2957",
+      "name": "A06 Users / Suspend User Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1400
+    },
+    {
+      "id": "55:3320",
+      "name": "A15 Platform / Invite Admin",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1300
+    },
+    {
+      "id": "82:9133",
+      "name": "A09 Content / Block Shared Page Confirm",
+      "type": "FRAME",
+      "width": 1440,
+      "height": 1180
+    },
+    {
+      "id": "83:8304",
+      "name": "VerseStudio Admin - dashboard screens",
+      "type": "TEXT",
+      "width": 914,
+      "height": 56
+    },
+    {
+      "id": "83:8305",
+      "name": "15 screens. Sidebar links connect the 9 sections. Start at Overview.",
+      "type": "TEXT",
+      "width": 573,
+      "height": 28
+    },
+    {
+      "id": "83:8306",
+      "name": "1 · Dashboard",
+      "type": "TEXT",
+      "width": 231,
+      "height": 44
+    },
+    {
+      "id": "83:8307",
+      "name": "Platform health at a glance",
+      "type": "TEXT",
+      "width": 228,
+      "height": 28
+    },
+    {
+      "id": "83:8308",
+      "name": "2 · Users",
+      "type": "TEXT",
+      "width": 149,
+      "height": 44
+    },
+    {
+      "id": "83:8309",
+      "name": "List, selection, empty state, detail and suspend",
+      "type": "TEXT",
+      "width": 401,
+      "height": 28
+    },
+    {
+      "id": "83:8310",
+      "name": "3 · Recordings and moderation",
+      "type": "TEXT",
+      "width": 522,
+      "height": 44
+    },
+    {
+      "id": "83:8311",
+      "name": "All recordings and reported content",
+      "type": "TEXT",
+      "width": 303,
+      "height": 28
+    },
+    {
+      "id": "83:8312",
+      "name": "4 · Plans, billing and AI cost",
+      "type": "TEXT",
+      "width": 464,
+      "height": 44
+    },
+    {
+      "id": "83:8313",
+      "name": "Revenue, subscriptions, Gemini and ElevenLabs spend",
+      "type": "TEXT",
+      "width": 463,
+      "height": 28
+    },
+    {
+      "id": "83:8314",
+      "name": "5 · Platform controls",
+      "type": "TEXT",
+      "width": 345,
+      "height": 44
+    },
+    {
+      "id": "83:8315",
+      "name": "Google Drive health, limits, audit log and admin team",
+      "type": "TEXT",
+      "width": 448,
+      "height": 28
+    }
+  ],
+  "componentSets": [
+    {
+      "page": "Core Components",
+      "id": "5:32",
+      "name": "Keyboard Shortcut Pill",
+      "variantCount": 2,
+      "variants": [
+        {
+          "id": "5:28",
+          "name": "Size=sm"
+        },
+        {
+          "id": "5:30",
+          "name": "Size=lg"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:97",
+      "name": "Button",
+      "variantCount": 20,
+      "variants": [
+        {
+          "id": "5:33",
+          "name": "Variant=Primary, State=Default"
+        },
+        {
+          "id": "5:37",
+          "name": "Variant=Primary, State=Hover"
+        },
+        {
+          "id": "5:41",
+          "name": "Variant=Primary, State=Pressed"
+        },
+        {
+          "id": "5:45",
+          "name": "Variant=Primary, State=Disabled"
+        },
+        {
+          "id": "5:49",
+          "name": "Variant=Secondary, State=Default"
+        },
+        {
+          "id": "5:53",
+          "name": "Variant=Secondary, State=Hover"
+        },
+        {
+          "id": "5:57",
+          "name": "Variant=Secondary, State=Pressed"
+        },
+        {
+          "id": "5:61",
+          "name": "Variant=Secondary, State=Disabled"
+        },
+        {
+          "id": "5:65",
+          "name": "Variant=Ghost, State=Default"
+        },
+        {
+          "id": "5:69",
+          "name": "Variant=Ghost, State=Hover"
+        },
+        {
+          "id": "5:73",
+          "name": "Variant=Ghost, State=Pressed"
+        },
+        {
+          "id": "5:77",
+          "name": "Variant=Ghost, State=Disabled"
+        },
+        {
+          "id": "5:81",
+          "name": "Variant=Danger, State=Default"
+        },
+        {
+          "id": "5:85",
+          "name": "Variant=Danger, State=Hover"
+        },
+        {
+          "id": "5:89",
+          "name": "Variant=Danger, State=Pressed"
+        },
+        {
+          "id": "5:93",
+          "name": "Variant=Danger, State=Disabled"
+        },
+        {
+          "id": "77:8613",
+          "name": "Variant=Primary, State=Focus"
+        },
+        {
+          "id": "77:8616",
+          "name": "Variant=Secondary, State=Focus"
+        },
+        {
+          "id": "77:8619",
+          "name": "Variant=Ghost, State=Focus"
+        },
+        {
+          "id": "77:8622",
+          "name": "Variant=Danger, State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:163",
+      "name": "Button Small",
+      "variantCount": 20,
+      "variants": [
+        {
+          "id": "5:99",
+          "name": "Variant=Primary, State=Default"
+        },
+        {
+          "id": "5:103",
+          "name": "Variant=Primary, State=Hover"
+        },
+        {
+          "id": "5:107",
+          "name": "Variant=Primary, State=Pressed"
+        },
+        {
+          "id": "5:111",
+          "name": "Variant=Primary, State=Disabled"
+        },
+        {
+          "id": "5:115",
+          "name": "Variant=Secondary, State=Default"
+        },
+        {
+          "id": "5:119",
+          "name": "Variant=Secondary, State=Hover"
+        },
+        {
+          "id": "5:123",
+          "name": "Variant=Secondary, State=Pressed"
+        },
+        {
+          "id": "5:127",
+          "name": "Variant=Secondary, State=Disabled"
+        },
+        {
+          "id": "5:131",
+          "name": "Variant=Ghost, State=Default"
+        },
+        {
+          "id": "5:135",
+          "name": "Variant=Ghost, State=Hover"
+        },
+        {
+          "id": "5:139",
+          "name": "Variant=Ghost, State=Pressed"
+        },
+        {
+          "id": "5:143",
+          "name": "Variant=Ghost, State=Disabled"
+        },
+        {
+          "id": "5:147",
+          "name": "Variant=Danger, State=Default"
+        },
+        {
+          "id": "5:151",
+          "name": "Variant=Danger, State=Hover"
+        },
+        {
+          "id": "5:155",
+          "name": "Variant=Danger, State=Pressed"
+        },
+        {
+          "id": "5:159",
+          "name": "Variant=Danger, State=Disabled"
+        },
+        {
+          "id": "77:8625",
+          "name": "Variant=Primary, State=Focus"
+        },
+        {
+          "id": "77:8628",
+          "name": "Variant=Secondary, State=Focus"
+        },
+        {
+          "id": "77:8631",
+          "name": "Variant=Ghost, State=Focus"
+        },
+        {
+          "id": "77:8634",
+          "name": "Variant=Danger, State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:237",
+      "name": "Icon Button",
+      "variantCount": 30,
+      "variants": [
+        {
+          "id": "5:165",
+          "name": "Variant=Primary, Size=Md, State=Default"
+        },
+        {
+          "id": "5:168",
+          "name": "Variant=Primary, Size=Md, State=Hover"
+        },
+        {
+          "id": "5:171",
+          "name": "Variant=Primary, Size=Md, State=Pressed"
+        },
+        {
+          "id": "5:174",
+          "name": "Variant=Primary, Size=Md, State=Disabled"
+        },
+        {
+          "id": "5:177",
+          "name": "Variant=Secondary, Size=Md, State=Default"
+        },
+        {
+          "id": "5:180",
+          "name": "Variant=Secondary, Size=Md, State=Hover"
+        },
+        {
+          "id": "5:183",
+          "name": "Variant=Secondary, Size=Md, State=Pressed"
+        },
+        {
+          "id": "5:186",
+          "name": "Variant=Secondary, Size=Md, State=Disabled"
+        },
+        {
+          "id": "5:189",
+          "name": "Variant=Ghost, Size=Md, State=Default"
+        },
+        {
+          "id": "5:192",
+          "name": "Variant=Ghost, Size=Md, State=Hover"
+        },
+        {
+          "id": "5:195",
+          "name": "Variant=Ghost, Size=Md, State=Pressed"
+        },
+        {
+          "id": "5:198",
+          "name": "Variant=Ghost, Size=Md, State=Disabled"
+        },
+        {
+          "id": "5:201",
+          "name": "Variant=Primary, Size=Sm, State=Default"
+        },
+        {
+          "id": "5:204",
+          "name": "Variant=Primary, Size=Sm, State=Hover"
+        },
+        {
+          "id": "5:207",
+          "name": "Variant=Primary, Size=Sm, State=Pressed"
+        },
+        {
+          "id": "5:210",
+          "name": "Variant=Primary, Size=Sm, State=Disabled"
+        },
+        {
+          "id": "5:213",
+          "name": "Variant=Secondary, Size=Sm, State=Default"
+        },
+        {
+          "id": "5:216",
+          "name": "Variant=Secondary, Size=Sm, State=Hover"
+        },
+        {
+          "id": "5:219",
+          "name": "Variant=Secondary, Size=Sm, State=Pressed"
+        },
+        {
+          "id": "5:222",
+          "name": "Variant=Secondary, Size=Sm, State=Disabled"
+        },
+        {
+          "id": "5:225",
+          "name": "Variant=Ghost, Size=Sm, State=Default"
+        },
+        {
+          "id": "5:228",
+          "name": "Variant=Ghost, Size=Sm, State=Hover"
+        },
+        {
+          "id": "5:231",
+          "name": "Variant=Ghost, Size=Sm, State=Pressed"
+        },
+        {
+          "id": "5:234",
+          "name": "Variant=Ghost, Size=Sm, State=Disabled"
+        },
+        {
+          "id": "77:8637",
+          "name": "Variant=Primary, Size=Md, State=Focus"
+        },
+        {
+          "id": "77:8639",
+          "name": "Variant=Secondary, Size=Md, State=Focus"
+        },
+        {
+          "id": "77:8641",
+          "name": "Variant=Ghost, Size=Md, State=Focus"
+        },
+        {
+          "id": "77:8643",
+          "name": "Variant=Primary, Size=Sm, State=Focus"
+        },
+        {
+          "id": "77:8645",
+          "name": "Variant=Secondary, Size=Sm, State=Focus"
+        },
+        {
+          "id": "77:8647",
+          "name": "Variant=Ghost, Size=Sm, State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:251",
+      "name": "Toggle",
+      "variantCount": 8,
+      "variants": [
+        {
+          "id": "5:239",
+          "name": "Checked=Off, State=Default"
+        },
+        {
+          "id": "5:241",
+          "name": "Checked=Off, State=Hover"
+        },
+        {
+          "id": "5:243",
+          "name": "Checked=Off, State=Disabled"
+        },
+        {
+          "id": "5:245",
+          "name": "Checked=On, State=Default"
+        },
+        {
+          "id": "5:247",
+          "name": "Checked=On, State=Hover"
+        },
+        {
+          "id": "5:249",
+          "name": "Checked=On, State=Disabled"
+        },
+        {
+          "id": "77:8673",
+          "name": "Checked=Off, State=Focus"
+        },
+        {
+          "id": "77:8675",
+          "name": "Checked=On, State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:313",
+      "name": "Slider",
+      "variantCount": 15,
+      "variants": [
+        {
+          "id": "5:253",
+          "name": "Value=0, State=Default"
+        },
+        {
+          "id": "5:257",
+          "name": "Value=0, State=Hover"
+        },
+        {
+          "id": "5:261",
+          "name": "Value=0, State=Disabled"
+        },
+        {
+          "id": "5:265",
+          "name": "Value=25, State=Default"
+        },
+        {
+          "id": "5:269",
+          "name": "Value=25, State=Hover"
+        },
+        {
+          "id": "5:273",
+          "name": "Value=25, State=Disabled"
+        },
+        {
+          "id": "5:277",
+          "name": "Value=50, State=Default"
+        },
+        {
+          "id": "5:281",
+          "name": "Value=50, State=Hover"
+        },
+        {
+          "id": "5:285",
+          "name": "Value=50, State=Disabled"
+        },
+        {
+          "id": "5:289",
+          "name": "Value=75, State=Default"
+        },
+        {
+          "id": "5:293",
+          "name": "Value=75, State=Hover"
+        },
+        {
+          "id": "5:297",
+          "name": "Value=75, State=Disabled"
+        },
+        {
+          "id": "5:301",
+          "name": "Value=100, State=Default"
+        },
+        {
+          "id": "5:305",
+          "name": "Value=100, State=Hover"
+        },
+        {
+          "id": "5:309",
+          "name": "Value=100, State=Disabled"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:323",
+      "name": "Tab",
+      "variantCount": 5,
+      "variants": [
+        {
+          "id": "5:315",
+          "name": "State=Default"
+        },
+        {
+          "id": "5:317",
+          "name": "State=Hover"
+        },
+        {
+          "id": "5:319",
+          "name": "State=Selected"
+        },
+        {
+          "id": "5:321",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "77:8677",
+          "name": "State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "5:388",
+      "name": "Toast",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "5:343",
+          "name": "Type=Info"
+        },
+        {
+          "id": "5:355",
+          "name": "Type=Success"
+        },
+        {
+          "id": "5:366",
+          "name": "Type=Warning"
+        },
+        {
+          "id": "5:377",
+          "name": "Type=Error"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "28:526",
+      "name": "Input",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "28:518",
+          "name": "State=Default"
+        },
+        {
+          "id": "28:520",
+          "name": "State=Focus"
+        },
+        {
+          "id": "28:522",
+          "name": "State=Error"
+        },
+        {
+          "id": "28:524",
+          "name": "State=Disabled"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "28:543",
+      "name": "Select",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "28:528",
+          "name": "State=Default"
+        },
+        {
+          "id": "28:533",
+          "name": "State=Open"
+        },
+        {
+          "id": "28:538",
+          "name": "State=Disabled"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "32:156",
+      "name": "Progress Bar",
+      "variantCount": 5,
+      "variants": [
+        {
+          "id": "32:141",
+          "name": "Value=0"
+        },
+        {
+          "id": "32:144",
+          "name": "Value=25"
+        },
+        {
+          "id": "32:147",
+          "name": "Value=50"
+        },
+        {
+          "id": "32:150",
+          "name": "Value=75"
+        },
+        {
+          "id": "32:153",
+          "name": "Value=100"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "32:189",
+      "name": "Menu Item",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "32:158",
+          "name": "State=Default"
+        },
+        {
+          "id": "32:165",
+          "name": "State=Hover"
+        },
+        {
+          "id": "32:172",
+          "name": "State=Selected"
+        },
+        {
+          "id": "32:182",
+          "name": "State=Danger"
+        }
+      ]
+    },
+    {
+      "page": "Core Components",
+      "id": "32:374",
+      "name": "Modal",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "32:238",
+          "name": "Type=Confirm"
+        },
+        {
+          "id": "32:280",
+          "name": "Type=Danger"
+        },
+        {
+          "id": "32:315",
+          "name": "Type=Progress"
+        },
+        {
+          "id": "32:340",
+          "name": "Type=Error"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "10:25",
+      "name": "Record Button",
+      "variantCount": 6,
+      "variants": [
+        {
+          "id": "10:5",
+          "name": "Size=Lg, State=Idle"
+        },
+        {
+          "id": "10:7",
+          "name": "Size=Lg, State=Recording"
+        },
+        {
+          "id": "10:9",
+          "name": "Size=Lg, State=Paused"
+        },
+        {
+          "id": "10:15",
+          "name": "Size=Md, State=Idle"
+        },
+        {
+          "id": "10:17",
+          "name": "Size=Md, State=Recording"
+        },
+        {
+          "id": "10:19",
+          "name": "Size=Md, State=Paused"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "10:143",
+      "name": "Layout Switcher",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "10:27",
+          "name": "Selected=Screen"
+        },
+        {
+          "id": "10:56",
+          "name": "Selected=Camera"
+        },
+        {
+          "id": "10:85",
+          "name": "Selected=Bubble"
+        },
+        {
+          "id": "10:114",
+          "name": "Selected=Split"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "10:177",
+      "name": "Camera Bubble",
+      "variantCount": 6,
+      "variants": [
+        {
+          "id": "10:145",
+          "name": "Shape=Circle, State=Default"
+        },
+        {
+          "id": "10:151",
+          "name": "Shape=Circle, State=Hover"
+        },
+        {
+          "id": "10:161",
+          "name": "Shape=Rounded, State=Default"
+        },
+        {
+          "id": "10:167",
+          "name": "Shape=Rounded, State=Hover"
+        },
+        {
+          "id": "34:629",
+          "name": "Shape=Circle, State=Off"
+        },
+        {
+          "id": "34:639",
+          "name": "Shape=Rounded, State=Off"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "11:187",
+      "name": "Mini Controller",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "11:111",
+          "name": "State=Recording"
+        },
+        {
+          "id": "11:151",
+          "name": "State=Paused"
+        },
+        {
+          "id": "34:593",
+          "name": "State=Idle"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "11:291",
+      "name": "Audio Track Selector",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "11:189",
+          "name": "Selected=Bangla"
+        },
+        {
+          "id": "11:223",
+          "name": "Selected=English"
+        },
+        {
+          "id": "11:257",
+          "name": "Selected=Ducking"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "11:367",
+      "name": "Share Link Card",
+      "variantCount": 2,
+      "variants": [
+        {
+          "id": "11:293",
+          "name": "State=Default"
+        },
+        {
+          "id": "11:330",
+          "name": "State=Copied"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "12:397",
+      "name": "Timeline Trimmer",
+      "variantCount": 2,
+      "variants": [
+        {
+          "id": "12:251",
+          "name": "State=Default"
+        },
+        {
+          "id": "12:324",
+          "name": "State=Trimming"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "28:516",
+      "name": "Recording Card",
+      "variantCount": 6,
+      "variants": [
+        {
+          "id": "28:428",
+          "name": "Visibility=Shared, State=Default"
+        },
+        {
+          "id": "28:450",
+          "name": "Visibility=Shared, State=Hover"
+        },
+        {
+          "id": "28:472",
+          "name": "Visibility=Private, State=Default"
+        },
+        {
+          "id": "28:494",
+          "name": "Visibility=Private, State=Hover"
+        },
+        {
+          "id": "80:549",
+          "name": "Visibility=Uploading, State=Default"
+        },
+        {
+          "id": "80:573",
+          "name": "Visibility=Failed, State=Default"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "34:523",
+      "name": "Tool Palette",
+      "variantCount": 6,
+      "variants": [
+        {
+          "id": "34:295",
+          "name": "Active=None"
+        },
+        {
+          "id": "34:333",
+          "name": "Active=Laser"
+        },
+        {
+          "id": "34:371",
+          "name": "Active=Spotlight"
+        },
+        {
+          "id": "34:409",
+          "name": "Active=Zoom"
+        },
+        {
+          "id": "34:447",
+          "name": "Active=Privacy"
+        },
+        {
+          "id": "34:485",
+          "name": "Active=Prompter"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "34:552",
+      "name": "Live Subtitle",
+      "variantCount": 2,
+      "variants": [
+        {
+          "id": "34:525",
+          "name": "Mode=Bilingual"
+        },
+        {
+          "id": "34:539",
+          "name": "Mode=English"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "34:560",
+      "name": "Countdown",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "34:554",
+          "name": "Value=3"
+        },
+        {
+          "id": "34:556",
+          "name": "Value=2"
+        },
+        {
+          "id": "34:558",
+          "name": "Value=1"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "34:592",
+      "name": "Wallpaper Swatch",
+      "variantCount": 10,
+      "variants": [
+        {
+          "id": "34:562",
+          "name": "Style=Lime, State=Default"
+        },
+        {
+          "id": "34:563",
+          "name": "Style=Lime, State=Selected"
+        },
+        {
+          "id": "34:568",
+          "name": "Style=Violet, State=Default"
+        },
+        {
+          "id": "34:569",
+          "name": "Style=Violet, State=Selected"
+        },
+        {
+          "id": "34:574",
+          "name": "Style=Sunset, State=Default"
+        },
+        {
+          "id": "34:575",
+          "name": "Style=Sunset, State=Selected"
+        },
+        {
+          "id": "34:580",
+          "name": "Style=Ocean, State=Default"
+        },
+        {
+          "id": "34:581",
+          "name": "Style=Ocean, State=Selected"
+        },
+        {
+          "id": "34:586",
+          "name": "Style=Mono, State=Default"
+        },
+        {
+          "id": "34:587",
+          "name": "Style=Mono, State=Selected"
+        }
+      ]
+    },
+    {
+      "page": "Studio Components",
+      "id": "80:548",
+      "name": "Mic Level",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "80:509",
+          "name": "Level=Low"
+        },
+        {
+          "id": "80:522",
+          "name": "Level=Good"
+        },
+        {
+          "id": "80:535",
+          "name": "Level=Loud"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:613",
+      "name": "Avatar",
+      "variantCount": 12,
+      "variants": [
+        {
+          "id": "45:589",
+          "name": "Tone=Brand, Size=Sm"
+        },
+        {
+          "id": "45:591",
+          "name": "Tone=Brand, Size=Md"
+        },
+        {
+          "id": "45:593",
+          "name": "Tone=Brand, Size=Lg"
+        },
+        {
+          "id": "45:595",
+          "name": "Tone=Neutral, Size=Sm"
+        },
+        {
+          "id": "45:597",
+          "name": "Tone=Neutral, Size=Md"
+        },
+        {
+          "id": "45:599",
+          "name": "Tone=Neutral, Size=Lg"
+        },
+        {
+          "id": "45:601",
+          "name": "Tone=Success, Size=Sm"
+        },
+        {
+          "id": "45:603",
+          "name": "Tone=Success, Size=Md"
+        },
+        {
+          "id": "45:605",
+          "name": "Tone=Success, Size=Lg"
+        },
+        {
+          "id": "45:607",
+          "name": "Tone=Warning, Size=Sm"
+        },
+        {
+          "id": "45:609",
+          "name": "Tone=Warning, Size=Md"
+        },
+        {
+          "id": "45:611",
+          "name": "Tone=Warning, Size=Lg"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:630",
+      "name": "Status Chip",
+      "variantCount": 5,
+      "variants": [
+        {
+          "id": "45:615",
+          "name": "Tone=Success"
+        },
+        {
+          "id": "45:618",
+          "name": "Tone=Warning"
+        },
+        {
+          "id": "45:621",
+          "name": "Tone=Error"
+        },
+        {
+          "id": "45:624",
+          "name": "Tone=Neutral"
+        },
+        {
+          "id": "45:627",
+          "name": "Tone=Brand"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:642",
+      "name": "Checkbox",
+      "variantCount": 5,
+      "variants": [
+        {
+          "id": "45:632",
+          "name": "State=Unchecked"
+        },
+        {
+          "id": "45:633",
+          "name": "State=Checked"
+        },
+        {
+          "id": "45:637",
+          "name": "State=Indeterminate"
+        },
+        {
+          "id": "45:641",
+          "name": "State=Disabled"
+        },
+        {
+          "id": "77:8679",
+          "name": "State=Focus"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:701",
+      "name": "KPI Card",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "45:644",
+          "name": "Trend=Up"
+        },
+        {
+          "id": "45:663",
+          "name": "Trend=Down"
+        },
+        {
+          "id": "45:682",
+          "name": "Trend=Flat"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:764",
+      "name": "Admin Nav Item",
+      "variantCount": 3,
+      "variants": [
+        {
+          "id": "45:737",
+          "name": "State=Default"
+        },
+        {
+          "id": "45:746",
+          "name": "State=Hover"
+        },
+        {
+          "id": "45:755",
+          "name": "State=Active"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:889",
+      "name": "User Menu",
+      "variantCount": 2,
+      "variants": [
+        {
+          "id": "45:766",
+          "name": "Role=User"
+        },
+        {
+          "id": "45:825",
+          "name": "Role=Admin"
+        }
+      ]
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:1089",
+      "name": "Plan Card",
+      "variantCount": 4,
+      "variants": [
+        {
+          "id": "45:891",
+          "name": "Plan=Free, Current=Yes"
+        },
+        {
+          "id": "45:938",
+          "name": "Plan=Free, Current=No"
+        },
+        {
+          "id": "45:985",
+          "name": "Plan=Pro, Current=Yes"
+        },
+        {
+          "id": "45:1035",
+          "name": "Plan=Pro, Current=No"
+        }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "page": "Core Components",
+      "id": "5:325",
+      "name": "Tab Group"
+    },
+    {
+      "page": "Core Components",
+      "id": "5:334",
+      "name": "Tooltip"
+    },
+    {
+      "page": "Core Components",
+      "id": "32:191",
+      "name": "Menu / Recording Actions"
+    },
+    {
+      "page": "Studio Components",
+      "id": "12:399",
+      "name": "Teleprompter"
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:703",
+      "name": "Pagination"
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:1091",
+      "name": "Chart / Line"
+    },
+    {
+      "page": "Account & Admin Components",
+      "id": "45:1114",
+      "name": "Chart / Bars"
+    }
+  ]
+}

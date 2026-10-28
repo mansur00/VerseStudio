@@ -1,0 +1,39 @@
+{
+  "success": true,
+  "settings": {
+    "aspectRatio": 1.7777777777777777,
+    "cursor": "never",
+    "deviceId": "screen:-3:0",
+    "displaySurface": "monitor",
+    "frameRate": 60,
+    "height": 2160,
+    "logicalSurface": true,
+    "resizeMode": "crop-and-scale",
+    "width": 3840
+  },
+  "capabilities": {
+    "aspectRatio": {
+      "max": 1920,
+      "min": 0.000925925925925926
+    },
+    "deviceId": "screen:-3:0",
+    "displaySurface": "monitor",
+    "facingMode": [],
+    "frameRate": {
+      "max": 60,
+      "min": 0
+    },
+    "height": {
+      "max": 1080,
+      "min": 1
+    },
+    "resizeMode": [
+      "none",
+      "crop-and-scale"
+    ],
+    "width": {
+      "max": 1920,
+      "min": 1
+    }
+  }
+}

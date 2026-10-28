@@ -1,0 +1,32 @@
+[
+  {
+    "second": 1,
+    "usedJSHeapSize": 11558834,
+    "totalJSHeapSize": 19383422
+  },
+  {
+    "second": 2,
+    "usedJSHeapSize": 11675290,
+    "totalJSHeapSize": 19383426
+  },
+  {
+    "second": 3,
+    "usedJSHeapSize": 11709638,
+    "totalJSHeapSize": 19383426
+  },
+  {
+    "second": 4,
+    "usedJSHeapSize": 11730426,
+    "totalJSHeapSize": 19383426
+  },
+  {
+    "second": 5,
+    "usedJSHeapSize": 11888786,
+    "totalJSHeapSize": 19383426
+  },
+  {
+    "second": 6,
+    "usedJSHeapSize": 12437814,
+    "totalJSHeapSize": 19383426
+  }
+]

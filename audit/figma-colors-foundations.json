@@ -1,0 +1,122 @@
+[
+  {
+    "name": "bg/canvas",
+    "hex": "#1B1C21"
+  },
+  {
+    "name": "bg/surface",
+    "hex": "#222329"
+  },
+  {
+    "name": "bg/elevated",
+    "hex": "#292A31"
+  },
+  {
+    "name": "bg/hover",
+    "hex": "#2F3037"
+  },
+  {
+    "name": "bg/active",
+    "hex": "#383942"
+  },
+  {
+    "name": "text/primary",
+    "hex": "#F5F5F7"
+  },
+  {
+    "name": "text/secondary",
+    "hex": "#B9BAC4"
+  },
+  {
+    "name": "text/tertiary",
+    "hex": "#A3A4B0"
+  },
+  {
+    "name": "text/disabled",
+    "hex": "#6E6F7B"
+  },
+  {
+    "name": "text/on-brand",
+    "hex": "#1B1C21"
+  },
+  {
+    "name": "text/inverse",
+    "hex": "#1B1C21"
+  },
+  {
+    "name": "border/subtle",
+    "hex": "#2F3037"
+  },
+  {
+    "name": "border/default",
+    "hex": "#383942"
+  },
+  {
+    "name": "border/strong",
+    "hex": "#4A4B55"
+  },
+  {
+    "name": "border/focus",
+    "hex": "#A3E635"
+  },
+  {
+    "name": "brand/default",
+    "hex": "#A3E635"
+  },
+  {
+    "name": "brand/hover",
+    "hex": "#BEF264"
+  },
+  {
+    "name": "brand/pressed",
+    "hex": "#84CC16"
+  },
+  {
+    "name": "brand/subtle",
+    "hex": "#26400A"
+  },
+  {
+    "name": "record/default",
+    "hex": "#FF4D4F"
+  },
+  {
+    "name": "record/hover",
+    "hex": "#FF6B6B"
+  },
+  {
+    "name": "record/pressed",
+    "hex": "#E5383B"
+  },
+  {
+    "name": "record/subtle",
+    "hex": "#4A1517"
+  },
+  {
+    "name": "success/default",
+    "hex": "#22C55E"
+  },
+  {
+    "name": "success/subtle",
+    "hex": "#0F3A1F"
+  },
+  {
+    "name": "warning/default",
+    "hex": "#F59E0B"
+  },
+  {
+    "name": "warning/subtle",
+    "hex": "#3F2A08"
+  },
+  {
+    "name": "error/default",
+    "hex": "#FF6B6B"
+  },
+  {
+    "name": "error/subtle",
+    "hex": "#4A1517"
+  },
+  {
+    "name": "accent/laser",
+    "hex": "#22D3EE"
+  }
+]
