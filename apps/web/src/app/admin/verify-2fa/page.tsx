@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Shield01Icon, Alert01Icon, LockIcon } from '@hugeicons/core-free-icons';
 import { Button, Input, HugeIcon } from '@verse-studio/ui';
 
-export default function AdminVerify2FaPage() {
+function AdminVerify2FaForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/admin';
@@ -62,45 +62,51 @@ export default function AdminVerify2FaPage() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[var(--color-text-secondary)] mb-1.5">
-              6-Digit Authenticator Code
-            </label>
-            <Input
-              type="text"
-              maxLength={6}
-              value={totpCode}
-              onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
-              placeholder="123456"
-              className="text-center text-xl tracking-widest font-mono"
-              required
-              autoFocus
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Input
+            label="Authentication Code"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={6}
+            value={totpCode}
+            onChange={(e) => setTotpCode(e.target.value.replace(/[^0-9]/g, ''))}
+            placeholder="123456"
+            className="text-center tracking-widest font-mono text-xl"
+            autoFocus
+            required
+          />
 
-          <div className="pt-2">
+          <div className="space-y-3">
             <Button
               type="submit"
               variant="primary"
               className="w-full justify-center"
               disabled={isLoading || totpCode.length < 6}
             >
-              {isLoading ? 'Verifying TOTP Code...' : 'Authorize Admin Access'}
+              {isLoading ? 'Verifying Code...' : 'Complete Authentication'}
             </Button>
           </div>
         </form>
 
         <div className="pt-4 border-t border-[var(--color-border-subtle)] flex items-center justify-between text-xs text-[var(--color-text-tertiary)]">
-          <Link href="/admin/login" className="hover:text-[var(--color-text-primary)]">
-            ← Switch Account
-          </Link>
           <div className="flex items-center gap-1.5">
             <HugeIcon icon={Shield01Icon} size={14} className="text-[var(--color-brand-default)]" />
-            <span>AAL2 Active</span>
+            <span>Assurance Level AAL2</span>
           </div>
+          <Link href="/admin/login" className="hover:text-[var(--color-text-primary)]">
+            Back to Sign In
+          </Link>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminVerify2FaPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[var(--color-bg-canvas)]" />}>
+      <AdminVerify2FaForm />
+    </Suspense>
   );
 }
