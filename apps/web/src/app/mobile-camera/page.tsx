@@ -2,19 +2,19 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Smartphone,
-  Video,
-  VideoOff,
-  Mic,
-  MicOff,
-  SwitchCamera,
-  Wifi,
-  Zap,
-  CheckCircle2,
-  AlertCircle,
-  Lock,
-} from 'lucide-react';
-import { Button, StatusChip } from '@verse-studio/ui';
+  SmartPhone01Icon,
+  CameraVideoIcon,
+  CameraOff01Icon,
+  Mic01Icon,
+  MicOff01Icon,
+  CameraRotated01Icon,
+  Wifi01Icon,
+  FlashIcon,
+  CheckmarkCircle01Icon,
+  AlertCircleIcon,
+  LockIcon,
+} from '@hugeicons/core-free-icons';
+import { Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 
 export default function MobileCameraPage() {
   const [pairingCode, setPairingCode] = useState<string>('');
@@ -31,7 +31,7 @@ export default function MobileCameraPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
-  const signalingChannelRef = useRef<BroadcastChannel | null>(null);
+  const signalingPollRef = useRef<any>(null);
   const wakeLockRef = useRef<any>(null);
 
   // Extract ?pair= parameter from URL
@@ -98,7 +98,7 @@ export default function MobileCameraPage() {
     }
   };
 
-  // Connect to Studio Host
+  // Connect to Studio Host via Network Signaling & WebRTC
   const startStreamingToStudio = async () => {
     setErrorMessage(null);
     setConnectionStatus('connecting');
@@ -107,9 +107,17 @@ export default function MobileCameraPage() {
       const stream = await startCamera(facingMode);
       await requestWakeLock();
 
-      const channelName = `verse-studio-webrtc-${pairingCode}`;
-      const channel = new BroadcastChannel(channelName);
-      signalingChannelRef.current = channel;
+      const postSignal = async (data: any) => {
+        try {
+          await fetch('/api/signaling', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: pairingCode, role: 'client', data }),
+          });
+        } catch (e) {
+          console.warn('Mobile postSignal failed:', e);
+        }
+      };
 
       const pc = new RTCPeerConnection({
         iceServers: [
@@ -124,15 +132,14 @@ export default function MobileCameraPage() {
 
       pc.onicecandidate = (event) => {
         if (event.candidate) {
-          channel.postMessage({
+          postSignal({
             type: 'PHONE_ICE_CANDIDATE',
             candidate: event.candidate,
           });
         }
       };
 
-      channel.onmessage = async (event) => {
-        const msg = event.data;
+      const handleSignalMessage = async (msg: any) => {
         if (!msg) return;
 
         if (msg.type === 'STUDIO_OFFER') {
@@ -140,7 +147,7 @@ export default function MobileCameraPage() {
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
 
-          channel.postMessage({
+          await postSignal({
             type: 'PHONE_ANSWER',
             sdp: answer,
           });
@@ -157,24 +164,32 @@ export default function MobileCameraPage() {
         }
       };
 
+      // Poll signals from host
+      if (signalingPollRef.current) clearInterval(signalingPollRef.current);
+      signalingPollRef.current = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/signaling?code=${encodeURIComponent(pairingCode)}&role=client`);
+          if (res.ok) {
+            const body = await res.json();
+            for (const msg of body.messages || []) {
+              await handleSignalMessage(msg);
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      }, 250);
+
       // Send join request to Studio
-      channel.postMessage({
+      await postSignal({
         type: 'PHONE_JOIN_REQUEST',
         pairingCode,
-        deviceName: navigator.userAgent.includes('iPhone')
+        deviceName: typeof navigator !== 'undefined' && navigator.userAgent.includes('iPhone')
           ? 'Apple iPhone 15 Pro'
-          : navigator.userAgent.includes('Android')
+          : typeof navigator !== 'undefined' && navigator.userAgent.includes('Android')
           ? 'Android Smartphone'
           : 'Mobile Camera Device',
       });
-
-      // Optimistic connect fallback for same-network demonstration
-      setTimeout(() => {
-        if (connectionStatus === 'connecting') {
-          setConnectionStatus('connected');
-          setIsStreaming(true);
-        }
-      }, 1200);
     } catch (err: unknown) {
       setConnectionStatus('error');
       const msg = err instanceof Error ? err.message : 'Streaming connection failed';
@@ -184,11 +199,16 @@ export default function MobileCameraPage() {
 
   // Stop Streaming
   const stopStreaming = () => {
-    if (signalingChannelRef.current) {
-      signalingChannelRef.current.postMessage({ type: 'PHONE_DISCONNECT' });
-      signalingChannelRef.current.close();
-      signalingChannelRef.current = null;
+    if (signalingPollRef.current) {
+      clearInterval(signalingPollRef.current);
+      signalingPollRef.current = null;
     }
+
+    fetch('/api/signaling', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: pairingCode, role: 'client', data: { type: 'PHONE_DISCONNECT' } }),
+    }).catch(() => {});
 
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
@@ -250,7 +270,7 @@ export default function MobileCameraPage() {
       <header className="px-5 py-4 flex items-center justify-between border-b border-[#2F3037] bg-[#222329]/80 backdrop-blur-md">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[var(--color-brand-default)] flex items-center justify-center shadow-[var(--glow-brand)]">
-            <Smartphone className="w-4 h-4 text-[#1B1C21]" />
+            <HugeIcon icon={SmartPhone01Icon} size={16} className="text-[#1B1C21]" />
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-tight">VerseStudio Camera</h1>
@@ -260,8 +280,8 @@ export default function MobileCameraPage() {
 
         <div className="flex items-center gap-2">
           <StatusChip
-            status={isStreaming ? 'recording' : 'private'}
-            label={isStreaming ? '1080p 30 FPS' : 'Standby'}
+            status={isStreaming ? 'recording' : connectionStatus === 'connecting' ? 'uploading' : 'private'}
+            label={isStreaming ? '1080p 30 FPS' : connectionStatus === 'connecting' ? 'Connecting...' : 'Standby'}
           />
         </div>
       </header>
@@ -282,13 +302,13 @@ export default function MobileCameraPage() {
         <div className="absolute inset-8 pointer-events-none flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-mono text-[var(--color-brand-default)] flex items-center gap-1.5">
-              <Zap className="w-3 h-3 text-[var(--color-brand-default)]" />
+              <HugeIcon icon={FlashIcon} size={12} className="text-[var(--color-brand-default)]" />
               <span>PAIR: {pairingCode || 'VS-8924'}</span>
             </div>
 
             {isStreaming && (
               <div className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-mono text-white flex items-center gap-1.5">
-                <Wifi className="w-3 h-3 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Wifi01Icon} size={12} className="text-[var(--color-brand-default)]" />
                 <span>{latencyMs}ms</span>
               </div>
             )}
@@ -305,7 +325,7 @@ export default function MobileCameraPage() {
             </span>
             {wakeLockActive && (
               <span className="bg-black/60 px-2 py-0.5 rounded backdrop-blur-md flex items-center gap-1 text-[var(--color-brand-default)]">
-                <Lock className="w-3 h-3" />
+                <HugeIcon icon={LockIcon} size={12} />
                 Screen Awake
               </span>
             )}
@@ -316,7 +336,7 @@ export default function MobileCameraPage() {
         {!isStreaming && (
           <div className="absolute inset-x-8 bottom-28 p-4 rounded-xl bg-black/75 backdrop-blur-md border border-white/15 text-center space-y-2">
             <h3 className="text-sm font-bold text-white flex items-center justify-center gap-1.5">
-              <CheckCircle2 className="w-4 h-4 text-[var(--color-brand-default)]" />
+              <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-brand-default)]" />
               Ready to Stream Camera Feed
             </h3>
             <p className="text-xs text-[#B9BAC4]">
@@ -328,7 +348,7 @@ export default function MobileCameraPage() {
         {/* Error notice */}
         {errorMessage && (
           <div className="absolute top-8 inset-x-6 p-3 rounded-xl bg-red-950/80 border border-red-500/40 text-red-200 text-xs flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
+            <HugeIcon icon={AlertCircleIcon} size={16} className="text-red-400 shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}
@@ -343,7 +363,7 @@ export default function MobileCameraPage() {
           className="p-3.5 rounded-full bg-[#292A31] hover:bg-[#2F3037] border border-[#383942] text-[#F5F5F7] transition-transform active:scale-95"
           aria-label="Flip Camera"
         >
-          <SwitchCamera className="w-5 h-5 text-[var(--color-brand-default)]" />
+          <HugeIcon icon={CameraRotated01Icon} size={20} className="text-[var(--color-brand-default)]" />
         </button>
 
         {/* Big Start / Stop Streaming Button */}
@@ -352,7 +372,7 @@ export default function MobileCameraPage() {
             size="lg"
             variant="danger"
             className="flex-1 max-w-xs shadow-lg"
-            leadingIcon={<VideoOff className="w-5 h-5" />}
+            leadingIcon={<HugeIcon icon={CameraOff01Icon} size={20} />}
             onClick={stopStreaming}
           >
             Stop Streaming
@@ -362,7 +382,7 @@ export default function MobileCameraPage() {
             size="lg"
             variant="primary"
             className="flex-1 max-w-xs shadow-[var(--glow-brand)]"
-            leadingIcon={<Video className="w-5 h-5" />}
+            leadingIcon={<HugeIcon icon={CameraVideoIcon} size={20} />}
             onClick={startStreamingToStudio}
           >
             Start Streaming (1080p)
@@ -380,7 +400,7 @@ export default function MobileCameraPage() {
           }`}
           aria-label={isMicMuted ? 'Unmute Microphone' : 'Mute Microphone'}
         >
-          {isMicMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          {isMicMuted ? <HugeIcon icon={MicOff01Icon} size={20} /> : <HugeIcon icon={Mic01Icon} size={20} />}
         </button>
       </footer>
     </div>

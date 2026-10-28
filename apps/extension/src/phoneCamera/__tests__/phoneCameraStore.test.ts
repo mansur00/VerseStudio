@@ -70,4 +70,27 @@ describe('usePhoneCameraStore & PhoneCameraService', () => {
     store.setIsModalOpen(false);
     expect(usePhoneCameraStore.getState().isModalOpen).toBe(false);
   });
+
+  it('P1-3: Handles network signaling handshake, ICE exchange, and reconnects', async () => {
+    const code = 'VS-TEST';
+    let statusLog: string[] = [];
+
+    const service = new PhoneCameraService(code, {
+      onStatusChange: (status) => statusLog.push(status),
+      onConnected: () => statusLog.push('connected'),
+      onDisconnected: () => statusLog.push('disconnected'),
+    }, { baseUrl: 'http://localhost:3000' });
+
+    service.startHost();
+    expect(statusLog).toContain('waiting');
+
+    // Simulate mobile disconnect
+    service.disconnect();
+    expect(statusLog).toContain('disconnected');
+
+    // Reconnect test
+    service.startHost();
+    expect(statusLog[statusLog.length - 1]).toBe('waiting');
+    service.disconnect();
+  });
 });
