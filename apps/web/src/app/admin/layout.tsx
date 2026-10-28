@@ -4,24 +4,23 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
-  Users,
-  Video,
-  ShieldAlert,
-  CreditCard,
-  Cpu,
-  HardDrive,
-  FileSpreadsheet,
-  Settings,
-  ShieldCheck,
-  Search,
-  Menu,
-  X,
-  LogOut,
-  Bell,
-  Sparkles,
-} from 'lucide-react';
-import { AdminNavItem, Avatar } from '@verse-studio/ui';
+  DashboardSpeed01Icon,
+  UserGroupIcon,
+  CameraVideoIcon,
+  Shield01Icon,
+  CreditCardIcon,
+  CpuIcon,
+  HardDriveIcon,
+  File01Icon,
+  Settings01Icon,
+  Search01Icon,
+  Menu01Icon,
+  Cancel01Icon,
+  Logout01Icon,
+  Notification01Icon,
+  SparklesIcon,
+} from '@hugeicons/core-free-icons';
+import { AdminNavItem, Avatar, HugeIcon } from '@verse-studio/ui';
 
 export default function AdminLayout({
   children,
@@ -30,31 +29,43 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [is2FaVerified, setIs2FaVerified] = useState(true);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'logout' }),
+      });
+      window.location.href = '/admin/login';
+    } catch {
+      window.location.href = '/admin/login';
+    }
+  };
 
   const navItems = [
     {
       label: 'Overview',
       href: '/admin',
-      icon: <LayoutDashboard className="w-4 h-4" />,
+      icon: <HugeIcon icon={DashboardSpeed01Icon} size={16} />,
       active: pathname === '/admin',
     },
     {
       label: 'Users',
       href: '/admin/users',
-      icon: <Users className="w-4 h-4" />,
+      icon: <HugeIcon icon={UserGroupIcon} size={16} />,
       active: pathname.startsWith('/admin/users'),
     },
     {
       label: 'Recordings',
       href: '/admin/recordings',
-      icon: <Video className="w-4 h-4" />,
+      icon: <HugeIcon icon={CameraVideoIcon} size={16} />,
       active: pathname.startsWith('/admin/recordings'),
     },
     {
       label: 'Moderation',
       href: '/admin/moderation',
-      icon: <ShieldAlert className="w-4 h-4" />,
+      icon: <HugeIcon icon={Shield01Icon} size={16} />,
       active: pathname.startsWith('/admin/moderation'),
       badge: 1,
       badgeVariant: 'warning' as const,
@@ -62,31 +73,31 @@ export default function AdminLayout({
     {
       label: 'Plans & Billing',
       href: '/admin/billing',
-      icon: <CreditCard className="w-4 h-4" />,
+      icon: <HugeIcon icon={CreditCardIcon} size={16} />,
       active: pathname.startsWith('/admin/billing'),
     },
     {
       label: 'AI Usage & Costs',
       href: '/admin/ai-usage',
-      icon: <Cpu className="w-4 h-4" />,
+      icon: <HugeIcon icon={CpuIcon} size={16} />,
       active: pathname.startsWith('/admin/ai-usage'),
     },
     {
       label: 'Drive & Limits',
       href: '/admin/drive-limits',
-      icon: <HardDrive className="w-4 h-4" />,
+      icon: <HugeIcon icon={HardDriveIcon} size={16} />,
       active: pathname.startsWith('/admin/drive-limits'),
     },
     {
       label: 'Audit Log',
       href: '/admin/audit-log',
-      icon: <FileSpreadsheet className="w-4 h-4" />,
+      icon: <HugeIcon icon={File01Icon} size={16} />,
       active: pathname.startsWith('/admin/audit-log'),
     },
     {
       label: 'Admin Settings',
       href: '/admin/settings',
-      icon: <Settings className="w-4 h-4" />,
+      icon: <HugeIcon icon={Settings01Icon} size={16} />,
       active: pathname.startsWith('/admin/settings'),
     },
   ];
@@ -132,37 +143,32 @@ export default function AdminLayout({
         <div className="pt-4 border-t border-[var(--color-border-subtle)] space-y-3">
           <div className="flex items-center justify-between px-2">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[var(--color-brand-default)]" />
-              <span className="text-xs font-semibold text-[var(--color-brand-default)]">2FA Protected</span>
+              <HugeIcon icon={Shield01Icon} size={16} className="text-[var(--color-brand-default)]" />
+              <span className="text-xs font-semibold text-[var(--color-brand-default)]">2FA Enforced</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setIs2FaVerified(!is2FaVerified)}
-              className="text-[10px] font-mono text-[var(--color-text-tertiary)] hover:underline"
-              title="Toggle simulated 2FA status"
-            >
-              {is2FaVerified ? 'Verified' : 'Challenge'}
-            </button>
+            <span className="text-[10px] font-mono text-[var(--color-success-default)] bg-[var(--color-success-subtle)] px-1.5 py-0.5 rounded">
+              AAL2 Verified
+            </span>
           </div>
 
           <div className="p-2.5 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-between">
             <div className="flex items-center gap-2.5 min-w-0">
-              <Avatar name="Mansur Admin" size="sm" />
+              <Avatar name="Admin User" size="sm" />
               <div className="min-w-0">
-                <p className="text-xs font-semibold truncate">Mansur Admin</p>
-                <p className="text-[10px] text-[var(--color-text-tertiary)] truncate">Super Admin</p>
+                <p className="text-xs font-semibold truncate">Super Admin</p>
+                <p className="text-[10px] text-[var(--color-text-tertiary)] truncate">admin@versestudio.app</p>
               </div>
             </div>
 
-            <Link href="/" title="Exit Admin to App">
-              <button
-                type="button"
-                className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors"
-                aria-label="Exit admin"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
-            </Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-error-default)] hover:bg-[var(--color-bg-hover)] transition-colors"
+              title="Sign Out"
+              aria-label="Sign out of admin"
+            >
+              <HugeIcon icon={Logout01Icon} size={14} />
+            </button>
           </div>
         </div>
       </aside>
@@ -178,11 +184,11 @@ export default function AdminLayout({
               className="lg:hidden p-2 rounded-lg text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)]"
               aria-label="Open navigation menu"
             >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {mobileOpen ? <HugeIcon icon={Cancel01Icon} size={20} /> : <HugeIcon icon={Menu01Icon} size={20} />}
             </button>
 
             <div className="relative hidden sm:block w-64 md:w-80">
-              <Search className="w-4 h-4 text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
+              <HugeIcon icon={Search01Icon} size={16} className="text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search users, recordings, logs..."
@@ -193,7 +199,7 @@ export default function AdminLayout({
 
           <div className="flex items-center gap-3">
             <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] border border-[var(--color-brand-default)]/30 text-xs font-mono font-medium">
-              <Sparkles className="w-3 h-3" />
+              <HugeIcon icon={SparklesIcon} size={12} />
               Cluster: us-east (Healthy)
             </span>
 
@@ -202,7 +208,7 @@ export default function AdminLayout({
               className="p-2 rounded-lg border border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] relative"
               aria-label="Notifications"
             >
-              <Bell className="w-4 h-4" />
+              <HugeIcon icon={Notification01Icon} size={16} />
               <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[var(--color-warning-default)]" />
             </button>
           </div>
@@ -220,7 +226,7 @@ export default function AdminLayout({
                     onClick={() => setMobileOpen(false)}
                     className="p-1 text-[var(--color-text-secondary)]"
                   >
-                    <X className="w-5 h-5" />
+                    <HugeIcon icon={Cancel01Icon} size={20} />
                   </button>
                 </div>
 
