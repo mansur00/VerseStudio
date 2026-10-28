@@ -2,13 +2,13 @@
 
 import React from 'react';
 import {
-  CreditCard,
-  DollarSign,
-  TrendingUp,
-  Sparkles,
-  Check,
-} from 'lucide-react';
-import { KpiCard, StatusChip } from '@verse-studio/ui';
+  CreditCardIcon,
+  DollarSignIcon,
+  TrendingUpIcon,
+  SparklesIcon,
+  Tick01Icon,
+} from '@hugeicons/core-free-icons';
+import { KpiCard, StatusChip, HugeIcon } from '@verse-studio/ui';
 
 export default function AdminBillingPage() {
   return (
@@ -28,7 +28,7 @@ export default function AdminBillingPage() {
           title="Monthly Recurring Revenue"
           value="$28,920"
           subtitle="+14.2% MRR growth"
-          icon={<DollarSign className="w-4 h-4 text-[var(--color-brand-default)]" />}
+          icon={<HugeIcon icon={DollarSignIcon} size={16} className="text-[var(--color-brand-default)]" />}
           trend={{ value: '+14.2%', isPositive: true }}
         />
 
@@ -36,7 +36,7 @@ export default function AdminBillingPage() {
           title="Pro Subscribers"
           value="1,522"
           subtitle="63.1% conversion rate"
-          icon={<Sparkles className="w-4 h-4 text-amber-400" />}
+          icon={<HugeIcon icon={SparklesIcon} size={16} className="text-amber-400" />}
           trend={{ value: '+8.4%', isPositive: true }}
         />
 
@@ -44,14 +44,14 @@ export default function AdminBillingPage() {
           title="Average Revenue / User"
           value="$19.00"
           subtitle="Standard Pro tier pricing"
-          icon={<CreditCard className="w-4 h-4 text-sky-400" />}
+          icon={<HugeIcon icon={CreditCardIcon} size={16} className="text-sky-400" />}
         />
 
         <KpiCard
           title="Churn Rate"
           value="1.2%"
           subtitle="Low churn due to Google Drive BYOS"
-          icon={<TrendingUp className="w-4 h-4 text-emerald-400" />}
+          icon={<HugeIcon icon={TrendingUpIcon} size={16} className="text-emerald-400" />}
           trend={{ value: '-0.3%', isPositive: true }}
         />
       </div>
@@ -73,15 +73,15 @@ export default function AdminBillingPage() {
 
             <ul className="space-y-2 text-xs text-[var(--color-text-secondary)]">
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Up to 4K 60FPS Studio Recording</span>
               </li>
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>30 AI Dubbing / Subtitle Minutes per month</span>
               </li>
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Direct Save to Google Drive (Zero storage quota limits)</span>
               </li>
               <li className="flex items-center gap-2 text-[var(--color-text-tertiary)]">
@@ -106,19 +106,19 @@ export default function AdminBillingPage() {
 
             <ul className="space-y-2 text-xs text-[var(--color-text-secondary)]">
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Everything in Starter + 300 AI Minutes per month</span>
               </li>
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Custom Branding & Unbranded Tutorial Markdown Guides</span>
               </li>
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Priority Whisper STT & ElevenLabs Dubbing Queues</span>
               </li>
               <li className="flex items-center gap-2">
-                <Check className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>2FA Security & Multi-device Sync</span>
               </li>
             </ul>

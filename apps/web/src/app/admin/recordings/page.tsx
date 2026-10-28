@@ -1,19 +1,18 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
-  Search,
-  ExternalLink,
-  Sparkles,
-  Subtitles,
-} from 'lucide-react';
-import { Button, StatusChip, Pagination, Select, Modal } from '@verse-studio/ui';
+  Search01Icon,
+  ArrowUpRight01Icon,
+  SparklesIcon,
+  SubtitleIcon,
+} from '@hugeicons/core-free-icons';
+import { Button, StatusChip, Pagination, Select, Modal, HugeIcon } from '@verse-studio/ui';
 import { AdminRecording } from '@verse-studio/shared';
-import { MOCK_ADMIN_RECORDINGS } from '../../../data/mockAdminData';
 
 export default function AdminRecordingsPage() {
-  const [recordings, setRecordings] = useState<AdminRecording[]>(MOCK_ADMIN_RECORDINGS);
+  const [recordings, setRecordings] = useState<AdminRecording[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'blocked'>('all');
   const [resolutionFilter, setResolutionFilter] = useState<'all' | '4k' | '1080p'>('all');
@@ -21,6 +20,39 @@ export default function AdminRecordingsPage() {
   const pageSize = 5;
 
   const [blockTarget, setBlockTarget] = useState<AdminRecording | null>(null);
+
+  const loadRecordings = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/recordings?q=${encodeURIComponent(searchQuery)}&status=${statusFilter}`);
+      if (res.ok) {
+        const data = await res.json();
+        const mapped: AdminRecording[] = (data.recordings || []).map((r: any) => ({
+          id: r.id,
+          title: r.title,
+          userId: r.user_id,
+          userName: 'Creator',
+          userEmail: 'creator@versestudio.app',
+          durationSeconds: r.duration_seconds || 180,
+          resolution: r.resolution || '4k',
+          fps: r.fps || 60,
+          status: r.is_blocked ? 'blocked' : 'active',
+          viewsCount: r.views_count || 0,
+          driveFileId: r.drive_file_id,
+          driveViewUrl: r.drive_view_url,
+          hasAiSubtitles: true,
+          hasAiVoice: true,
+          createdAt: r.created_at,
+        }));
+        setRecordings(mapped);
+      }
+    } catch (e) {
+      console.error('Failed to fetch recordings from DB API:', e);
+    }
+  }, [searchQuery, statusFilter]);
+
+  useEffect(() => {
+    loadRecordings();
+  }, [loadRecordings]);
 
   const filtered = useMemo(() => {
     return recordings.filter((r) => {
@@ -42,15 +74,31 @@ export default function AdminRecordingsPage() {
     return `${mins}:${s.toString().padStart(2, '0')}`;
   };
 
-  const handleToggleBlock = () => {
+  const handleToggleBlock = async () => {
     if (!blockTarget) return;
-    setRecordings((prev) =>
-      prev.map((r) =>
-        r.id === blockTarget.id
-          ? { ...r, status: r.status === 'blocked' ? 'active' : 'blocked' }
-          : r
-      )
-    );
+    const nextBlocked = blockTarget.status !== 'blocked';
+    try {
+      const res = await fetch('/api/admin/recordings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageId: blockTarget.id,
+          isBlocked: nextBlocked,
+          reason: nextBlocked ? 'Violates community guidelines' : 'Restored by admin',
+        }),
+      });
+      if (res.ok) {
+        setRecordings((prev) =>
+          prev.map((r) =>
+            r.id === blockTarget.id
+              ? { ...r, status: nextBlocked ? 'blocked' : 'active' }
+              : r
+          )
+        );
+      }
+    } catch (e) {
+      console.error('Failed to toggle block:', e);
+    }
     setBlockTarget(null);
   };
 
@@ -70,7 +118,7 @@ export default function AdminRecordingsPage() {
       {/* Filter toolbar */}
       <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
+          <HugeIcon icon={Search01Icon} size={16} className="text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search recordings or author..."
@@ -163,12 +211,12 @@ export default function AdminRecordingsPage() {
                     <div className="flex items-center gap-1.5">
                       {rec.hasSubtitles && (
                         <span className="p-1 rounded bg-[var(--color-bg-elevated)] text-[var(--color-brand-default)]" title="Bangla-to-English Subtitles">
-                          <Subtitles className="w-3.5 h-3.5" />
+                          <HugeIcon icon={SubtitleIcon} size={14} />
                         </span>
                       )}
                       {rec.hasAiDub && (
                         <span className="p-1 rounded bg-[var(--color-bg-elevated)] text-cyan-400" title="Neural English Dub">
-                          <Sparkles className="w-3.5 h-3.5" />
+                          <HugeIcon icon={SparklesIcon} size={14} />
                         </span>
                       )}
                     </div>
@@ -188,7 +236,7 @@ export default function AdminRecordingsPage() {
                     <div className="flex items-center justify-end gap-1.5">
                       <Link href={`/watch/${rec.id === 'rec_001' ? 'demo-recording' : rec.id}`} target="_blank">
                         <Button variant="ghost" size="sm" className="text-xs px-2 py-1">
-                          <ExternalLink className="w-3 h-3" />
+                          <HugeIcon icon={ArrowUpRight01Icon} size={12} />
                         </Button>
                       </Link>
 

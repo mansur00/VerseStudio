@@ -1,37 +1,63 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
-  ShieldCheck,
-  UserPlus,
-  Lock,
-  Trash2,
-} from 'lucide-react';
-import { Button, Modal, Input, Select, StatusChip, Avatar } from '@verse-studio/ui';
+  Shield01Icon,
+  UserAdd01Icon,
+  LockIcon,
+  Delete01Icon,
+} from '@hugeicons/core-free-icons';
+import { Button, Modal, Input, Select, StatusChip, Avatar, HugeIcon } from '@verse-studio/ui';
 import { AdminRoleMember } from '@verse-studio/shared';
-import { MOCK_ADMIN_ROLES } from '../../../data/mockAdminData';
 
 export default function AdminSettingsPage() {
-  const [admins, setAdmins] = useState<AdminRoleMember[]>(MOCK_ADMIN_ROLES);
+  const [admins, setAdmins] = useState<AdminRoleMember[]>([]);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
   const [inviteName, setInviteName] = useState('');
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<'super_admin' | 'moderator' | 'support'>('moderator');
 
-  const handleSendInvite = (e: React.FormEvent) => {
+  const loadAdmins = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/admins');
+      if (res.ok) {
+        const data = await res.json();
+        const mapped: AdminRoleMember[] = (data.admins || []).map((a: any) => ({
+          id: a.id,
+          name: a.email.split('@')[0],
+          email: a.email,
+          role: a.role === 'super_admin' ? 'super_admin' : a.role === 'support' ? 'support' : 'moderator',
+          twoFactorEnabled: a.two_factor_enabled,
+          addedAt: a.created_at,
+        }));
+        setAdmins(mapped);
+      }
+    } catch (e) {
+      console.error('Failed to load admins:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAdmins();
+  }, [loadAdmins]);
+
+  const handleSendInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail || !inviteName) return;
 
-    const newAdmin: AdminRoleMember = {
-      id: `adm_${Date.now()}`,
-      name: inviteName,
-      email: inviteEmail,
-      role: inviteRole,
-      twoFactorEnabled: true,
-      addedAt: new Date().toISOString(),
-    };
+    try {
+      const res = await fetch('/api/admin/admins', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: inviteEmail, role: inviteRole === 'moderator' ? 'viewer' : inviteRole }),
+      });
+      if (res.ok) {
+        loadAdmins();
+      }
+    } catch (e) {
+      console.error('Failed to invite admin:', e);
+    }
 
-    setAdmins([...admins, newAdmin]);
     setInviteName('');
     setInviteEmail('');
     setInviteModalOpen(false);
@@ -59,7 +85,7 @@ export default function AdminSettingsPage() {
           onClick={() => setInviteModalOpen(true)}
           className="flex items-center gap-1.5 text-xs"
         >
-          <UserPlus className="w-3.5 h-3.5" />
+          <HugeIcon icon={UserAdd01Icon} size={14} />
           <span>Invite Admin (A15)</span>
         </Button>
       </div>
@@ -68,7 +94,7 @@ export default function AdminSettingsPage() {
       <div className="p-4 rounded-xl border border-[var(--color-brand-default)]/30 bg-[var(--color-brand-subtle)] flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-[var(--color-bg-surface)] text-[var(--color-brand-default)] border border-[var(--color-brand-default)]/30">
-            <ShieldCheck className="w-5 h-5" />
+            <HugeIcon icon={Shield01Icon} size={20} />
           </div>
           <div>
             <h3 className="text-xs font-bold text-[var(--color-brand-default)]">
@@ -108,7 +134,7 @@ export default function AdminSettingsPage() {
                 </span>
 
                 <div className="flex items-center gap-1.5 text-xs text-[var(--color-success-default)]">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <HugeIcon icon={Shield01Icon} size={14} />
                   <span className="hidden sm:inline">2FA Active</span>
                 </div>
 
@@ -119,7 +145,7 @@ export default function AdminSettingsPage() {
                     className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-error-default)] hover:bg-[var(--color-bg-hover)] transition-colors"
                     title="Revoke Admin Access"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <HugeIcon icon={Delete01Icon} size={16} />
                   </button>
                 )}
               </div>
@@ -173,7 +199,7 @@ export default function AdminSettingsPage() {
 
             <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] text-[11px] text-[var(--color-text-tertiary)] space-y-1">
               <div className="flex items-center gap-1.5 text-[var(--color-text-secondary)] font-semibold">
-                <Lock className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                <HugeIcon icon={LockIcon} size={14} className="text-[var(--color-brand-default)]" />
                 <span>Security Onboarding Requirement</span>
               </div>
               <p>

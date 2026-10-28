@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
-  Search,
-  Download,
-  AlertTriangle,
-  HardDrive,
-  Cpu,
-  Video,
-} from 'lucide-react';
+  Search01Icon,
+  Download01Icon,
+  Alert01Icon,
+  HardDriveIcon,
+  CpuIcon,
+  CameraVideoIcon,
+} from '@hugeicons/core-free-icons';
 import {
   Button,
   StatusChip,
@@ -17,18 +17,47 @@ import {
   Modal,
   Avatar,
   Select,
+  HugeIcon,
 } from '@verse-studio/ui';
 import { AdminUser } from '@verse-studio/shared';
-import { MOCK_ADMIN_USERS } from '../../../data/mockAdminData';
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<AdminUser[]>(MOCK_ADMIN_USERS);
+  const [users, setUsers] = useState<AdminUser[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [planFilter, setPlanFilter] = useState<'all' | 'free' | 'pro'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
   const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+
+  const loadUsers = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/users?q=${encodeURIComponent(searchQuery)}&status=${statusFilter}&plan=${planFilter}`);
+      if (res.ok) {
+        const data = await res.json();
+        const mappedUsers: AdminUser[] = (data.users || []).map((u: any) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          plan: u.plan,
+          status: u.status,
+          createdAt: u.created_at,
+          recordingsCount: 12,
+          storageUsedBytes: 3.4 * 1024 * 1024 * 1024,
+          storageQuotaBytes: 15 * 1024 * 1024 * 1024,
+          aiMinutesUsed: u.ai_minutes_used || 0,
+          aiMinutesLimit: u.ai_minutes_limit || 30,
+        }));
+        setUsers(mappedUsers);
+      }
+    } catch (e) {
+      console.error('Failed to load users from DB API:', e);
+    }
+  }, [searchQuery, statusFilter, planFilter]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   // Modals state
   const [detailUser, setDetailUser] = useState<AdminUser | null>(null);
@@ -70,15 +99,27 @@ export default function AdminUsersPage() {
   };
 
   // Suspend action (Screen A06)
-  const handleConfirmSuspend = () => {
+  const handleConfirmSuspend = async () => {
     if (!suspendUserTarget) return;
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === suspendUserTarget.id
-          ? { ...u, status: u.status === 'suspended' ? 'active' : 'suspended' }
-          : u
-      )
-    );
+    const nextStatus = suspendUserTarget.status === 'suspended' ? 'active' : 'suspended';
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'suspend',
+          userId: suspendUserTarget.id,
+          status: nextStatus,
+        }),
+      });
+      if (res.ok) {
+        setUsers((prev) =>
+          prev.map((u) => (u.id === suspendUserTarget.id ? { ...u, status: nextStatus } : u))
+        );
+      }
+    } catch (e) {
+      console.error('Failed to update user status:', e);
+    }
     setSuspendUserTarget(null);
   };
 
@@ -122,7 +163,7 @@ export default function AdminUsersPage() {
             }}
             className="flex items-center gap-1.5 text-xs"
           >
-            <Download className="w-3.5 h-3.5" />
+            <HugeIcon icon={Download01Icon} size={14} />
             <span>Export CSV</span>
           </Button>
         </div>
@@ -131,7 +172,7 @@ export default function AdminUsersPage() {
       {/* Filters & Search Toolbar */}
       <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
+          <HugeIcon icon={Search01Icon} size={16} className="text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by name or email..."
@@ -214,7 +255,7 @@ export default function AdminUsersPage() {
       {filteredUsers.length === 0 ? (
         <div className="p-12 text-center rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] space-y-4">
           <div className="w-12 h-12 rounded-xl bg-[var(--color-bg-elevated)] text-[var(--color-text-tertiary)] flex items-center justify-center mx-auto">
-            <Search className="w-6 h-6" />
+            <HugeIcon icon={Search01Icon} size={24} />
           </div>
           <h2 className="text-base font-bold text-[var(--color-text-primary)]">
             No users match your criteria
@@ -395,7 +436,7 @@ export default function AdminUsersPage() {
             <div className="grid grid-cols-3 gap-3">
               <div className="p-3 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
                 <div className="flex items-center gap-1.5 text-[var(--color-text-tertiary)] mb-1">
-                  <Video className="w-3.5 h-3.5 text-[var(--color-brand-default)]" />
+                  <HugeIcon icon={CameraVideoIcon} size={14} className="text-[var(--color-brand-default)]" />
                   <span>Recordings</span>
                 </div>
                 <p className="text-lg font-bold text-[var(--color-text-primary)]">{detailUser.recordingsCount}</p>
@@ -403,7 +444,7 @@ export default function AdminUsersPage() {
 
               <div className="p-3 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
                 <div className="flex items-center gap-1.5 text-[var(--color-text-tertiary)] mb-1">
-                  <HardDrive className="w-3.5 h-3.5 text-blue-400" />
+                  <HugeIcon icon={HardDriveIcon} size={14} className="text-blue-400" />
                   <span>Drive Managed</span>
                 </div>
                 <p className="text-lg font-bold text-[var(--color-text-primary)]">{formatBytes(detailUser.driveStorageBytes)}</p>
@@ -411,7 +452,7 @@ export default function AdminUsersPage() {
 
               <div className="p-3 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
                 <div className="flex items-center gap-1.5 text-[var(--color-text-tertiary)] mb-1">
-                  <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+                  <HugeIcon icon={CpuIcon} size={14} className="text-cyan-400" />
                   <span>AI Minutes</span>
                 </div>
                 <p className="text-lg font-bold text-[var(--color-text-primary)]">{detailUser.aiMinutesUsed} / 300m</p>
@@ -470,7 +511,7 @@ export default function AdminUsersPage() {
         >
           <div className="space-y-4 text-xs text-[var(--color-text-secondary)]">
             <div className="p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)]/30 text-[var(--color-error-default)] flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+              <HugeIcon icon={Alert01Icon} size={20} className="flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold">
                   {suspendUserTarget.status === 'active'

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { Cpu, DollarSign, Activity, Server } from 'lucide-react';
-import { KpiCard, ChartLine } from '@verse-studio/ui';
+import { CpuIcon, DollarSignIcon, Activity01Icon, ServerIcon } from '@hugeicons/core-free-icons';
+import { KpiCard, ChartLine, HugeIcon } from '@verse-studio/ui';
 
 export default function AdminAiUsagePage() {
   const weeklyUsageData = [
@@ -31,21 +31,21 @@ export default function AdminAiUsagePage() {
           title="Total AI Minutes (MTD)"
           value="48,250m"
           subtitle="Whisper + Neural Voice"
-          icon={<Cpu className="w-4 h-4 text-[var(--color-brand-default)]" />}
+          icon={<HugeIcon icon={CpuIcon} size={16} className="text-[var(--color-brand-default)]" />}
         />
 
         <KpiCard
           title="Gross AI Compute Cost"
           value="$742.60"
           subtitle="Avg $0.015 / minute"
-          icon={<DollarSign className="w-4 h-4 text-emerald-400" />}
+          icon={<HugeIcon icon={DollarSignIcon} size={16} className="text-emerald-400" />}
         />
 
         <KpiCard
           title="Gross Margin on AI"
           value="97.4%"
           subtitle="High margin SaaS economics"
-          icon={<Activity className="w-4 h-4 text-sky-400" />}
+          icon={<HugeIcon icon={Activity01Icon} size={16} className="text-sky-400" />}
           trend={{ value: '+2.1%', isPositive: true }}
         />
 
@@ -53,7 +53,7 @@ export default function AdminAiUsagePage() {
           title="Serverless Success Rate"
           value="99.94%"
           subtitle="Zero failed mux jobs"
-          icon={<Server className="w-4 h-4 text-purple-400" />}
+          icon={<HugeIcon icon={ServerIcon} size={16} className="text-purple-400" />}
         />
       </div>
 

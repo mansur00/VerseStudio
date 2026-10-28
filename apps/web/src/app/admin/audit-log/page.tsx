@@ -1,14 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, Download } from 'lucide-react';
-import { Button } from '@verse-studio/ui';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Search01Icon, Download01Icon } from '@hugeicons/core-free-icons';
+import { Button, HugeIcon } from '@verse-studio/ui';
 import { AuditLogEntry } from '@verse-studio/shared';
-import { MOCK_AUDIT_LOGS } from '../../../data/mockAdminData';
 
 export default function AdminAuditLogPage() {
-  const [logs] = useState<AuditLogEntry[]>(MOCK_AUDIT_LOGS);
+  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [search, setSearch] = useState('');
+
+  const loadLogs = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/audit-log?limit=100');
+      if (res.ok) {
+        const data = await res.json();
+        const mapped: AuditLogEntry[] = (data.logs || []).map((l: any) => ({
+          id: l.id,
+          actorEmail: l.actor_email,
+          action: l.action,
+          targetType: l.target_type,
+          targetId: l.target_id,
+          details: typeof l.details === 'object' ? JSON.stringify(l.details) : l.details || '',
+          ipAddress: l.ip_address,
+          timestamp: l.created_at,
+          status: l.status,
+        }));
+        setLogs(mapped);
+      }
+    } catch (e) {
+      console.error('Failed to load audit logs:', e);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLogs();
+  }, [loadLogs]);
 
   const filtered = logs.filter(
     (l) =>
@@ -43,14 +69,14 @@ export default function AdminAuditLogPage() {
           }}
           className="flex items-center gap-1.5 text-xs"
         >
-          <Download className="w-3.5 h-3.5" />
+          <HugeIcon icon={Download01Icon} size={14} />
           <span>Export Audit CSV</span>
         </Button>
       </div>
 
       <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
+          <HugeIcon icon={Search01Icon} size={16} className="text-[var(--color-text-tertiary)] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search by action, actor, or detail..."

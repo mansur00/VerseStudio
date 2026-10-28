@@ -1,20 +1,27 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
-  Video,
-  Users,
-  Cpu,
-  HardDrive,
-  ShieldAlert,
-  ArrowUpRight,
-  ExternalLink,
-} from 'lucide-react';
-import { KpiCard, ChartLine, ChartBars, Button, StatusChip } from '@verse-studio/ui';
-import { MOCK_ADMIN_RECORDINGS, MOCK_MODERATION_REPORTS } from '../../data/mockAdminData';
+  CameraVideoIcon,
+  UserGroupIcon,
+  CpuIcon,
+  HardDriveIcon,
+  Shield01Icon,
+  ArrowUpRight01Icon,
+} from '@hugeicons/core-free-icons';
+import { KpiCard, ChartLine, ChartBars, Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 
 export default function AdminOverviewPage() {
+  const [recordings, setRecordings] = useState<any[]>([]);
+  const [pendingReportsCount] = useState(1);
+
+  useEffect(() => {
+    fetch('/api/admin/recordings?limit=5')
+      .then((res) => (res.ok ? res.json() : { recordings: [] }))
+      .then((data) => setRecordings(data.recordings || []))
+      .catch(() => {});
+  }, []);
   const recordingTrendData = [
     { label: 'Oct 01', value: 320 },
     { label: 'Oct 05', value: 410 },
@@ -48,8 +55,8 @@ export default function AdminOverviewPage() {
         <div className="flex items-center gap-2">
           <Link href="/admin/moderation">
             <Button variant="secondary" size="sm" className="flex items-center gap-1.5 text-xs">
-              <ShieldAlert className="w-3.5 h-3.5 text-[var(--color-warning-default)]" />
-              <span>Moderation Queue ({MOCK_MODERATION_REPORTS.filter((r) => r.status === 'pending').length})</span>
+              <HugeIcon icon={Shield01Icon} size={14} className="text-[var(--color-warning-default)]" />
+              <span>Moderation Queue ({pendingReportsCount})</span>
             </Button>
           </Link>
         </div>
@@ -61,7 +68,7 @@ export default function AdminOverviewPage() {
           title="Total Recordings"
           value="14,892"
           subtitle="+18.4% vs last month"
-          icon={<Video className="w-4 h-4 text-[var(--color-brand-default)]" />}
+          icon={<HugeIcon icon={CameraVideoIcon} size={16} className="text-[var(--color-brand-default)]" />}
           trend={{ value: '+18.4%', isPositive: true }}
         />
 
@@ -69,7 +76,7 @@ export default function AdminOverviewPage() {
           title="Active Creators"
           value="2,410"
           subtitle="+12.2% growth rate"
-          icon={<Users className="w-4 h-4 text-sky-400" />}
+          icon={<HugeIcon icon={UserGroupIcon} size={16} className="text-sky-400" />}
           trend={{ value: '+12.2%', isPositive: true }}
         />
 
@@ -77,7 +84,7 @@ export default function AdminOverviewPage() {
           title="AI Minutes Consumed"
           value="48,250"
           subtitle="STT & Neural Dubbing"
-          icon={<Cpu className="w-4 h-4 text-[var(--color-accent-laser)]" />}
+          icon={<HugeIcon icon={CpuIcon} size={16} className="text-[var(--color-accent-laser)]" />}
           trend={{ value: '+24.0%', isPositive: true }}
         />
 
@@ -85,7 +92,7 @@ export default function AdminOverviewPage() {
           title="Drive Storage Managed"
           value="18.4 TB"
           subtitle="Zero server video cost • User Drive"
-          icon={<HardDrive className="w-4 h-4 text-emerald-400" />}
+          icon={<HugeIcon icon={HardDriveIcon} size={16} className="text-emerald-400" />}
           trend={{ value: '100% BYOS', isPositive: true }}
         />
       </div>
@@ -153,39 +160,41 @@ export default function AdminOverviewPage() {
               className="text-xs text-[var(--color-brand-default)] hover:underline flex items-center gap-1 font-semibold"
             >
               <span>View All</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <HugeIcon icon={ArrowUpRight01Icon} size={14} />
             </Link>
           </div>
 
           <div className="divide-y divide-[var(--color-border-subtle)]">
-            {MOCK_ADMIN_RECORDINGS.slice(0, 3).map((rec) => (
+            {(recordings.length > 0 ? recordings.slice(0, 3) : [
+              { id: 'rec_demo_figma_tutorial', title: 'Figma to React Workflow Masterclass', resolution: '4k', fps: 60, views_count: 1420, is_blocked: false }
+            ]).map((rec) => (
               <div key={rec.id} className="py-3 flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <p className="text-sm font-semibold truncate text-[var(--color-text-primary)]">
                     {rec.title}
                   </p>
                   <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)] mt-0.5">
-                    <span>by {rec.userName}</span>
+                    <span>by Creator</span>
                     <span>•</span>
-                    <span className="font-mono">{rec.resolution.toUpperCase()} {rec.fps}FPS</span>
+                    <span className="font-mono">{(rec.resolution || '4k').toUpperCase()} {rec.fps || 60}FPS</span>
                     <span>•</span>
-                    <span>{rec.viewsCount} views</span>
+                    <span>{rec.views_count || rec.viewsCount || 0} views</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 flex-shrink-0">
                   <StatusChip
-                    status={rec.status === 'active' ? 'shared' : 'failed'}
-                    label={rec.status === 'active' ? 'Active' : 'Blocked'}
+                    status={!rec.is_blocked ? 'shared' : 'failed'}
+                    label={!rec.is_blocked ? 'Active' : 'Blocked'}
                     size="sm"
                   />
-                  <Link href={`/watch/${rec.id === 'rec_001' ? 'demo-recording' : rec.id}`} target="_blank">
+                  <Link href={`/watch/${rec.id}`} target="_blank">
                     <button
                       type="button"
                       className="p-1.5 rounded-lg text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors"
                       title="Open watch page"
                     >
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <HugeIcon icon={ArrowUpRight01Icon} size={14} />
                     </button>
                   </Link>
                 </div>
@@ -199,7 +208,7 @@ export default function AdminOverviewPage() {
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-[var(--color-border-subtle)] mb-4">
               <div className="flex items-center gap-2">
-                <ShieldAlert className="w-4 h-4 text-[var(--color-warning-default)]" />
+                <HugeIcon icon={Shield01Icon} size={16} className="text-[var(--color-warning-default)]" />
                 <h2 className="text-sm font-bold tracking-tight">Active Moderation</h2>
               </div>
               <span className="text-xs font-mono text-[var(--color-warning-default)] bg-[var(--color-warning-subtle)] px-2 py-0.5 rounded-full font-semibold">
@@ -208,7 +217,16 @@ export default function AdminOverviewPage() {
             </div>
 
             <div className="space-y-3">
-              {MOCK_MODERATION_REPORTS.map((rep) => (
+              {[
+                {
+                  id: 'rep_1',
+                  reason: 'copyright_infringement',
+                  recordingTitle: 'Unlicensed Movie Rip Screening',
+                  reporterEmail: 'copyright@media-watch.org',
+                  status: 'pending',
+                  details: 'Pirated content stream reported',
+                }
+              ].map((rep) => (
                 <div
                   key={rep.id}
                   className="p-3 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] space-y-1.5"

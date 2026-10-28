@@ -3,17 +3,29 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import {
-  ShieldAlert,
-  ExternalLink,
-  CheckCircle2,
-  Clock,
-} from 'lucide-react';
-import { Button, StatusChip } from '@verse-studio/ui';
+  Shield01Icon,
+  ArrowUpRight01Icon,
+  CheckmarkCircle01Icon,
+  Time02Icon,
+} from '@hugeicons/core-free-icons';
+import { Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 import { ModerationReport } from '@verse-studio/shared';
-import { MOCK_MODERATION_REPORTS } from '../../../data/mockAdminData';
+
+const INITIAL_REPORTS: ModerationReport[] = [
+  {
+    id: 'rep_1',
+    recordingId: 'rec_flagged_copyright_violation',
+    recordingTitle: 'Unlicensed Movie Rip Screening',
+    reportedByEmail: 'copyright@media-watch.org',
+    reason: 'copyright',
+    details: 'Pirated content stream reported',
+    status: 'pending',
+    createdAt: '2024-01-23T11:30:00Z',
+  },
+];
 
 export default function AdminModerationPage() {
-  const [reports, setReports] = useState<ModerationReport[]>(MOCK_MODERATION_REPORTS);
+  const [reports, setReports] = useState<ModerationReport[]>(INITIAL_REPORTS);
 
   const handleUpdateStatus = (id: string, newStatus: 'resolved' | 'dismissed') => {
     setReports((prev) =>
@@ -46,7 +58,7 @@ export default function AdminModerationPage() {
                     {rep.reason.replace('_', ' ')}
                   </span>
                   <span className="text-xs text-[var(--color-text-tertiary)] flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
+                    <HugeIcon icon={Time02Icon} size={12} />
                     {new Date(rep.createdAt).toLocaleDateString()}
                   </span>
                   <StatusChip
@@ -72,7 +84,7 @@ export default function AdminModerationPage() {
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Link href={`/watch/${rep.recordingId === 'rec_001' ? 'demo-recording' : rep.recordingId}`} target="_blank">
                   <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1.5">
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <HugeIcon icon={ArrowUpRight01Icon} size={14} />
                     <span>Inspect</span>
                   </Button>
                 </Link>
@@ -85,7 +97,7 @@ export default function AdminModerationPage() {
                       onClick={() => handleUpdateStatus(rep.id, 'resolved')}
                       className="text-xs flex items-center gap-1.5"
                     >
-                      <ShieldAlert className="w-3.5 h-3.5" />
+                      <HugeIcon icon={Shield01Icon} size={14} />
                       <span>Block Page</span>
                     </Button>
 
@@ -95,7 +107,7 @@ export default function AdminModerationPage() {
                       onClick={() => handleUpdateStatus(rep.id, 'dismissed')}
                       className="text-xs flex items-center gap-1.5"
                     >
-                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <HugeIcon icon={CheckmarkCircle01Icon} size={14} />
                       <span>Dismiss</span>
                     </Button>
                   </>

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { HardDrive, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
-import { KpiCard } from '@verse-studio/ui';
+import { HardDriveIcon, Shield01Icon, AlertCircleIcon, CheckmarkCircle01Icon } from '@hugeicons/core-free-icons';
+import { KpiCard, HugeIcon } from '@verse-studio/ui';
 
 export default function AdminDriveLimitsPage() {
   return (
@@ -21,28 +21,28 @@ export default function AdminDriveLimitsPage() {
           title="Total Video Storage"
           value="18.4 TB"
           subtitle="Managed across user Drives"
-          icon={<HardDrive className="w-4 h-4 text-blue-400" />}
+          icon={<HugeIcon icon={HardDriveIcon} size={16} className="text-blue-400" />}
         />
 
         <KpiCard
           title="Server Video Hosting Cost"
           value="$0.00"
           subtitle="Zero video egress or disk cost"
-          icon={<ShieldCheck className="w-4 h-4 text-[var(--color-brand-default)]" />}
+          icon={<HugeIcon icon={Shield01Icon} size={16} className="text-[var(--color-brand-default)]" />}
         />
 
         <KpiCard
           title="OAuth Token Health"
           value="99.8%"
           subtitle="Active drive.file grants"
-          icon={<CheckCircle2 className="w-4 h-4 text-emerald-400" />}
+          icon={<HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-emerald-400" />}
         />
 
         <KpiCard
           title="Quota Overages"
           value="4"
           subtitle="Users with full Google Drive"
-          icon={<AlertCircle className="w-4 h-4 text-amber-400" />}
+          icon={<HugeIcon icon={AlertCircleIcon} size={16} className="text-amber-400" />}
         />
       </div>
 
