@@ -1,4 +1,5 @@
 import type { SubtitleCue, ClickEventLog, StepByStepGuide, GuideStep } from '@verse-studio/shared';
+import { mixAudioWithDucking } from './audioDuckingMixer';
 
 export interface AIProcessResult {
   cues: SubtitleCue[];
@@ -7,7 +8,18 @@ export interface AIProcessResult {
   guide: StepByStepGuide;
   audioBlob?: Blob;
   mixedAudioBlob?: Blob;
+  minutesConsumed?: number;
 }
+
+const getApiBase = () => {
+  if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  if (typeof window !== 'undefined' && (window as any).__VS_API_BASE__) {
+    return (window as any).__VS_API_BASE__;
+  }
+  return 'http://localhost:3000';
+};
 
 /**
  * Format seconds into SRT timestamp format: HH:MM:SS,mmm
@@ -75,12 +87,11 @@ export function generateStepByStepGuide(
   title: string,
   durationSeconds: number,
   cues: SubtitleCue[],
-  clicks: ClickEventLog[]
+  clicks: ClickEventLog[] = []
 ): StepByStepGuide {
   const steps: GuideStep[] = [];
   const createdAt = new Date().toISOString();
 
-  // Combine and sort events by timestamp
   interface UnifiedEvent {
     timestamp: number;
     type: 'click' | 'speech';
@@ -93,63 +104,43 @@ export function generateStepByStepGuide(
     ...cues.map((q) => ({ timestamp: q.startTime, type: 'speech' as const, cue: q })),
   ].sort((a, b) => a.timestamp - b.timestamp);
 
-  // Group events within 4-second windows into logical steps
   let currentStepIndex = 1;
   let lastTimestamp = -10;
 
   for (const event of events) {
-    const isNewStep = event.timestamp - lastTimestamp > 3.5 || steps.length === 0;
-
-    const timeFormatted = `[${String(Math.floor(event.timestamp / 60)).padStart(2, '0')}:${String(
-      Math.floor(event.timestamp % 60)
-    ).padStart(2, '0')}]`;
-
-    if (isNewStep) {
+    if (event.timestamp - lastTimestamp >= 4) {
       lastTimestamp = event.timestamp;
-      let stepTitle = `Action at ${timeFormatted}`;
-      let stepDesc = 'User interaction recorded.';
-      let bangla: string | undefined;
-      let english: string | undefined;
+      const mm = String(Math.floor(event.timestamp / 60)).padStart(2, '0');
+      const ss = String(Math.floor(event.timestamp % 60)).padStart(2, '0');
+      const timeFormatted = `[${mm}:${ss}]`;
 
-      if (event.click) {
-        stepTitle = event.click.targetText
-          ? `Click "${event.click.targetText}"`
-          : `Click ${event.click.targetTag || 'element'}`;
-        stepDesc = event.click.actionDescription || `Clicked on ${event.click.targetTag || 'interactive UI'}.`;
-      } else if (event.cue) {
-        stepTitle = `Instruction: ${event.cue.englishText.slice(0, 45)}...`;
-        stepDesc = event.cue.englishText;
-        bangla = event.cue.banglaText;
-        english = event.cue.englishText;
+      let stepTitle = `Action ${currentStepIndex}`;
+      let stepDesc = 'User performed studio interaction on canvas.';
+
+      if (event.type === 'click' && event.click) {
+        stepTitle = event.click.actionDescription || `Click ${event.click.targetTag || 'element'}`;
+        stepDesc = `User clicked at position (${Math.round(event.click.x * 100)}%, ${Math.round(
+          event.click.y * 100
+        )}%) on screen.`;
+      } else if (event.type === 'speech' && event.cue) {
+        stepTitle = `Explanation ${currentStepIndex}`;
+        stepDesc = `Narrator explanation: "${event.cue.englishText}"`;
       }
 
       steps.push({
-        stepNumber: currentStepIndex++,
+        stepNumber: currentStepIndex,
         timestamp: event.timestamp,
         timeFormatted,
         title: stepTitle,
         description: stepDesc,
-        banglaTranscript: bangla,
-        englishTranscript: english,
+        banglaTranscript: event.cue?.banglaText,
+        englishTranscript: event.cue?.englishText,
       });
-    } else {
-      // Append to the current step
-      const currentStep = steps[steps.length - 1];
-      if (event.click) {
-        currentStep.description += ` Then clicked "${event.click.targetText || event.click.targetTag}".`;
-      }
-      if (event.cue) {
-        currentStep.banglaTranscript = currentStep.banglaTranscript
-          ? `${currentStep.banglaTranscript} ${event.cue.banglaText}`
-          : event.cue.banglaText;
-        currentStep.englishTranscript = currentStep.englishTranscript
-          ? `${currentStep.englishTranscript} ${event.cue.englishText}`
-          : event.cue.englishText;
-      }
+
+      currentStepIndex++;
     }
   }
 
-  // Fallback step if recording had no clicks/cues
   if (steps.length === 0) {
     steps.push({
       stepNumber: 1,
@@ -160,7 +151,6 @@ export function generateStepByStepGuide(
     });
   }
 
-  // Construct Markdown formatted document
   const markdownContent = [
     `# ${title}`,
     ``,
@@ -208,101 +198,92 @@ export function generateStepByStepGuide(
  */
 export class AIService {
   /**
-   * Process a recording session through the AI pipeline
+   * Process a recording session through the server AI pipeline
    */
   public static async processRecording(
     title: string,
     durationSeconds: number,
     clicks: ClickEventLog[] = [],
     onProgress?: (progress: number, stepText: string) => void,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
+    options?: {
+      token?: string;
+      voicePersona?: string;
+      originalAudioBlob?: Blob;
+      testMode?: boolean;
+    }
   ): Promise<AIProcessResult> {
     if (abortSignal?.aborted) {
       throw new Error('AI Processing cancelled');
     }
 
-    onProgress?.(15, 'Transcribing Bengali speech from audio stream...');
-    await new Promise((r) => setTimeout(r, 400));
-    if (abortSignal?.aborted) throw new Error('AI Processing cancelled');
+    onProgress?.(15, 'Transcribing Bengali speech from audio stream via server...');
 
-    onProgress?.(40, 'Translating Bengali speech to natural English...');
-    await new Promise((r) => setTimeout(r, 500));
-    if (abortSignal?.aborted) throw new Error('AI Processing cancelled');
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (options?.token) {
+      headers['Authorization'] = `Bearer ${options.token}`;
+    }
 
-    // Generate realistic timed cues based on recording duration
-    const cues = this.generateSimulatedCues(durationSeconds);
+    let audioBase64: string | undefined;
+    if (options?.originalAudioBlob) {
+      const buffer = await options.originalAudioBlob.arrayBuffer();
+      audioBase64 = Buffer.from(buffer).toString('base64');
+    }
 
-    onProgress?.(70, 'Synthesizing studio-grade English neural voice...');
-    await new Promise((r) => setTimeout(r, 600));
-    if (abortSignal?.aborted) throw new Error('AI Processing cancelled');
+    onProgress?.(35, 'Contacting Gemini for Speech-to-Text and translation...');
 
-    onProgress?.(90, 'Compiling step-by-step tutorial guide...');
-    await new Promise((r) => setTimeout(r, 400));
-    if (abortSignal?.aborted) throw new Error('AI Processing cancelled');
+    const res = await fetch(`${getApiBase()}/api/ai/process`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        title,
+        durationSeconds,
+        clicks,
+        voicePersona: options?.voicePersona,
+        audioBase64,
+        testMode: options?.testMode ?? false,
+      }),
+      signal: abortSignal,
+    });
 
-    const srtContent = generateSrt(cues, 'bilingual');
-    const vttContent = generateVtt(cues);
-    const guide = generateStepByStepGuide(title, durationSeconds, cues, clicks);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || `AI processing failed with HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    onProgress?.(70, 'Received bilingual subtitles and transcript from server...');
+
+    let voiceAudioBlob: Blob | undefined;
+    let mixedAudioBlob: Blob | undefined;
+
+    if (data.voiceAudioBase64) {
+      onProgress?.(85, 'Synthesizing English neural voice audio stream...');
+      const byteChars = atob(data.voiceAudioBase64);
+      const byteNums = new Array(byteChars.length);
+      for (let i = 0; i < byteChars.length; i++) {
+        byteNums[i] = byteChars.charCodeAt(i);
+      }
+      voiceAudioBlob = new Blob([new Uint8Array(byteNums)], { type: 'audio/webm' });
+
+      if (options?.originalAudioBlob) {
+        onProgress?.(95, 'Mixing audio: ducking original Bangla track to ~20% under English...');
+        mixedAudioBlob = await mixAudioWithDucking(options.originalAudioBlob, voiceAudioBlob);
+      }
+    }
 
     onProgress?.(100, 'AI processing complete!');
 
     return {
-      cues,
-      srtContent,
-      vttContent,
-      guide,
+      cues: data.cues,
+      srtContent: data.srtContent,
+      vttContent: data.vttContent,
+      guide: data.guide,
+      audioBlob: voiceAudioBlob,
+      mixedAudioBlob,
+      minutesConsumed: data.minutesConsumed,
     };
-  }
-
-  /**
-   * Generate realistic Bengali & English sample cues for a given recording duration
-   */
-  public static generateSimulatedCues(durationSeconds: number): SubtitleCue[] {
-    const templates: Array<{ bangla: string; english: string }> = [
-      {
-        bangla: 'স্বাগতম সবাইকে ভার্সস্টুডিও ৪কে প্রো টিউটোরিয়ালে।',
-        english: 'Welcome everyone to the VerseStudio 4K Pro tutorial.',
-      },
-      {
-        bangla: 'প্রথমে আমরা আমাদের মূল ড্যাশবোর্ড এবং সেটিংস পরীক্ষা করে নেব।',
-        english: 'First, we will inspect our main dashboard and recording settings.',
-      },
-      {
-        bangla: 'এখানে ক্লিক করে নতুন প্রজেক্ট ফোল্ডার এবং অপশনগুলো দেখুন।',
-        english: 'Click here to review the new project folder and studio options.',
-      },
-      {
-        bangla: 'রেকর্ডিংয়ের সময় লেজার পেন এবং স্পটলাইট টুলগুলো ব্যবহার করা অত্যন্ত সহজ।',
-        english: 'During recording, using the laser pen and spotlight tools is very intuitive.',
-      },
-      {
-        bangla: 'সবকিছু সঠিকভাবে সম্পন্ন হলে সেভ বাটনে ক্লিক করে ফাইলটি সংরক্ষণ করুন।',
-        english: 'Once complete, click the Save button to preserve your high-resolution file.',
-      },
-      {
-        bangla: 'ভিডিওটি স্বয়ংক্রিয়ভাবে গুগল ড্রাইভে আপলোড হয়ে শেয়ারিং লিংক তৈরি হবে।',
-        english: 'The video will automatically upload to Google Drive with an instant share link.',
-      },
-    ];
-
-    const cues: SubtitleCue[] = [];
-    const interval = 5; // 5-second cues
-    const cueCount = Math.max(1, Math.min(templates.length, Math.floor(durationSeconds / interval)));
-
-    for (let i = 0; i < cueCount; i++) {
-      const template = templates[i % templates.length];
-      const start = i * interval;
-      const end = Math.min(durationSeconds, start + interval - 0.5);
-
-      cues.push({
-        id: `cue-${i + 1}`,
-        startTime: start,
-        endTime: Math.max(start + 1, end),
-        banglaText: template.bangla,
-        englishText: template.english,
-      });
-    }
-
-    return cues;
   }
 }

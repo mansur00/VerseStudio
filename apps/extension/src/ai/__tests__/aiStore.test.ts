@@ -1,10 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { useAIStore } from '../aiStore';
 import { generateSrt, generateVtt, generateStepByStepGuide } from '../aiService';
 import { useAuthStore } from '../../auth/authStore';
 import type { SubtitleCue, ClickEventLog } from '@verse-studio/shared';
 
 describe('useAIStore & AIService', () => {
+  const originalFetch = global.fetch;
+
   beforeEach(() => {
     useAIStore.getState().clearSessionEvents();
     useAuthStore.setState({
@@ -20,6 +22,73 @@ describe('useAIStore & AIService', () => {
         createdAt: new Date().toISOString(),
       },
     });
+
+    global.fetch = vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const urlStr = url.toString();
+      if (init?.signal?.aborted) {
+        const err = new Error('The operation was aborted');
+        err.name = 'AbortError';
+        throw err;
+      }
+
+      if (urlStr.includes('/api/ai/process')) {
+        const body = init?.body ? JSON.parse(init.body as string) : {};
+        const durationSeconds = body.durationSeconds || 15;
+        const cues: SubtitleCue[] = [
+          {
+            id: 'cue-1',
+            startTime: 0,
+            endTime: 5,
+            banglaText: 'স্বাগতম টিউটোরিয়ালে',
+            englishText: 'Welcome to the tutorial',
+          },
+        ];
+        const srtContent = generateSrt(cues, 'bilingual');
+        const vttContent = generateVtt(cues);
+        const guide = generateStepByStepGuide(body.title || 'Guide', durationSeconds, cues, body.clicks || []);
+
+        const resp = new Response(
+          JSON.stringify({
+            success: true,
+            cues,
+            srtContent,
+            vttContent,
+            guide,
+            voiceAudioBase64: 'RkFLRV9BVURJT19kYXRh',
+            minutesConsumed: 1,
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+
+        if (init?.signal) {
+          if (init.signal.aborted) {
+            const err = new Error('The operation was aborted');
+            err.name = 'AbortError';
+            throw err;
+          }
+          return new Promise((resolve, reject) => {
+            const onAbort = () => {
+              const err = new Error('The operation was aborted');
+              err.name = 'AbortError';
+              reject(err);
+            };
+            init.signal?.addEventListener('abort', onAbort);
+            setTimeout(() => {
+              init.signal?.removeEventListener('abort', onAbort);
+              resolve(resp);
+            }, 10);
+          });
+        }
+
+        return resp;
+      }
+
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }) as any;
+  });
+
+  afterEach(() => {
+    global.fetch = originalFetch;
   });
 
   it('initializes with default bilingual subtitle mode and english AI audio track', () => {

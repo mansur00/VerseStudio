@@ -148,7 +148,11 @@ export const useAIStore = create<AIState>((set, get) => ({
             },
           });
         },
-        activeAbortController.signal
+        activeAbortController.signal,
+        {
+          token: auth.session?.token,
+          testMode: process.env.NODE_ENV === 'test' || !auth.user,
+        }
       );
 
       // Deduct used AI minutes from auth store
@@ -180,7 +184,10 @@ export const useAIStore = create<AIState>((set, get) => ({
       return true;
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : 'Processing failed';
-      if (errorMsg === 'AI Processing cancelled') {
+      const isAborted =
+        (err instanceof Error && (err.name === 'AbortError' || err.message.includes('aborted') || err.message.includes('cancelled'))) ||
+        errorMsg === 'AI Processing cancelled';
+      if (isAborted) {
         set({
           processingState: {
             status: 'idle',
