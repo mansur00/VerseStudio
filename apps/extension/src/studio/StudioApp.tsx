@@ -2248,9 +2248,10 @@ export const StudioApp: React.FC = () => {
                 onClick={() => {
                   setShowDriveUploadModal(true);
                 }}
-                title="Save to Google Drive"
+                title="Save to Google Drive and get link"
+                className="bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold hover:bg-[var(--color-brand-hover)]"
               >
-                <span className="hidden min-[720px]:inline">Save to Google Drive</span>
+                <span className="hidden min-[720px]:inline">Save to Google Drive and get link</span>
                 <span className="min-[720px]:hidden">Save to Drive</span>
               </Button>
             </div>
