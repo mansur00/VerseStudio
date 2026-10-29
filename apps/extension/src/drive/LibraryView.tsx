@@ -137,6 +137,8 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
               size="sm"
               onClick={onNewRecording}
               leadingIcon={<HugeIcon icon={PlusSignIcon} size={16} />}
+              responsiveIconOnly
+              title="New Recording"
             >
               New Recording
             </Button>

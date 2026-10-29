@@ -7,6 +7,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   isLoading?: boolean;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
+  responsiveIconOnly?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -18,19 +19,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       isLoading = false,
       leadingIcon,
       trailingIcon,
+      responsiveIconOnly = false,
       children,
       disabled,
+      title,
+      'aria-label': ariaLabel,
       ...props
     },
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-medium rounded-lg transition-all select-none max-w-full disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-canvas)] active:scale-[0.98]';
+      'inline-flex items-center justify-center font-medium rounded-lg transition-all select-none whitespace-nowrap flex-nowrap shrink-0 disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-text-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-canvas)] active:scale-[0.98]';
 
     const sizeStyles = {
-      sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
-      md: 'h-10 px-4 text-sm gap-2 rounded-lg',
-      lg: 'h-12 px-6 text-base gap-2.5 rounded-lg',
+      sm: responsiveIconOnly
+        ? 'h-8 px-2 min-[720px]:px-3 text-xs gap-1.5 rounded-lg'
+        : 'h-8 px-3 text-xs gap-1.5 rounded-lg',
+      md: responsiveIconOnly
+        ? 'h-10 px-2.5 min-[720px]:px-4 text-sm gap-2 rounded-lg'
+        : 'h-10 px-4 text-sm gap-2 rounded-lg',
+      lg: responsiveIconOnly
+        ? 'h-12 px-3 min-[720px]:px-6 text-base gap-2.5 rounded-lg'
+        : 'h-12 px-6 text-base gap-2.5 rounded-lg',
     };
 
     const variantStyles = {
@@ -44,10 +54,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-[var(--color-danger-default)] text-white font-medium hover:bg-[var(--color-danger-hover)] active:bg-[var(--color-danger-pressed)]',
     };
 
+    const textFallback = typeof children === 'string' ? children : undefined;
+    const computedTitle = title || textFallback;
+    const computedAriaLabel = ariaLabel || textFallback;
+
     return (
       <button
         ref={ref}
         disabled={disabled || isLoading}
+        title={computedTitle}
+        aria-label={computedAriaLabel}
         className={cn(baseStyles, sizeStyles[size], variantStyles[variant], className)}
         {...props}
       >
@@ -76,7 +92,16 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ) : leadingIcon ? (
           <span className="inline-flex shrink-0 items-center justify-center" aria-hidden="true">{leadingIcon}</span>
         ) : null}
-        <span className="inline-flex items-center gap-1.5 shrink-0">{children}</span>
+        {children && (
+          <span
+            className={cn(
+              'inline-flex items-center gap-1.5 shrink-0',
+              responsiveIconOnly && (leadingIcon || trailingIcon) && 'hidden min-[720px]:inline-flex'
+            )}
+          >
+            {children}
+          </span>
+        )}
         {!isLoading && trailingIcon ? (
           <span className="inline-flex shrink-0 items-center justify-center" aria-hidden="true">{trailingIcon}</span>
         ) : null}

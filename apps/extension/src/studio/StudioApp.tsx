@@ -771,20 +771,20 @@ export const StudioApp: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-[var(--color-record-default)]" />
             </span>
           </div>
-          <h1 className="font-h4 text-xl font-semibold tracking-tight text-[var(--color-text-primary)]">
+          <h1 className="font-h4 text-lg sm:text-xl font-semibold tracking-tight text-[var(--color-text-primary)]">
             VerseStudio
           </h1>
-          <div className="px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-hover)] text-xs font-medium">
+          <div className="hidden min-[720px]:inline-block px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-hover)] text-xs font-medium">
             4K · 60 FPS
           </div>
         </div>
 
         {/* View Switcher: Studio | Post-Studio | Library */}
-        <div className="flex items-center gap-1 bg-[var(--color-bg-hover)] p-1 rounded-lg border border-[var(--color-border-subtle)]">
+        <div className="flex items-center gap-0.5 sm:gap-1 bg-[var(--color-bg-hover)] p-1 rounded-lg border border-[var(--color-border-subtle)]">
           <button
             type="button"
             onClick={() => setView('studio')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
               view === 'studio'
                 ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-sm'
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
@@ -795,18 +795,19 @@ export const StudioApp: React.FC = () => {
           <button
             type="button"
             onClick={handleOpenPostStudio}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
               view === 'post-studio'
                 ? 'bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] shadow-sm'
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
-            Post-Studio
+            <span className="hidden min-[720px]:inline">Post-Studio</span>
+            <span className="min-[720px]:hidden">Post</span>
           </button>
           <button
             type="button"
             onClick={() => setView('library')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all ${
+            className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-semibold transition-all whitespace-nowrap ${
               view === 'library'
                 ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-sm'
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
@@ -1564,6 +1565,8 @@ export const StudioApp: React.FC = () => {
                 variant="ghost"
                 size="sm"
                 leadingIcon={<HugeIcon icon={RotateLeft01Icon} size={16} />}
+                responsiveIconOnly
+                title="Record Another"
                 onClick={() => setView('studio')}
               >
                 Record Another
@@ -1572,6 +1575,8 @@ export const StudioApp: React.FC = () => {
                 variant="danger"
                 size="sm"
                 leadingIcon={<HugeIcon icon={Delete01Icon} size={16} />}
+                responsiveIconOnly
+                title="Discard"
                 onClick={() => setShowDiscardConfirm(true)}
               >
                 Discard
@@ -1626,24 +1631,27 @@ export const StudioApp: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPreviewMuted((prev) => !prev)}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] font-label-s bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-all"
-                aria-label={previewMuted ? 'Unmute' : 'Mute'}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] font-label-s bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-all whitespace-nowrap"
+                aria-label={previewMuted ? 'Unmute audio' : 'Mute audio'}
+                title={previewMuted ? 'Unmute audio' : 'Mute audio'}
               >
                 {previewMuted ? <HugeIcon icon={VolumeOffIcon} size={14} className="text-[var(--color-record-default)]" /> : <HugeIcon icon={VolumeHighIcon} size={14} className="text-[var(--color-brand-default)]" />}
-                <span className="hidden sm:inline">{previewMuted ? 'Muted' : 'Audio'}</span>
+                <span className="hidden min-[720px]:inline">{previewMuted ? 'Muted' : 'Audio'}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPreviewSubtitlesActive((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s transition-all whitespace-nowrap ${
                   previewSubtitlesActive
                     ? 'bg-[var(--color-brand-subtle)] border-[var(--color-brand-default)] text-[var(--color-brand-default)] shadow-sm'
                     : 'bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                 }`}
+                aria-label={previewSubtitlesActive ? 'Subtitles On' : 'Subtitles Off'}
+                title={previewSubtitlesActive ? 'Subtitles On' : 'Subtitles Off'}
               >
                 <HugeIcon icon={AiTranscribeAudioIcon} size={14} />
-                <span>CC {previewSubtitlesActive ? 'On' : 'Off'}</span>
+                <span className="hidden min-[720px]:inline">CC {previewSubtitlesActive ? 'On' : 'Off'}</span>
               </button>
             </div>
 
@@ -1791,6 +1799,7 @@ export const StudioApp: React.FC = () => {
                 variant="secondary"
                 size="sm"
                 leadingIcon={<HugeIcon icon={SparklesIcon} size={16} className="text-[var(--color-brand-default)]" />}
+                title="Process AI Voice & Guide"
                 onClick={() => {
                   aiStore.startProcessingAI(
                     `VerseStudio_${new Date().toISOString().slice(0, 10)}`,
@@ -1798,7 +1807,8 @@ export const StudioApp: React.FC = () => {
                   );
                 }}
               >
-                Process AI Voice & Guide
+                <span className="hidden min-[720px]:inline">Process AI Voice & Guide</span>
+                <span className="min-[720px]:hidden">AI Voice</span>
               </Button>
             </div>
 
@@ -1817,22 +1827,28 @@ export const StudioApp: React.FC = () => {
                 size="md"
                 leadingIcon={<HugeIcon icon={Download01Icon} size={18} />}
                 onClick={handleExportMP4}
+                title="Export MP4 (4K)"
               >
-                Export MP4 (4K)
+                <span className="hidden min-[720px]:inline">Export MP4 (4K)</span>
+                <span className="min-[720px]:hidden">MP4</span>
               </Button>
               <Button
                 variant="secondary"
                 size="md"
                 leadingIcon={<HugeIcon icon={Download01Icon} size={18} />}
                 onClick={handleExportWebM}
+                title="Export WebM"
               >
-                Export WebM
+                <span className="hidden min-[720px]:inline">Export WebM</span>
+                <span className="min-[720px]:hidden">WebM</span>
               </Button>
               <Button
                 variant="ghost"
                 size="md"
                 leadingIcon={<HugeIcon icon={File01Icon} size={18} />}
                 onClick={() => aiStore.setIsGuideModalOpen(true)}
+                responsiveIconOnly
+                title="Step-by-Step Guide"
               >
                 Step-by-Step Guide
               </Button>
@@ -1847,8 +1863,10 @@ export const StudioApp: React.FC = () => {
                 onClick={() => {
                   setShowDriveUploadModal(true);
                 }}
+                title="Save to Google Drive"
               >
-                Save to Google Drive
+                <span className="hidden min-[720px]:inline">Save to Google Drive</span>
+                <span className="min-[720px]:hidden">Save to Drive</span>
               </Button>
             </div>
           </div>

@@ -294,9 +294,17 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                 className="flex-1 flex items-center justify-center gap-2"
                 onClick={handleConnect}
                 disabled={isDriveConnecting}
+                leadingIcon={<HugeIcon icon={CloudIcon} size={16} />}
+                title="Connect Google Drive"
               >
-                <HugeIcon icon={CloudIcon} size={16} />
-                <span>{isDriveConnecting ? 'Connecting...' : 'Connect Google Drive'}</span>
+                {isDriveConnecting ? (
+                  'Connecting...'
+                ) : (
+                  <>
+                    <span className="hidden min-[720px]:inline">Connect Google Drive</span>
+                    <span className="min-[720px]:hidden">Connect Drive</span>
+                  </>
+                )}
               </Button>
             </div>
           </div>
