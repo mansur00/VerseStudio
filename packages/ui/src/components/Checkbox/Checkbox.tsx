@@ -35,7 +35,7 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
           aria-invalid={Boolean(error)}
           aria-describedby={error ? errorId : hint ? hintId : undefined}
           className={cn(
-            'peer h-4 w-4 shrink-0 mt-0.5 rounded border border-[var(--color-border-input)] bg-[var(--color-bg-surface)] transition-all',
+            'peer h-5 w-5 shrink-0 mt-0.5 rounded-md border border-[var(--color-border-input)] bg-[var(--color-bg-surface)] transition-all',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-bg-canvas)]',
             'disabled:cursor-not-allowed disabled:opacity-50',
             'data-[state=checked]:bg-[var(--color-brand-default)] data-[state=checked]:border-[var(--color-brand-default)] data-[state=checked]:text-[var(--color-text-on-brand)]',
@@ -45,9 +45,9 @@ export const Checkbox = forwardRef<HTMLButtonElement, CheckboxProps>(
         >
           <CheckboxPrimitive.Indicator className="flex items-center justify-center text-current">
             {checked === 'indeterminate' ? (
-              <span className="w-2 h-0.5 bg-current rounded-full" />
+              <span className="w-2.5 h-0.5 bg-current rounded-full" />
             ) : (
-              <HugeIcon icon={Tick01Icon} size={12} />
+              <HugeIcon icon={Tick01Icon} size={14} />
             )}
           </CheckboxPrimitive.Indicator>
         </CheckboxPrimitive.Root>

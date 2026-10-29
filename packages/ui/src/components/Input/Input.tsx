@@ -41,8 +41,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={Boolean(error)}
             aria-describedby={error ? errorId : hint ? hintId : undefined}
             className={cn(
-              'w-full h-10 px-3 bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)]',
-              'border border-[var(--color-border-input)] rounded-md text-sm transition-colors',
+              'w-full h-11 px-3.5 bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] placeholder-[var(--color-text-tertiary)]',
+              'border border-[var(--color-border-input)] rounded-xl text-sm transition-colors',
               'focus:outline-none focus:border-[var(--color-border-focus)] focus:ring-1 focus:ring-[var(--color-border-focus)]',
               'disabled:opacity-50 disabled:cursor-not-allowed',
               error && 'border-[var(--color-error-default)] focus:border-[var(--color-error-default)] focus:ring-[var(--color-error-default)]',

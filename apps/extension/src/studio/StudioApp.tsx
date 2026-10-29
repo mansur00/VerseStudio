@@ -391,7 +391,8 @@ export const StudioApp: React.FC = () => {
       }
     });
 
-    // Initialize Google Drive library & settings
+    // Initialize Auth, Google Drive library & settings
+    useAuthStore.getState().initialize();
     useDriveStore.getState().initialize();
     useSettingsStore.getState().initialize();
 
