@@ -1,8 +1,40 @@
 -- VerseStudio 4K Pro — Production Database Schema & RLS Policies
 -- Migration: 20261029000000_init_admin_schema.sql
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- Enable UUID extension if available
+DO $$
+BEGIN
+  CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+EXCEPTION WHEN OTHERS THEN
+  NULL;
+END
+$$;
+
+-- Auth Schema & Shims (Compatible with Supabase / Standard Postgres JWT Auth)
+CREATE SCHEMA IF NOT EXISTS auth;
+
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS text AS $$
+  SELECT NULLIF(current_setting('request.jwt.claims', true)::jsonb->>'sub', '')::text;
+$$ LANGUAGE sql STABLE;
+
+CREATE OR REPLACE FUNCTION auth.role() RETURNS text AS $$
+  SELECT NULLIF(current_setting('request.jwt.claims', true)::jsonb->>'role', '')::text;
+$$ LANGUAGE sql STABLE;
+
+-- Create Standard Roles if not existing
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'anon') THEN
+    CREATE ROLE anon NOLOGIN;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'authenticated') THEN
+    CREATE ROLE authenticated NOLOGIN;
+  END IF;
+  IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'service_role') THEN
+    CREATE ROLE service_role NOLOGIN;
+  END IF;
+END
+$$;
 
 -- 1. User Profiles Table
 CREATE TABLE IF NOT EXISTS public.profiles (
@@ -131,15 +163,127 @@ ALTER TABLE public.moderation_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.drive_connections ENABLE ROW LEVEL SECURITY;
 
--- Security Policies:
--- 1. Profiles: users can read and update their own profile; admins can read all profiles.
-CREATE POLICY "Users can read own profile" ON public.profiles FOR SELECT USING (true);
-CREATE POLICY "Users can update own profile" ON public.profiles FOR UPDATE USING (true);
+-- Grant standard permissions to roles
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO authenticated, service_role;
 
--- 2. Audit log: read-only for admins, append-only by service role
-CREATE POLICY "Admins can view audit log" ON public.audit_log FOR SELECT USING (true);
-CREATE POLICY "System can insert audit log" ON public.audit_log FOR INSERT WITH CHECK (true);
+-- Grant BYPASSRLS to service_role (standard Supabase pattern)
+ALTER ROLE service_role BYPASSRLS;
 
--- 3. Share pages: public read for active unblocked pages
-CREATE POLICY "Public can view unblocked share pages" ON public.share_pages FOR SELECT USING (NOT is_blocked AND NOT is_private);
+-- Security Definer Helpers for Role Lookup without RLS Recursion
+CREATE OR REPLACE FUNCTION public.is_admin(check_user_id text)
+RETURNS boolean
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE sql STABLE AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.admin_roles WHERE user_id = check_user_id
+  );
+$$;
 
+CREATE OR REPLACE FUNCTION public.get_admin_role(check_user_id text)
+RETURNS text
+SECURITY DEFINER
+SET search_path = public
+LANGUAGE sql STABLE AS $$
+  SELECT role FROM public.admin_roles WHERE user_id = check_user_id LIMIT 1;
+$$;
+
+-- 1. Profiles RLS:
+-- Anon reads nothing
+-- User reads only own profile; Admins read all profiles
+CREATE POLICY "Users read own profile" ON public.profiles
+  FOR SELECT TO authenticated
+  USING (
+    id = auth.uid()
+    OR auth.role() = 'service_role'
+    OR public.is_admin(auth.uid())
+  );
+
+CREATE POLICY "Users insert own profile" ON public.profiles
+  FOR INSERT TO authenticated, service_role
+  WITH CHECK (
+    id = auth.uid()
+    OR auth.role() = 'service_role'
+  );
+
+CREATE POLICY "Users update own profile" ON public.profiles
+  FOR UPDATE TO authenticated
+  USING (
+    id = auth.uid()
+    OR auth.role() = 'service_role'
+    OR public.get_admin_role(auth.uid()) IN ('super_admin', 'support')
+  );
+
+-- 2. Admin Roles RLS:
+-- Only admin roles read admin tables; anon and normal users read nothing
+CREATE POLICY "Admins read admin roles" ON public.admin_roles
+  FOR SELECT TO authenticated
+  USING (
+    auth.role() = 'service_role'
+    OR public.is_admin(auth.uid())
+  );
+
+CREATE POLICY "Super admin manage admin roles" ON public.admin_roles
+  FOR ALL TO authenticated
+  USING (
+    auth.role() = 'service_role'
+    OR public.get_admin_role(auth.uid()) = 'super_admin'
+  );
+
+-- 3. Audit Log RLS & Immutability:
+-- Read-only for admins and service role; no anon read
+CREATE POLICY "Admins read audit log" ON public.audit_log
+  FOR SELECT TO authenticated
+  USING (
+    auth.role() = 'service_role'
+    OR public.is_admin(auth.uid())
+  );
+
+CREATE POLICY "Append-only audit log" ON public.audit_log
+  FOR INSERT TO authenticated, service_role
+  WITH CHECK (true);
+
+-- Immutable Trigger on audit_log: STRICTLY PREVENTS UPDATE OR DELETE
+CREATE OR REPLACE FUNCTION public.prevent_audit_log_modification() RETURNS TRIGGER AS $$
+BEGIN
+  RAISE EXCEPTION 'audit_log is strictly immutable: UPDATE and DELETE operations are prohibited';
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_immutable_audit_log ON public.audit_log;
+CREATE TRIGGER trg_immutable_audit_log
+BEFORE UPDATE OR DELETE ON public.audit_log
+FOR EACH STATEMENT EXECUTE FUNCTION public.prevent_audit_log_modification();
+
+-- 4. Share Pages RLS:
+-- Public can view unblocked, public pages
+CREATE POLICY "Public can view unblocked share pages" ON public.share_pages
+  FOR SELECT TO anon, authenticated
+  USING (NOT is_blocked AND NOT is_private);
+
+-- Authenticated owner or admin can view all own/managed share pages
+CREATE POLICY "Owners and admins view share pages" ON public.share_pages
+  FOR SELECT TO authenticated
+  USING (
+    user_id = auth.uid()
+    OR auth.role() = 'service_role'
+    OR public.is_admin(auth.uid())
+  );
+
+CREATE POLICY "Users insert own share pages" ON public.share_pages
+  FOR INSERT TO authenticated, service_role
+  WITH CHECK (
+    user_id = auth.uid()
+    OR auth.role() = 'service_role'
+  );
+
+-- Viewer CANNOT write (only super_admin and support can update/block)
+CREATE POLICY "Super admin and support update share pages" ON public.share_pages
+  FOR UPDATE TO authenticated
+  USING (
+    user_id = auth.uid()
+    OR auth.role() = 'service_role'
+    OR public.get_admin_role(auth.uid()) IN ('super_admin', 'support')
+  );

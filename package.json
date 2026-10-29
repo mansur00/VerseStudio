@@ -12,10 +12,14 @@
     "package:extension": "rm -rf apps/extension/dist release/versestudio-4k-pro-v1.0.0.zip && pnpm --filter @verse-studio/extension build && cd apps/extension/dist && zip -r ../../../release/versestudio-4k-pro-v1.0.0.zip ./*"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.12",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@types/node": "^20.14.0",
+    "@types/pg": "^8.23.1",
     "axe-core": "^4.14.0",
+    "pg": "^8.23.1",
     "playwright-core": "^1.64.1",
+    "tsx": "^4.23.15",
     "typescript": "^5.4.5"
   },
   "packageManager": "pnpm@12.15.0",

@@ -26,3 +26,4 @@ CREATE POLICY "Signaling rooms accessible within TTL"
   ON public.phone_signaling_rooms
   FOR ALL
   USING (NOW() < expires_at);
+
