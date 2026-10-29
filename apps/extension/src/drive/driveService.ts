@@ -1,6 +1,7 @@
 /**
  * VerseStudio Google Drive API Client & Resumable Upload Engine
  * Strictly uses scope: https://www.googleapis.com/auth/drive.file
+ * Conforms to Google Drive v3 Resumable Upload Specification with Range query resume.
  */
 
 export interface DriveQuota {
@@ -33,6 +34,18 @@ const FOLDER_NAME = 'VerseStudio';
 export class DriveService {
   private static cachedToken: string | null = null;
   private static cachedFolderId: string | null = null;
+  private static apiBase = 'https://www.googleapis.com';
+
+  /**
+   * Override API Base URL (for testing against fake Drive server)
+   */
+  public static setApiBase(url: string) {
+    this.apiBase = url.replace(/\/+$/, '');
+  }
+
+  public static getApiBase() {
+    return this.apiBase;
+  }
 
   /**
    * Get configured Google Client ID from settings or storage
@@ -67,7 +80,7 @@ export class DriveService {
   /**
    * Helper to persist access token session across extension and browser storage
    */
-  private static async persistSession(token: string, expiresInSeconds = 86400): Promise<void> {
+  public static async persistSession(token: string, expiresInSeconds = 86400): Promise<void> {
     const session = {
       token,
       expiresAt: Date.now() + expiresInSeconds * 1000,
@@ -85,7 +98,8 @@ export class DriveService {
   }
 
   /**
-   * Acquire or restore Google OAuth 2.0 Access Token with seamless fallback
+   * Acquire or restore Google OAuth 2.0 Access Token
+   * Scope: Strictly https://www.googleapis.com/auth/drive.file
    */
   public static async getAccessToken(interactive = false): Promise<string> {
     if (this.cachedToken) return this.cachedToken;
@@ -118,34 +132,27 @@ export class DriveService {
       }
     }
 
-    // 3. If real Custom Client ID is configured, attempt Chrome WebAuthFlow
-    const configuredClientId = await this.getClientId();
-    const hasValidClientId =
-      configuredClientId &&
-      configuredClientId.trim() !== '' &&
-      !configuredClientId.includes('YOUR_GOOGLE_CLIENT_ID');
+    // 3. Interactive OAuth Flow
+    if (interactive) {
+      const configuredClientId = await this.getClientId();
+      if (!configuredClientId || configuredClientId.includes('YOUR_GOOGLE_CLIENT_ID')) {
+        throw new Error('Google Drive Client ID is not configured. Please set your Google Client ID in Settings.');
+      }
 
-    if (
-      interactive &&
-      hasValidClientId &&
-      typeof chrome !== 'undefined' &&
-      chrome.identity &&
-      chrome.identity.launchWebAuthFlow
-    ) {
-      const redirectUri = chrome.identity.getRedirectURL();
-      const authUrl =
-        `https://accounts.google.com/o/oauth2/v2/auth?` +
-        `client_id=${encodeURIComponent(configuredClientId)}&` +
-        `response_type=token&` +
-        `redirect_uri=${encodeURIComponent(redirectUri)}&` +
-        `scope=${encodeURIComponent('https://www.googleapis.com/auth/drive.file')}&` +
-        `prompt=consent`;
+      if (typeof chrome !== 'undefined' && chrome.identity && chrome.identity.launchWebAuthFlow) {
+        const redirectUri = chrome.identity.getRedirectURL();
+        const authUrl =
+          `https://accounts.google.com/o/oauth2/v2/auth?` +
+          `client_id=${encodeURIComponent(configuredClientId)}&` +
+          `response_type=token&` +
+          `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+          `scope=${encodeURIComponent('https://www.googleapis.com/auth/drive.file')}&` +
+          `prompt=consent`;
 
-      try {
         const responseUrl = await new Promise<string>((resolve, reject) => {
           chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, (url) => {
             if (chrome.runtime.lastError || !url) {
-              reject(new Error(chrome.runtime.lastError?.message || 'OAuth cancelled'));
+              reject(new Error(chrome.runtime.lastError?.message || 'Google OAuth connection cancelled by user'));
             } else {
               resolve(url);
             }
@@ -156,19 +163,19 @@ export class DriveService {
         const token = params.get('access_token');
         const expiresIn = parseInt(params.get('expires_in') || '3600', 10);
 
-        if (token) {
-          await this.persistSession(token, expiresIn);
-          return token;
+        if (!token) {
+          throw new Error('No access token returned from Google OAuth authorization');
         }
-      } catch (e) {
-        console.warn('Real Google OAuth flow failed or was cancelled; switching to verified demo session:', e);
+
+        await this.persistSession(token, expiresIn);
+        return token;
       }
+
+      throw new Error('Chrome identity API not available for Google OAuth.');
     }
 
-    // 4. Guaranteed fallback session (ensures zero crashes and smooth operation in demo/test)
-    const mockToken = 'mock_drive_oauth_token_' + Date.now();
-    await this.persistSession(mockToken, 30 * 24 * 3600); // 30 days
-    return mockToken;
+    // Not interactive and no token stored: throw clear unconfigured error
+    throw new Error('Google Drive is not connected. Please connect Google Drive in Settings.');
   }
 
   /**
@@ -193,28 +200,27 @@ export class DriveService {
   public static async getStorageQuota(): Promise<DriveQuota> {
     const token = await this.getAccessToken(false);
 
-    if (token.startsWith('mock_')) {
-      // Return simulated quota for test environment
-      return {
-        limitBytes: 15 * 1024 * 1024 * 1024, // 15 GB
-        usageBytes: 6.4 * 1024 * 1024 * 1024, // 6.4 GB used
-        availableBytes: 8.6 * 1024 * 1024 * 1024,
-      };
-    }
-
-    const res = await fetch('https://www.googleapis.com/drive/v3/about?fields=storageQuota', {
-      headers: { Authorization: `Bearer ${token}` },
+    const res = await fetch(`${this.apiBase}/drive/v3/about?fields=storageQuota`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
 
-    if (!res.ok) throw new Error(`Failed to fetch storage quota: ${res.statusText}`);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch Google Drive storage quota: HTTP ${res.status}`);
+    }
 
     const data = await res.json();
-    const limit = parseInt(data.storageQuota?.limit || '0', 10);
-    const usage = parseInt(data.storageQuota?.usage || '0', 10);
+    const quota = data.storageQuota;
+
+    const limitBytes = parseInt(quota.limit || '16106127360', 10); // 15 GB default
+    const usageBytes = parseInt(quota.usage || '0', 10);
+    const availableBytes = Math.max(0, limitBytes - usageBytes);
+
     return {
-      limitBytes: limit,
-      usageBytes: usage,
-      availableBytes: Math.max(0, limit - usage),
+      limitBytes,
+      usageBytes,
+      availableBytes,
     };
   }
 
@@ -225,17 +231,13 @@ export class DriveService {
     if (this.cachedFolderId) return this.cachedFolderId;
 
     const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) {
-      this.cachedFolderId = 'folder_versestudio_mock_root';
-      return this.cachedFolderId;
-    }
 
-    // 1. Check if folder already exists
+    // Search for existing folder created by VerseStudio
     const query = encodeURIComponent(
-      `name='${FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`
+      `name = '${FOLDER_NAME}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`
     );
     const searchRes = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id,name)`,
+      `${this.apiBase}/drive/v3/files?q=${query}&fields=files(id,name)`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -249,8 +251,8 @@ export class DriveService {
       }
     }
 
-    // 2. Folder does not exist, create it
-    const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+    // Create folder if not found
+    const createRes = await fetch(`${this.apiBase}/drive/v3/files`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -262,53 +264,27 @@ export class DriveService {
       }),
     });
 
-    if (!createRes.ok) throw new Error('Failed to create VerseStudio directory in Google Drive');
+    if (!createRes.ok) {
+      throw new Error(`Failed to create ${FOLDER_NAME} folder in Google Drive`);
+    }
 
-    const created = await createRes.json();
-    this.cachedFolderId = created.id;
-    return created.id;
+    const newFolder = await createRes.json();
+    this.cachedFolderId = newFolder.id;
+    return newFolder.id;
+  }
+
+  public static async uploadVideoResumable(options: DriveUploadOptions): Promise<DriveUploadResult> {
+    return this.uploadFileResumable(options);
   }
 
   /**
-   * 8 MB Chunked Resumable Upload Engine with status query and recovery
+   * Resumable chunked upload engine (8 MB chunks)
+   * Recovers from network interruptions by querying byte status and resuming.
    */
-  public static async uploadVideoResumable(
-    options: DriveUploadOptions
-  ): Promise<DriveUploadResult> {
+  public static async uploadFileResumable(options: DriveUploadOptions): Promise<DriveUploadResult> {
     const { name, blob, onProgress, signal } = options;
     const token = await this.getAccessToken(false);
     const totalBytes = blob.size;
-
-    // Check storage quota before upload
-    try {
-      const quota = await this.getStorageQuota();
-      if (quota.availableBytes < totalBytes) {
-        throw new Error('Google Drive Full: Not enough space available to upload recording');
-      }
-    } catch (err: any) {
-      if (err.message.includes('Google Drive Full')) throw err;
-    }
-
-    if (token.startsWith('mock_')) {
-      // Simulate chunked upload progression for test / mock env
-      let sentBytes = 0;
-      const stepSize = Math.max(CHUNK_SIZE, Math.floor(totalBytes / 4));
-      while (sentBytes < totalBytes) {
-        if (signal?.aborted) throw new Error('Upload cancelled');
-        await new Promise((res) => setTimeout(res, 200));
-        sentBytes = Math.min(totalBytes, sentBytes + stepSize);
-        const percent = Math.round((sentBytes / totalBytes) * 100);
-        onProgress?.(percent, sentBytes, totalBytes);
-      }
-
-      const mockFileId = 'drive_file_' + Math.random().toString(36).substring(2, 10);
-      return {
-        fileId: mockFileId,
-        name,
-        webViewLink: `https://drive.google.com/file/d/${mockFileId}/view`,
-        shareUrl: `https://versestudio.app/watch/${mockFileId}`,
-      };
-    }
 
     const folderId = options.folderId || (await this.getOrCreateAppFolder());
 
@@ -320,7 +296,7 @@ export class DriveService {
     };
 
     const initRes = await fetch(
-      'https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable',
+      `${this.apiBase}/upload/drive/v3/files?uploadType=resumable`,
       {
         method: 'POST',
         headers: {
@@ -335,75 +311,117 @@ export class DriveService {
     );
 
     if (!initRes.ok) {
-      throw new Error(`Failed to initiate Google Drive upload session: ${initRes.statusText}`);
+      throw new Error(`Failed to initiate Google Drive upload session: HTTP ${initRes.status}`);
     }
 
-    const uploadLocation = initRes.headers.get('Location');
-    if (!uploadLocation) throw new Error('Google Drive did not return a valid upload location URI');
+    const sessionUri = initRes.headers.get('Location');
+    if (!sessionUri) {
+      throw new Error('Google Drive upload session URI missing from response');
+    }
 
-    // Step 2: Upload Chunks sequentially
-    let startByte = 0;
-    while (startByte < totalBytes) {
-      if (signal?.aborted) throw new Error('Upload cancelled');
+    // Step 2: Upload Chunks with Resumption & Retry
+    let uploadedBytes = 0;
 
-      const endByte = Math.min(startByte + CHUNK_SIZE, totalBytes);
-      const chunk = blob.slice(startByte, endByte);
+    while (uploadedBytes < totalBytes) {
+      if (signal?.aborted) {
+        throw new Error('Upload cancelled');
+      }
 
-      const chunkRes = await fetch(uploadLocation, {
-        method: 'PUT',
-        headers: {
-          'Content-Range': `bytes ${startByte}-${endByte - 1}/${totalBytes}`,
-        },
-        body: chunk,
-        signal,
-      });
+      const chunkEnd = Math.min(uploadedBytes + CHUNK_SIZE, totalBytes);
+      const chunkBlob = blob.slice(uploadedBytes, chunkEnd);
+      const contentRange = `bytes ${uploadedBytes}-${chunkEnd - 1}/${totalBytes}`;
 
-      if (chunkRes.status === 308) {
-        // Range acknowledged, parse next start position
-        const rangeHeader = chunkRes.headers.get('Range');
-        if (rangeHeader) {
-          const match = rangeHeader.match(/bytes=0-(\d+)/);
-          if (match) {
-            startByte = parseInt(match[1], 10) + 1;
+      try {
+        const chunkRes = await fetch(sessionUri, {
+          method: 'PUT',
+          headers: {
+            'Content-Range': contentRange,
+          },
+          body: chunkBlob,
+          signal,
+        });
+
+        if (chunkRes.status === 308) {
+          // Chunk accepted, resume incomplete
+          const rangeHeader = chunkRes.headers.get('Range');
+          if (rangeHeader) {
+            const match = rangeHeader.match(/bytes=0-(\d+)/);
+            if (match) {
+              uploadedBytes = parseInt(match[1], 10) + 1;
+            } else {
+              uploadedBytes = chunkEnd;
+            }
           } else {
-            startByte = endByte;
+            uploadedBytes = chunkEnd;
           }
+          const percent = Math.round((uploadedBytes / totalBytes) * 100);
+          onProgress?.(percent, uploadedBytes, totalBytes);
+        } else if (chunkRes.ok) {
+          // Upload complete!
+          const fileData = await chunkRes.json();
+          onProgress?.(100, totalBytes, totalBytes);
+
+          return {
+            fileId: fileData.id,
+            name: fileData.name,
+            webViewLink: fileData.webViewLink || `https://drive.google.com/file/d/${fileData.id}/view`,
+            shareUrl: `https://versestudio.app/watch/${fileData.id}`,
+          };
         } else {
-          startByte = endByte;
+          throw new Error(`Chunk upload failed with HTTP ${chunkRes.status}`);
+        }
+      } catch (chunkErr: any) {
+        if (signal?.aborted) throw chunkErr;
+
+        // Query status to determine what Google Drive actually received
+        try {
+          const statusRes = await fetch(sessionUri, {
+            method: 'PUT',
+            headers: {
+              'Content-Range': `bytes */${totalBytes}`,
+            },
+          });
+
+          if (statusRes.status === 308) {
+            const rangeHeader = statusRes.headers.get('Range');
+            if (rangeHeader) {
+              const match = rangeHeader.match(/bytes=0-(\d+)/);
+              if (match) {
+                uploadedBytes = parseInt(match[1], 10) + 1;
+                continue; // Resume from last byte received by Drive
+              }
+            }
+          } else if (statusRes.ok) {
+            const fileData = await statusRes.json();
+            return {
+              fileId: fileData.id,
+              name: fileData.name,
+              webViewLink: fileData.webViewLink,
+              shareUrl: `https://versestudio.app/watch/${fileData.id}`,
+            };
+          }
+        } catch {
+          // Status query also failed, rethrow original error
         }
 
-        const pct = Math.round((startByte / totalBytes) * 100);
-        onProgress?.(pct, startByte, totalBytes);
-      } else if (chunkRes.status === 200 || chunkRes.status === 201) {
-        // Upload finished!
-        const fileData = await chunkRes.json();
-        onProgress?.(100, totalBytes, totalBytes);
-
-        // Make file viewable by link
-        await this.setFilePublic(fileData.id);
-
-        return {
-          fileId: fileData.id,
-          name: fileData.name,
-          webViewLink: fileData.webViewLink,
-          shareUrl: `https://versestudio.app/watch/${fileData.id}`,
-        };
-      } else {
-        throw new Error(`Upload error: HTTP ${chunkRes.status}`);
+        throw chunkErr;
       }
     }
 
-    throw new Error('Upload terminated unexpectedly');
+    throw new Error('Upload reached end of stream without server completion confirmation');
   }
 
   /**
-   * Set Google Drive file permission: Anyone with link can view
+   * Set Google Drive file permission to "anyone with link can view"
    */
   public static async setFilePublic(fileId: string): Promise<string> {
-    const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) return 'perm_anyone_mock';
+    return this.shareFilePublicly(fileId);
+  }
 
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+  public static async shareFilePublicly(fileId: string): Promise<string> {
+    const token = await this.getAccessToken(false);
+
+    const res = await fetch(`${this.apiBase}/drive/v3/files/${fileId}/permissions`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -415,35 +433,43 @@ export class DriveService {
       }),
     });
 
-    if (!res.ok) throw new Error('Failed to set public view permission');
-    const data = await res.json();
-    return data.id;
+    if (!res.ok) {
+      throw new Error(`Failed to set public sharing permission: HTTP ${res.status}`);
+    }
+
+    return `https://versestudio.app/watch/${fileId}`;
   }
 
   /**
-   * Set Google Drive file permission to private
+   * Revoke public share link (make private)
    */
   public static async setFilePrivate(fileId: string, permissionId = 'anyoneWithLink'): Promise<void> {
-    const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) return;
+    return this.makeFilePrivate(fileId, permissionId);
+  }
 
-    await fetch(
-      `https://www.googleapis.com/drive/v3/files/${fileId}/permissions/${permissionId}`,
+  public static async makeFilePrivate(fileId: string, permissionId = 'anyoneWithLink'): Promise<void> {
+    const token = await this.getAccessToken(false);
+
+    const res = await fetch(
+      `${this.apiBase}/drive/v3/files/${fileId}/permissions/${permissionId}`,
       {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
+    if (!res.ok && res.status !== 404) {
+      throw new Error(`Failed to revoke permissions: HTTP ${res.status}`);
+    }
   }
 
   /**
-   * Rename a file in Google Drive
+   * Rename a recording in Google Drive
    */
   public static async renameFile(fileId: string, newName: string): Promise<void> {
     const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) return;
 
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+    const res = await fetch(`${this.apiBase}/drive/v3/files/${fileId}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -452,17 +478,22 @@ export class DriveService {
       body: JSON.stringify({ name: newName }),
     });
 
-    if (!res.ok) throw new Error('Failed to rename file');
+    if (!res.ok) {
+      throw new Error(`Failed to rename file in Google Drive: HTTP ${res.status}`);
+    }
   }
 
   /**
-   * Move file to Trash in Google Drive
+   * Move file to Trash in Google Drive (Never permanently deletes from user storage)
    */
   public static async moveToTrash(fileId: string): Promise<void> {
-    const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) return;
+    return this.trashFile(fileId);
+  }
 
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+  public static async trashFile(fileId: string): Promise<void> {
+    const token = await this.getAccessToken(false);
+
+    const res = await fetch(`${this.apiBase}/drive/v3/files/${fileId}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -471,17 +502,18 @@ export class DriveService {
       body: JSON.stringify({ trashed: true }),
     });
 
-    if (!res.ok) throw new Error('Failed to move file to Trash');
+    if (!res.ok) {
+      throw new Error(`Failed to trash file in Google Drive: HTTP ${res.status}`);
+    }
   }
 
   /**
-   * Restore file from Trash
+   * Restore file from Trash in Google Drive
    */
   public static async restoreFromTrash(fileId: string): Promise<void> {
     const token = await this.getAccessToken(false);
-    if (token.startsWith('mock_')) return;
 
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+    const res = await fetch(`${this.apiBase}/drive/v3/files/${fileId}`, {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -490,6 +522,8 @@ export class DriveService {
       body: JSON.stringify({ trashed: false }),
     });
 
-    if (!res.ok) throw new Error('Failed to restore file from Trash');
+    if (!res.ok) {
+      throw new Error(`Failed to restore file from trash: HTTP ${res.status}`);
+    }
   }
 }
