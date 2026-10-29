@@ -45,14 +45,14 @@ export const Modal: React.FC<ModalProps> = ({
     <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
       <DialogPrimitive.Portal>
         {/* Backdrop */}
-        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+        <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-black/75 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
 
         {/* Dialog Content */}
         <DialogPrimitive.Content
           className={cn(
             'fixed left-[50%] top-[50%] z-50 w-full translate-x-[-50%] translate-y-[-50%]',
             sizeClasses[size],
-            'bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] rounded-xl p-6 shadow-xl',
+            'bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] rounded-2xl p-6 shadow-xl',
             'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
             className
           )}
@@ -82,12 +82,13 @@ export const Modal: React.FC<ModalProps> = ({
           {children ? <div className="mt-4">{children}</div> : null}
 
           {(confirmText || cancelText) && (
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 sm:gap-3">
               {cancelText && (
                 <Button
                   variant="secondary"
                   onClick={() => onOpenChange(false)}
                   disabled={isLoading}
+                  className="w-full sm:w-auto"
                 >
                   {cancelText}
                 </Button>
@@ -97,6 +98,7 @@ export const Modal: React.FC<ModalProps> = ({
                   variant={variant === 'danger' ? 'danger' : 'primary'}
                   onClick={onConfirm}
                   isLoading={isLoading}
+                  className="w-full sm:w-auto"
                 >
                   {confirmText}
                 </Button>

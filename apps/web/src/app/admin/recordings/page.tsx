@@ -107,7 +107,7 @@ export default function AdminRecordingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-            Recordings Directory (A07)
+            Recordings Directory
           </h1>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Browse and moderate all 4K recordings hosted on creators&apos; Google Drive accounts.
@@ -276,10 +276,10 @@ export default function AdminRecordingsPage() {
           size="md"
         >
           <div className="space-y-4 text-xs text-[var(--color-text-secondary)]">
-            <div className="p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)]/30 text-[var(--color-error-default)]">
+            <div className="p-3 rounded-xl bg-[var(--color-error-subtle)] text-[var(--color-error-default)]">
               <p className="font-bold">
                 {blockTarget.status === 'active'
-                  ? 'Blocking this share link will display the "Link Unavailable" screen (Screen 47) to all public visitors.'
+                  ? 'Blocking this share link will display the "Link Unavailable" screen to all public visitors.'
                   : 'Unblocking this link restores public watch page access for all visitors.'}
               </p>
               <p className="text-[11px] mt-1 text-[var(--color-text-secondary)]">
@@ -291,13 +291,14 @@ export default function AdminRecordingsPage() {
               Target Recording: <span className="font-bold">{blockTarget.title}</span>
             </p>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" onClick={() => setBlockTarget(null)}>
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button variant="ghost" onClick={() => setBlockTarget(null)} className="w-full sm:w-auto">
                 Cancel
               </Button>
               <Button
                 variant={blockTarget.status === 'active' ? 'danger' : 'primary'}
                 onClick={handleToggleBlock}
+                className="w-full sm:w-auto"
               >
                 {blockTarget.status === 'active' ? 'Confirm Block' : 'Confirm Restore'}
               </Button>

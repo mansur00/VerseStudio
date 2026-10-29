@@ -141,14 +141,14 @@ export default function AdminUsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-            Users Management (A02–A06)
+            Users Management
           </h1>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Directory of all registered creators, subscription tiers, Drive storage, and active accounts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <Button
             variant="secondary"
             size="sm"
@@ -161,10 +161,10 @@ export default function AdminUsersPage() {
               a.download = 'versestudio_users.csv';
               a.click();
             }}
-            className="flex items-center gap-1.5 text-xs"
+            leadingIcon={<HugeIcon icon={Download01Icon} size={14} />}
+            className="w-full sm:w-auto"
           >
-            <HugeIcon icon={Download01Icon} size={14} />
-            <span>Export CSV</span>
+            Export CSV
           </Button>
         </div>
       </div>
@@ -222,7 +222,7 @@ export default function AdminUsersPage() {
 
       {/* Screen A03: Bulk Actions Floating Bar */}
       {selectedUserIds.length > 0 && (
-        <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-brand-default)]/40 flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2">
+        <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] flex items-center justify-between gap-4 animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2 text-xs font-semibold text-[var(--color-brand-default)]">
             <span className="w-5 h-5 rounded-full bg-[var(--color-brand-default)] text-black flex items-center justify-center font-bold text-[10px]">
               {selectedUserIds.length}
@@ -510,7 +510,7 @@ export default function AdminUsersPage() {
           size="md"
         >
           <div className="space-y-4 text-xs text-[var(--color-text-secondary)]">
-            <div className="p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)]/30 text-[var(--color-error-default)] flex items-start gap-3">
+            <div className="p-3 rounded-xl bg-[var(--color-error-subtle)] text-[var(--color-error-default)] flex items-start gap-3">
               <HugeIcon icon={Alert01Icon} size={20} className="flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold">

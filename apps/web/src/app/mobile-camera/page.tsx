@@ -295,14 +295,14 @@ export default function MobileCameraPage() {
   return (
     <div className="min-h-screen bg-[#1B1C21] text-[#F5F5F7] flex flex-col justify-between select-none">
       {/* Top Header Bar */}
-      <header className="px-5 py-4 flex items-center justify-between border-b border-[#2F3037] bg-[#222329]/80 backdrop-blur-md">
+      <header className="px-5 py-4 flex items-center justify-between border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-[var(--color-brand-default)] flex items-center justify-center shadow-[var(--glow-brand)]">
             <HugeIcon icon={SmartPhone01Icon} size={16} className="text-[#1B1C21]" />
           </div>
           <div>
             <h1 className="text-sm font-bold tracking-tight">VerseStudio Camera</h1>
-            <p className="text-[10px] text-[#A3A4B0]">Screen 17 • Mobile View</p>
+            <p className="text-[10px] text-[var(--color-text-secondary)]">HD WebRTC Video Feed</p>
           </div>
         </div>
 
@@ -321,7 +321,7 @@ export default function MobileCameraPage() {
           playsInline
           autoPlay
           muted
-          className={`w-full h-full max-h-[82vh] object-cover rounded-2xl border border-white/10 shadow-2xl transition-transform ${
+          className={`w-full h-full max-h-[82vh] object-cover rounded-2xl border border-[var(--color-border-subtle)] shadow-2xl transition-transform ${
             facingMode === 'user' ? 'scale-x-[-1]' : ''
           }`}
         />
@@ -329,13 +329,13 @@ export default function MobileCameraPage() {
         {/* Viewfinder crosshairs and HUD */}
         <div className="absolute inset-8 pointer-events-none flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <div className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-mono text-[var(--color-brand-default)] flex items-center gap-1.5">
+            <div className="px-2.5 py-1 rounded-md bg-[var(--color-bg-canvas)] border border-[var(--color-border-subtle)] text-[11px] font-mono text-[var(--color-brand-default)] flex items-center gap-1.5">
               <HugeIcon icon={FlashIcon} size={12} className="text-[var(--color-brand-default)]" />
               <span>PAIR: {pairingCode || 'VS-8924'}</span>
             </div>
 
             {isStreaming && (
-              <div className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/15 text-[11px] font-mono text-white flex items-center gap-1.5">
+              <div className="px-2.5 py-1 rounded-md bg-[var(--color-bg-canvas)] border border-[var(--color-border-subtle)] text-[11px] font-mono text-white flex items-center gap-1.5">
                 <HugeIcon icon={Wifi01Icon} size={12} className="text-[var(--color-brand-default)]" />
                 <span>{latencyMs}ms</span>
               </div>
@@ -343,16 +343,16 @@ export default function MobileCameraPage() {
           </div>
 
           {/* Center focus indicator */}
-          <div className="self-center w-16 h-16 rounded-xl border border-white/30 flex items-center justify-center">
+          <div className="self-center w-16 h-16 rounded-xl border border-[var(--color-border-strong)] flex items-center justify-center">
             <div className="w-2 h-2 rounded-full bg-[var(--color-brand-default)]" />
           </div>
 
           <div className="flex items-center justify-between text-[11px] text-white/80">
-            <span className="bg-black/60 px-2 py-0.5 rounded backdrop-blur-md">
+            <span className="bg-[var(--color-bg-canvas)] border border-[var(--color-border-subtle)] px-2 py-0.5 rounded">
               {facingMode === 'user' ? 'Front Camera' : 'Rear Camera'}
             </span>
             {wakeLockActive && (
-              <span className="bg-black/60 px-2 py-0.5 rounded backdrop-blur-md flex items-center gap-1 text-[var(--color-brand-default)]">
+              <span className="bg-[var(--color-bg-canvas)] border border-[var(--color-border-subtle)] px-2 py-0.5 rounded flex items-center gap-1 text-[var(--color-brand-default)]">
                 <HugeIcon icon={LockIcon} size={12} />
                 Screen Awake
               </span>
@@ -362,12 +362,12 @@ export default function MobileCameraPage() {
 
         {/* Status prompt overlay when idle */}
         {!isStreaming && (
-          <div className="absolute inset-x-8 bottom-28 p-4 rounded-xl bg-black/75 backdrop-blur-md border border-white/15 text-center space-y-2">
-            <h3 className="text-sm font-bold text-white flex items-center justify-center gap-1.5">
+          <div className="absolute inset-x-8 bottom-28 p-4 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] text-center space-y-2">
+            <h3 className="text-sm font-bold text-[var(--color-text-primary)] flex items-center justify-center gap-1.5">
               <HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-[var(--color-brand-default)]" />
               Ready to Stream Camera Feed
             </h3>
-            <p className="text-xs text-[#B9BAC4]">
+            <p className="text-xs text-[var(--color-text-secondary)]">
               Connected to pairing channel <strong>{pairingCode}</strong>. Tap Start Streaming to feed video into your studio camera bubble.
             </p>
           </div>
@@ -375,8 +375,8 @@ export default function MobileCameraPage() {
 
         {/* Error notice */}
         {errorMessage && (
-          <div className="absolute top-8 inset-x-6 p-3 rounded-xl bg-red-950/80 border border-red-500/40 text-red-200 text-xs flex items-center gap-2">
-            <HugeIcon icon={AlertCircleIcon} size={16} className="text-red-400 shrink-0" />
+          <div className="absolute top-8 inset-x-6 p-3 rounded-xl bg-[var(--color-error-subtle)] text-[var(--color-error-default)] text-xs flex items-center gap-2">
+            <HugeIcon icon={AlertCircleIcon} size={16} className="text-[var(--color-error-default)] shrink-0" />
             <span>{errorMessage}</span>
           </div>
         )}

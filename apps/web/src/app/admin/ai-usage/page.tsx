@@ -48,7 +48,7 @@ export default function AdminAiUsagePage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-          AI Usage & Server Costs (A11)
+          AI Usage & Costs
         </h1>
         <p className="text-xs text-[var(--color-text-secondary)] mt-1">
           Monitor serverless speech-to-text, neural English dubbing, and AI tutorial compilation costs.

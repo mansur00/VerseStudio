@@ -167,7 +167,7 @@ export default function SharedWatchPage() {
   return (
     <div className="min-h-screen bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] flex flex-col">
       {/* Top Navbar */}
-      <header className="h-16 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-40 backdrop-blur-md">
+      <header className="h-16 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 sm:px-8 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div className="w-8 h-8 rounded-lg bg-[var(--color-brand-default)] flex items-center justify-center font-black text-black text-base shadow-[var(--glow-brand)]">
@@ -200,9 +200,8 @@ export default function SharedWatchPage() {
             variant="ghost"
             size="sm"
             onClick={handleCopyLink}
-            className="flex items-center gap-1.5"
+            leadingIcon={copiedLink ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Share01Icon} size={16} />}
           >
-            {copiedLink ? <HugeIcon icon={Tick01Icon} size={16} className="text-[var(--color-brand-default)]" /> : <HugeIcon icon={Share01Icon} size={16} />}
             <span className="hidden sm:inline">{copiedLink ? 'Link Copied!' : 'Share'}</span>
           </Button>
 
@@ -216,9 +215,8 @@ export default function SharedWatchPage() {
             <Button
               variant="secondary"
               size="sm"
-              className="flex items-center gap-1.5"
+              leadingIcon={<HugeIcon icon={ArrowUpRight01Icon} size={16} />}
             >
-              <HugeIcon icon={ArrowUpRight01Icon} size={16} />
               <span>Open in Drive</span>
             </Button>
           </a>
@@ -244,7 +242,7 @@ export default function SharedWatchPage() {
                 {/* 4K Visual Canvas Mock */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#1B1C21] via-[#222329] to-[#292A31] flex items-center justify-center">
                   <div className="text-center p-6">
-                    <div className="w-20 h-20 rounded-full bg-[var(--color-brand-default)]/10 border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)] flex items-center justify-center mx-auto mb-4 cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsPlaying(!isPlaying)}>
+                    <div className="w-20 h-20 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] flex items-center justify-center mx-auto mb-4 cursor-pointer hover:scale-105 transition-transform" onClick={() => setIsPlaying(!isPlaying)}>
                       {isPlaying ? <HugeIcon icon={PauseIcon} size={32} /> : <HugeIcon icon={PlayIcon} size={32} className="translate-x-0.5" />}
                     </div>
                     <p className="text-sm font-medium text-[var(--color-text-secondary)]">
@@ -256,11 +254,11 @@ export default function SharedWatchPage() {
                 {/* Subtitle Overlay if enabled */}
                 {ccEnabled && (
                   <div className="absolute bottom-16 left-6 right-6 text-center pointer-events-none z-20">
-                    <div className="inline-block px-4 py-2 rounded-xl bg-black/85 backdrop-blur-md border border-white/10 shadow-xl max-w-2xl text-left">
+                    <div className="inline-block px-4 py-2.5 rounded-2xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] shadow-xl max-w-2xl text-left">
                       <p className="text-sm text-[var(--color-brand-default)] font-semibold font-['Hind_Siliguri',sans-serif]">
                         আজকে আমরা দেখব কিভাবে ক্লাউডে ৪কে ভিডিও স্ট্রিম ডিপ্লয় করতে হয়।
                       </p>
-                      <p className="text-xs text-white/90 font-medium mt-0.5">
+                      <p className="text-xs text-[var(--color-text-primary)] font-medium mt-0.5">
                         Today we will see how to deploy 4K video streaming to cloud infrastructure.
                       </p>
                     </div>
@@ -301,7 +299,7 @@ export default function SharedWatchPage() {
                       className={`px-2 py-1 rounded text-xs font-bold transition-all ${
                         ccEnabled
                           ? 'bg-[var(--color-brand-default)] text-black shadow-sm'
-                          : 'bg-white/20 text-white hover:bg-white/30'
+                          : 'bg-[var(--color-bg-elevated)] text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-hover)] hover:text-[var(--color-text-primary)] border border-[var(--color-border-subtle)]'
                       }`}
                       title="Toggle Bangla-to-English Subtitles"
                     >

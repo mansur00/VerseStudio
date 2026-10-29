@@ -56,7 +56,7 @@ export default function AdminModerationPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-          Moderation Queue (A08)
+          Moderation Queue
         </h1>
         <p className="text-xs text-[var(--color-text-secondary)] mt-1">
           Review community reports, copyright disputes, and privacy violation tickets on public share pages.
@@ -87,8 +87,8 @@ export default function AdminModerationPage() {
                 className="p-5 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm"
               >
                 <div className="space-y-2 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[var(--color-warning-subtle)] text-[var(--color-warning-default)] border border-[var(--color-warning-default)]/30 font-semibold">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-[var(--color-warning-subtle)] text-[var(--color-warning-default)] font-semibold">
                       {rep.reason.replace('_', ' ')}
                     </span>
                     <span className="text-xs text-[var(--color-text-tertiary)] flex items-center gap-1">
@@ -111,11 +111,10 @@ export default function AdminModerationPage() {
                   </p>
                 </div>
 
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap">
                   <Link href={`/watch/${rep.share_page_id}`} target="_blank">
-                    <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1.5">
-                      <HugeIcon icon={ArrowUpRight01Icon} size={14} />
-                      <span>Inspect</span>
+                    <Button variant="ghost" size="sm" leadingIcon={<HugeIcon icon={ArrowUpRight01Icon} size={14} />}>
+                      Inspect
                     </Button>
                   </Link>
 
@@ -125,19 +124,17 @@ export default function AdminModerationPage() {
                         variant="danger"
                         size="sm"
                         onClick={() => handleUpdateStatus(rep.id, 'resolved')}
-                        className="text-xs flex items-center gap-1.5"
+                        leadingIcon={<HugeIcon icon={Shield01Icon} size={14} />}
                       >
-                        <HugeIcon icon={Shield01Icon} size={14} />
-                        <span>Take Down</span>
+                        Take Down
                       </Button>
                       <Button
                         variant="secondary"
                         size="sm"
                         onClick={() => handleUpdateStatus(rep.id, 'dismissed')}
-                        className="text-xs flex items-center gap-1.5"
+                        leadingIcon={<HugeIcon icon={CheckmarkCircle01Icon} size={14} />}
                       >
-                        <HugeIcon icon={CheckmarkCircle01Icon} size={14} />
-                        <span>Dismiss</span>
+                        Dismiss
                       </Button>
                     </>
                   )}

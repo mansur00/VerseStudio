@@ -1055,7 +1055,7 @@ export const StudioApp: React.FC = () => {
                   onClose={() => toggleTool('teleprompter')}
                   isBangla={lang === 'bn'}
                 />
-                <div className="px-3 py-1.5 rounded-lg bg-amber-950/80 border border-amber-500/40 text-amber-200 text-xs flex items-center gap-1.5 backdrop-blur-md max-w-sm">
+                <div className="px-3 py-1.5 rounded-lg bg-[var(--color-warning-subtle)] border border-[var(--color-border-subtle)] text-[var(--color-warning-default)] text-xs flex items-center gap-1.5 max-w-sm">
                   <HugeIcon icon={Alert01Icon} size={14} className="text-amber-400 shrink-0" />
                   <span>Entire Screen capture records all on-screen overlays. Use Window or Tab capture to exclude prompter.</span>
                 </div>
@@ -1082,7 +1082,7 @@ export const StudioApp: React.FC = () => {
 
             {/* In-viewport camera bubble drag instruction */}
             {layout === 'screen-camera' && !teleprompterOpen && (
-              <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md font-caption text-[var(--color-text-secondary)] border border-white/10 pointer-events-none">
+              <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-elevated)] font-caption text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] pointer-events-none">
                 <HugeIcon icon={Move01Icon} size={14} className="text-[var(--color-brand-default)]" />
                 <span className="hidden sm:inline">Draggable Camera Bubble Enabled</span>
                 <span className="sm:hidden">Bubble Active</span>
@@ -1261,7 +1261,7 @@ export const StudioApp: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPreviewMuted((prev) => !prev)}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s backdrop-blur-md bg-black/60 border-white/20 text-white hover:bg-black/80 transition-all"
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border border-[var(--color-border-subtle)] font-label-s bg-[var(--color-bg-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-all"
                 aria-label={previewMuted ? 'Unmute' : 'Mute'}
               >
                 {previewMuted ? <HugeIcon icon={VolumeOffIcon} size={14} className="text-[var(--color-record-default)]" /> : <HugeIcon icon={VolumeHighIcon} size={14} className="text-[var(--color-brand-default)]" />}
@@ -1271,10 +1271,10 @@ export const StudioApp: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPreviewSubtitlesActive((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s backdrop-blur-md transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg border font-label-s transition-all ${
                   previewSubtitlesActive
-                    ? 'bg-black/75 border-[var(--color-brand-default)] text-[var(--color-brand-default)] shadow-md'
-                    : 'bg-black/50 border-white/20 text-white/70 hover:text-white'
+                    ? 'bg-[var(--color-brand-subtle)] border-[var(--color-brand-default)] text-[var(--color-brand-default)] shadow-sm'
+                    : 'bg-[var(--color-bg-elevated)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
                 }`}
               >
                 <HugeIcon icon={AiTranscribeAudioIcon} size={14} />
@@ -1317,7 +1317,7 @@ export const StudioApp: React.FC = () => {
                 <button
                   type="button"
                   onClick={togglePlay}
-                  className="p-1 sm:p-1.5 rounded-md hover:bg-white/20 text-white transition-colors"
+                  className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
                   aria-label={isPlaying ? 'Pause' : 'Play'}
                 >
                   {isPlaying ? <HugeIcon icon={PauseIcon} size={16} /> : <HugeIcon icon={PlayIcon} size={16} className="ml-0.5" />}
@@ -1332,7 +1332,7 @@ export const StudioApp: React.FC = () => {
                       setCurrentTime(newT);
                     }
                   }}
-                  className="p-1 sm:p-1.5 rounded-md hover:bg-white/20 text-white transition-colors"
+                  className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
                   title="Rewind 5s"
                   aria-label="Rewind 5 seconds"
                 >
@@ -1348,7 +1348,7 @@ export const StudioApp: React.FC = () => {
                       setCurrentTime(newT);
                     }
                   }}
-                  className="p-1 sm:p-1.5 rounded-md hover:bg-white/20 text-white transition-colors"
+                  className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
                   title="Forward 5s"
                   aria-label="Forward 5 seconds"
                 >
@@ -1361,7 +1361,7 @@ export const StudioApp: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="font-code text-[11px] text-[var(--color-brand-default)] bg-black/60 px-2 py-0.5 rounded border border-white/10 hidden md:inline">
+                <span className="font-code text-[11px] text-[var(--color-brand-default)] bg-[var(--color-bg-canvas)] px-2 py-0.5 rounded border border-[var(--color-border-subtle)] hidden md:inline">
                   Trim: {formatTime(trimRange.start * 1000)} - {formatTime((trimRange.end || videoDuration) * 1000)}
                 </span>
                 <button
@@ -1371,7 +1371,7 @@ export const StudioApp: React.FC = () => {
                       previewVideoRef.current.requestFullscreen();
                     }
                   }}
-                  className="p-1 sm:p-1.5 rounded-md hover:bg-white/20 text-white transition-colors"
+                  className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
                   title="Fullscreen"
                   aria-label="Fullscreen"
                 >

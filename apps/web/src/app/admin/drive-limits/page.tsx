@@ -40,7 +40,7 @@ export default function AdminDriveLimitsPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-          Google Drive Storage & Quota Limits (A12)
+          Drive & Limits
         </h1>
         <p className="text-xs text-[var(--color-text-secondary)] mt-1">
           Telemetry on user-owned Google Drive storage, BYOS (Bring Your Own Storage) economics, and OAuth token health.

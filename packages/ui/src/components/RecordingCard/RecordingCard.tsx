@@ -83,7 +83,7 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-[var(--color-bg-elevated)] to-[var(--color-bg-hover)] text-[var(--color-text-tertiary)]">
-            <div className="w-10 h-10 rounded-full bg-[var(--color-bg-surface)]/80 flex items-center justify-center text-[var(--color-text-primary)] shadow-sm backdrop-blur-sm group-hover:scale-110 group-hover:text-[var(--color-brand-default)] transition-all">
+            <div className="w-10 h-10 rounded-full bg-[var(--color-bg-surface)] flex items-center justify-center text-[var(--color-text-primary)] shadow-sm group-hover:scale-110 group-hover:text-[var(--color-brand-default)] transition-all">
               <HugeIcon icon={PlayIcon} size={18} className="ml-0.5" />
             </div>
           </div>
@@ -105,13 +105,13 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
             size="sm"
           />
 
-          <span className="font-code text-[10px] font-bold px-1.5 py-0.5 rounded bg-black/60 text-white backdrop-blur-sm border border-white/10 uppercase">
+          <span className="font-code text-[10px] font-bold px-1.5 py-0.5 rounded bg-[var(--color-bg-canvas)] text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] uppercase">
             {item.resolution} {item.fps}FPS
           </span>
         </div>
 
         {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/70 text-white font-code text-[11px] font-medium backdrop-blur-sm">
+        <div className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] border border-[var(--color-border-subtle)] font-code text-[11px] font-medium">
           {formatDuration(item.durationSeconds)}
         </div>
       </div>
@@ -181,7 +181,7 @@ export const RecordingCard: React.FC<RecordingCardProps> = ({
               sideOffset={4}
               className={cn(
                 'z-50 w-48 rounded-xl p-1 shadow-xl border border-[var(--color-border-default)]',
-                'bg-[var(--color-bg-surface)] backdrop-blur-md text-[var(--color-text-primary)]',
+                'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)]',
                 'animate-in fade-in-0 zoom-in-95'
               )}
             >

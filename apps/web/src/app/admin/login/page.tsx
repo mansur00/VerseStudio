@@ -51,7 +51,7 @@ function AdminLoginForm() {
     <div className="min-h-screen bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col gap-6">
         <div className="flex flex-col gap-1.5">
-          <div className="w-10 h-10 rounded-xl bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 flex items-center justify-center mb-2">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-brand-subtle)] flex items-center justify-center mb-2">
             <HugeIcon icon={Shield01Icon} size={20} className="text-[var(--color-brand-default)]" />
           </div>
           <h1 className="text-xl font-bold tracking-tight">VerseStudio Admin Portal</h1>
@@ -61,7 +61,7 @@ function AdminLoginForm() {
         </div>
 
         {error && (
-          <div className="p-3 rounded-lg bg-[var(--color-danger-subtle)] border border-[var(--color-danger-default)] text-xs text-[var(--color-danger-default)] flex items-center gap-2">
+          <div className="p-3 rounded-lg bg-[var(--color-danger-subtle)] text-xs text-[var(--color-danger-default)] flex items-center gap-2">
             <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
             <span>{error}</span>
           </div>

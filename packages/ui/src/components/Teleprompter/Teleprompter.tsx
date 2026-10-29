@@ -111,7 +111,7 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
       role="region"
       aria-label="Teleprompter Overlay"
       className={cn(
-        'w-[380px] bg-[var(--color-bg-surface)]/95 backdrop-blur-xl rounded-2xl border border-[var(--color-border-default)] shadow-2xl',
+        'w-full max-w-[380px] bg-[var(--color-bg-surface)] rounded-2xl border border-[var(--color-border-default)] shadow-2xl',
         'flex flex-col select-none overflow-hidden transition-all',
         className
       )}

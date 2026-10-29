@@ -198,7 +198,7 @@ export default function AdminLayout({
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] border border-[var(--color-brand-default)]/30 text-xs font-mono font-medium">
+            <span className="hidden md:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] text-xs font-mono font-medium">
               <HugeIcon icon={SparklesIcon} size={12} />
               Cluster: us-east (Healthy)
             </span>
@@ -216,7 +216,7 @@ export default function AdminLayout({
 
         {/* Mobile Navigation Drawer */}
         {mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm flex">
+          <div className="lg:hidden fixed inset-0 z-40 bg-black/80 flex">
             <div className="w-64 bg-[var(--color-bg-surface)] h-full p-4 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-[var(--color-border-subtle)]">

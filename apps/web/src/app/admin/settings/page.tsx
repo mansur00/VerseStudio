@@ -72,7 +72,7 @@ export default function AdminSettingsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-            Admin Settings & Roles (A14)
+            Admin Settings & Roles
           </h1>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Manage administrative personnel, assign role-based access permissions, and enforce hardware/TOTP 2FA.
@@ -83,17 +83,17 @@ export default function AdminSettingsPage() {
           variant="primary"
           size="sm"
           onClick={() => setInviteModalOpen(true)}
-          className="flex items-center gap-1.5 text-xs"
+          leadingIcon={<HugeIcon icon={UserAdd01Icon} size={16} />}
+          className="w-full sm:w-auto"
         >
-          <HugeIcon icon={UserAdd01Icon} size={14} />
-          <span>Invite Admin (A15)</span>
+          Invite Admin
         </Button>
       </div>
 
       {/* 2FA Enforcement Banner */}
-      <div className="p-4 rounded-xl border border-[var(--color-brand-default)]/30 bg-[var(--color-brand-subtle)] flex items-center justify-between gap-4">
+      <div className="p-4 rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-brand-subtle)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-[var(--color-bg-surface)] text-[var(--color-brand-default)] border border-[var(--color-brand-default)]/30">
+          <div className="p-2.5 rounded-xl bg-[var(--color-bg-surface)] text-[var(--color-brand-default)] shrink-0">
             <HugeIcon icon={Shield01Icon} size={20} />
           </div>
           <div>
@@ -115,7 +115,7 @@ export default function AdminSettingsPage() {
 
         <div className="divide-y divide-[var(--color-border-subtle)]">
           {admins.map((adm) => (
-            <div key={adm.id} className="py-3.5 flex items-center justify-between gap-4">
+            <div key={adm.id} className="py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3 min-w-0">
                 <Avatar name={adm.name} size="md" />
                 <div className="min-w-0">
@@ -128,14 +128,14 @@ export default function AdminSettingsPage() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 flex-shrink-0">
+              <div className="flex items-center gap-4 flex-shrink-0 flex-wrap sm:flex-nowrap">
                 <span className="font-mono text-xs uppercase px-2 py-0.5 rounded bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] text-[var(--color-brand-default)] font-semibold">
                   {adm.role.replace('_', ' ')}
                 </span>
 
                 <div className="flex items-center gap-1.5 text-xs text-[var(--color-success-default)]">
                   <HugeIcon icon={Shield01Icon} size={14} />
-                  <span className="hidden sm:inline">2FA Active</span>
+                  <span>2FA Active</span>
                 </div>
 
                 {adm.role !== 'super_admin' && (
@@ -159,7 +159,7 @@ export default function AdminSettingsPage() {
         <Modal
           open={inviteModalOpen}
           onOpenChange={setInviteModalOpen}
-          title="Invite New Administrator (A15)"
+          title="Invite New Administrator"
           size="md"
         >
           <form onSubmit={handleSendInvite} className="space-y-4 text-xs">
@@ -207,11 +207,11 @@ export default function AdminSettingsPage() {
               </p>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" type="button" onClick={() => setInviteModalOpen(false)}>
+            <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-2">
+              <Button variant="ghost" type="button" onClick={() => setInviteModalOpen(false)} className="w-full sm:w-auto">
                 Cancel
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" className="w-full sm:w-auto">
                 Send Invitation
               </Button>
             </div>

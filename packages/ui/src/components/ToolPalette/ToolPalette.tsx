@@ -41,7 +41,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
       role="toolbar"
       aria-label="Studio Live Recording Tools"
       className={cn(
-        'inline-flex items-center gap-1.5 p-1.5 rounded-xl bg-[var(--color-bg-surface)]/90 backdrop-blur-md',
+        'inline-flex items-center gap-1.5 p-1.5 rounded-xl bg-[var(--color-bg-surface)]',
         'border border-[var(--color-border-default)] shadow-2xl select-none',
         className
       )}

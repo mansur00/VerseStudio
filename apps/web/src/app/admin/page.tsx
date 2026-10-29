@@ -45,18 +45,22 @@ export default function AdminOverviewPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[var(--color-text-primary)]">
-            Admin Overview (A01)
+            Admin Overview
           </h1>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Real-time platform telemetry, user adoption, bilingual AI pipelines, and cloud storage health.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Link href="/admin/moderation">
-            <Button variant="secondary" size="sm" className="flex items-center gap-1.5 text-xs">
-              <HugeIcon icon={Shield01Icon} size={14} className="text-[var(--color-warning-default)]" />
-              <span>Moderation Queue ({pendingReportsCount})</span>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Link href="/admin/moderation" className="w-full sm:w-auto">
+            <Button
+              variant="secondary"
+              size="sm"
+              leadingIcon={<HugeIcon icon={Shield01Icon} size={14} className="text-[var(--color-warning-default)]" />}
+              className="w-full sm:w-auto"
+            >
+              Moderation Queue ({pendingReportsCount})
             </Button>
           </Link>
         </div>

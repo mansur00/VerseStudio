@@ -48,7 +48,7 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
   return (
     <div
       className={cn(
-        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/75 backdrop-blur-md select-none',
+        'fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 select-none',
         className
       )}
       role="dialog"
@@ -57,7 +57,7 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
     >
       <div className="relative flex flex-col items-center">
         {/* Glowing ring around number */}
-        <div className="relative flex items-center justify-center w-40 h-40 rounded-full border-4 border-[var(--color-brand-default)] shadow-[var(--glow-brand)] bg-[var(--color-bg-surface)]/80">
+        <div className="relative flex items-center justify-center w-40 h-40 rounded-full border-4 border-[var(--color-brand-default)] shadow-[var(--glow-brand)] bg-[var(--color-bg-surface)]">
           <span
             key={count}
             className={cn(

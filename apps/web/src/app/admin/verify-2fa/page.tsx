@@ -46,7 +46,7 @@ function AdminVerify2FaForm() {
     <div className="min-h-screen bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-md space-y-8 bg-[var(--color-bg-surface)] p-8 rounded-2xl border border-[var(--color-border-subtle)] shadow-xl">
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)] flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 rounded-xl bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] flex items-center justify-center mx-auto mb-4">
             <HugeIcon icon={LockIcon} size={24} />
           </div>
           <h1 className="text-2xl font-bold tracking-tight">Two-Factor Authentication</h1>
@@ -56,7 +56,7 @@ function AdminVerify2FaForm() {
         </div>
 
         {error && (
-          <div className="p-3.5 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)]/30 text-[var(--color-error-default)] flex items-center gap-2.5 text-xs">
+          <div className="p-3.5 rounded-xl bg-[var(--color-error-subtle)] text-[var(--color-error-default)] flex items-center gap-2.5 text-xs">
             <HugeIcon icon={Alert01Icon} size={16} className="shrink-0" />
             <span>{error}</span>
           </div>

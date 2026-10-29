@@ -64,7 +64,7 @@ export default function AdminBillingPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-          Plans & Billing (A10)
+          Plans & Billing
         </h1>
         <p className="text-xs text-[var(--color-text-secondary)] mt-1">
           Revenue performance, subscription distribution, and plan pricing tier controls.
@@ -73,7 +73,7 @@ export default function AdminBillingPage() {
 
       {/* Provider Status Alert */}
       {!provider.configured && (
-        <div className="p-4 rounded-xl border border-[var(--color-warning-default)]/30 bg-[var(--color-warning-subtle)]/30 flex items-start gap-3">
+        <div className="p-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-warning-subtle)] flex items-start gap-3">
           <div className="text-[var(--color-warning-default)] mt-0.5">
             <HugeIcon icon={AlertCircleIcon} size={18} />
           </div>

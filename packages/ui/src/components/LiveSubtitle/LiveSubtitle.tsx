@@ -30,17 +30,17 @@ export const LiveSubtitle: React.FC<LiveSubtitleProps> = ({
       aria-label="Live Subtitles"
       className={`pointer-events-none select-none max-w-2xl mx-auto flex flex-col items-center gap-1.5 transition-all duration-200 ${className}`}
     >
-      <div className="bg-black/80 backdrop-blur-md border border-white/15 px-5 py-2.5 rounded-xl shadow-2xl flex flex-col items-center text-center gap-1">
+      <div className="bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] px-5 py-3 rounded-2xl shadow-xl flex flex-col items-center text-center gap-1.5 max-w-2xl">
         {/* Bengali text line */}
         {showBangla && (
-          <p className="font-bangla text-base md:text-lg font-medium text-[var(--color-brand-default)] tracking-wide leading-relaxed">
+          <p className="font-bangla text-base md:text-lg font-medium text-[var(--color-text-secondary)] tracking-wide leading-relaxed">
             {banglaText}
           </p>
         )}
 
         {/* English translated line */}
         {showEnglish && (
-          <p className="text-sm md:text-base font-semibold text-white tracking-normal leading-snug">
+          <p className="text-sm md:text-base font-semibold text-[var(--color-text-primary)] tracking-normal leading-snug">
             {englishText}
           </p>
         )}

@@ -61,7 +61,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({
           sideOffset={8}
           className={cn(
             'z-50 w-64 rounded-xl p-1.5 shadow-xl border border-[var(--color-border-default)]',
-            'bg-[var(--color-bg-surface)] backdrop-blur-md text-[var(--color-text-primary)]',
+            'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)]',
             'animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2'
           )}
         >

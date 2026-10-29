@@ -48,7 +48,7 @@ export default function AdminAuditLogPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-[var(--color-text-primary)]">
-            Audit Log (A13)
+            Audit Log
           </h1>
           <p className="text-xs text-[var(--color-text-secondary)] mt-1">
             Immutable security ledger tracking administrative operations, moderation decisions, and user suspensions.
@@ -67,10 +67,10 @@ export default function AdminAuditLogPage() {
             a.download = 'audit_log.csv';
             a.click();
           }}
-          className="flex items-center gap-1.5 text-xs"
+          leadingIcon={<HugeIcon icon={Download01Icon} size={14} />}
+          className="w-full sm:w-auto"
         >
-          <HugeIcon icon={Download01Icon} size={14} />
-          <span>Export Audit CSV</span>
+          Export Audit CSV
         </Button>
       </div>
 
