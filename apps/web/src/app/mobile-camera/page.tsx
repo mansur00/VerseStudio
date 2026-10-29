@@ -18,6 +18,7 @@ import { Button, StatusChip, HugeIcon } from '@verse-studio/ui';
 
 export default function MobileCameraPage() {
   const [pairingCode, setPairingCode] = useState<string>('');
+  const [pairingToken, setPairingToken] = useState<string>('');
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const [connectionStatus, setConnectionStatus] = useState<
     'idle' | 'waiting' | 'connecting' | 'connected' | 'error'
@@ -34,12 +35,14 @@ export default function MobileCameraPage() {
   const signalingPollRef = useRef<any>(null);
   const wakeLockRef = useRef<any>(null);
 
-  // Extract ?pair= parameter from URL
+  // Extract ?pair= and ?token= parameters from URL
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const code = params.get('pair') || 'VS-8924';
+      const token = params.get('token') || '';
       setPairingCode(code.toUpperCase());
+      setPairingToken(token);
     }
   }, []);
 
@@ -109,11 +112,20 @@ export default function MobileCameraPage() {
 
       const postSignal = async (data: any) => {
         try {
-          await fetch('/api/signaling', {
+          const res = await fetch('/api/signaling', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: pairingCode, role: 'client', data }),
+            body: JSON.stringify({
+              code: pairingCode,
+              token: pairingToken || undefined,
+              role: 'client',
+              data,
+            }),
           });
+          if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            if (err.error) setErrorMessage(err.error);
+          }
         } catch (e) {
           console.warn('Mobile postSignal failed:', e);
         }
@@ -168,11 +180,22 @@ export default function MobileCameraPage() {
       if (signalingPollRef.current) clearInterval(signalingPollRef.current);
       signalingPollRef.current = setInterval(async () => {
         try {
-          const res = await fetch(`/api/signaling?code=${encodeURIComponent(pairingCode)}&role=client`);
+          const query = pairingToken
+            ? `token=${encodeURIComponent(pairingToken)}&code=${encodeURIComponent(pairingCode)}&role=client`
+            : `code=${encodeURIComponent(pairingCode)}&role=client`;
+          const res = await fetch(`/api/signaling?${query}`);
           if (res.ok) {
             const body = await res.json();
             for (const msg of body.messages || []) {
               await handleSignalMessage(msg);
+            }
+          } else {
+            const err = await res.json().catch(() => ({}));
+            if (err.error) {
+              setErrorMessage(err.error);
+              if (res.status === 410 || res.status === 429) {
+                setConnectionStatus('error');
+              }
             }
           }
         } catch (e) {
@@ -207,7 +230,12 @@ export default function MobileCameraPage() {
     fetch('/api/signaling', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: pairingCode, role: 'client', data: { type: 'PHONE_DISCONNECT' } }),
+      body: JSON.stringify({
+        code: pairingCode,
+        token: pairingToken || undefined,
+        role: 'client',
+        data: { type: 'PHONE_DISCONNECT' },
+      }),
     }).catch(() => {});
 
     if (peerConnectionRef.current) {

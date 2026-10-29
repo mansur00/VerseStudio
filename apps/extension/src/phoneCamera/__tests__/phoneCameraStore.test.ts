@@ -15,9 +15,13 @@ describe('usePhoneCameraStore & PhoneCameraService', () => {
     expect(s.isUsingPhoneCamera).toBe(false);
   });
 
-  it('generates a valid VS-XXXX pairing code format', () => {
+  it('generates a valid VS-XXXX pairing code format and 128-bit pairing token', () => {
     const code = PhoneCameraService.generatePairingCode();
     expect(code).toMatch(/^VS-[A-Z0-9]{4}$/);
+
+    const token = PhoneCameraService.generatePairingToken();
+    expect(token).toHaveLength(32); // 32 hex chars = 128 bits
+    expect(token).toMatch(/^[0-9a-f]{32}$/);
   });
 
   it('starts a pairing session and updates store to waiting state', () => {
@@ -27,7 +31,9 @@ describe('usePhoneCameraStore & PhoneCameraService', () => {
     const s = usePhoneCameraStore.getState();
     expect(s.status).toBe('waiting');
     expect(s.pairingCode).toMatch(/^VS-[A-Z0-9]{4}$/);
-    expect(s.streamUrl).toContain('mobile-camera?pair=');
+    expect(s.pairingToken).toHaveLength(32);
+    expect(s.streamUrl).toContain('token=');
+    expect(s.streamUrl).toContain('pair=');
     expect(s.isModalOpen).toBe(true);
   });
 

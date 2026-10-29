@@ -142,3 +142,4 @@ CREATE POLICY "System can insert audit log" ON public.audit_log FOR INSERT WITH 
 
 -- 3. Share pages: public read for active unblocked pages
 CREATE POLICY "Public can view unblocked share pages" ON public.share_pages FOR SELECT USING (NOT is_blocked AND NOT is_private);
+

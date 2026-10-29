@@ -10,10 +10,12 @@ export interface PhoneCameraCallbacks {
 export interface SignalingConfig {
   baseUrl?: string;
   turnServers?: RTCIceServer[];
+  token?: string; // >= 128-bit pairing token
 }
 
 export class PhoneCameraService {
   private pairingCode: string;
+  private pairingToken: string;
   private peerConnection: RTCPeerConnection | null = null;
   private signalingChannel: BroadcastChannel | null = null;
   private signalingPollInterval: any = null;
@@ -33,6 +35,7 @@ export class PhoneCameraService {
     config: SignalingConfig = {}
   ) {
     this.pairingCode = pairingCode;
+    this.pairingToken = config.token || PhoneCameraService.generatePairingToken();
     this.callbacks = callbacks;
     this.signalingBaseUrl =
       config.baseUrl ||
@@ -43,6 +46,18 @@ export class PhoneCameraService {
     if (config.turnServers && config.turnServers.length > 0) {
       this.iceServers = [...this.iceServers, ...config.turnServers];
     }
+  }
+
+  /**
+   * Generate at least 128-bit cryptographically secure pairing token (32 hex chars)
+   */
+  public static generatePairingToken(): string {
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      const bytes = new Uint8Array(16); // 16 bytes = 128 bits
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+    }
+    return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join('');
   }
 
   /**
@@ -67,6 +82,7 @@ export class PhoneCameraService {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           code: this.pairingCode,
+          token: this.pairingToken,
           role: 'host',
           data,
         }),
@@ -82,6 +98,9 @@ export class PhoneCameraService {
   public startHost() {
     this.isDestroyed = false;
     this.callbacks.onStatusChange?.('waiting');
+
+    // Register room on signaling server
+    this.postNetworkSignal({ type: 'HOST_READY' });
 
     const handleMessage = async (msg: any) => {
       if (!msg || typeof msg !== 'object') return;
@@ -127,10 +146,13 @@ export class PhoneCameraService {
       if (this.isDestroyed) return;
       try {
         const res = await fetch(
-          `${this.signalingBaseUrl}/api/signaling?code=${encodeURIComponent(this.pairingCode)}&role=host`
+          `${this.signalingBaseUrl}/api/signaling?token=${encodeURIComponent(this.pairingToken)}&code=${encodeURIComponent(this.pairingCode)}&role=host`
         );
         if (res.ok) {
           const data = await res.json();
+          if (data.iceServers && Array.isArray(data.iceServers) && data.iceServers.length > 0) {
+            this.iceServers = data.iceServers;
+          }
           if (data.messages && Array.isArray(data.messages)) {
             for (const msg of data.messages) {
               await handleMessage(msg);
@@ -353,9 +375,12 @@ export class PhoneCameraService {
       this.signalingChannel = null;
     }
 
-    fetch(`${this.signalingBaseUrl}/api/signaling?code=${encodeURIComponent(this.pairingCode)}`, {
-      method: 'DELETE',
-    }).catch(() => {});
+    fetch(
+      `${this.signalingBaseUrl}/api/signaling?token=${encodeURIComponent(this.pairingToken)}&code=${encodeURIComponent(this.pairingCode)}`,
+      {
+        method: 'DELETE',
+      }
+    ).catch(() => {});
 
     this.callbacks.onStatusChange?.('disconnected');
     this.callbacks.onDisconnected?.();

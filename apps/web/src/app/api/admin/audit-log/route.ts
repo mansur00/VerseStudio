@@ -13,3 +13,4 @@ export async function GET(req: NextRequest) {
   const data = await ServerDatabase.getAuditLogs(limit, offset);
   return NextResponse.json(data);
 }
+
