@@ -55,6 +55,7 @@ import {
   FullScreenIcon,
   Mic01Icon,
   TranslateIcon,
+  ViewOffSlashIcon,
 } from '@hugeicons/core-free-icons';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
@@ -173,6 +174,8 @@ export const StudioApp: React.FC = () => {
   const [view, setView] = useState<'studio' | 'post-studio' | 'library'>('studio');
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [showDriveUploadModal, setShowDriveUploadModal] = useState(false);
+  const { settings } = useSettingsStore();
+  const reduceMotion = settings.reduceMotion;
 
   // Engine & Device State
   const [engine, setEngine] = useState<CaptureEngine | null>(null);
@@ -224,6 +227,32 @@ export const StudioApp: React.FC = () => {
   });
   const [teleprompterOpen, setTeleprompterOpen] = useState(false);
   const [showLongRecordingWarning, setShowLongRecordingWarning] = useState(false);
+
+  // Draggable UI Overlays & Live Effects State
+  const [toolPalettePos, setToolPalettePos] = useState({ x: 20, y: 120 });
+  const [miniControllerPos, setMiniControllerPos] = useState<{ x: number; y: number } | null>(null);
+  const [spotlightPos, setSpotlightPos] = useState({ x: 480, y: 270 });
+  const [privacyPos, setPrivacyPos] = useState({ x: 120, y: 100, w: 280, h: 140 });
+  const [activeKeystroke, setActiveKeystroke] = useState<string | null>(null);
+  const [isZoomed, setIsZoomed] = useState(false);
+  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
+  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number }>>([]);
+
+  // Refs for dragging and laser
+  const isDraggingPaletteRef = useRef(false);
+  const paletteDragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
+
+  const isDraggingMiniRef = useRef(false);
+  const miniDragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
+
+  const isDraggingPrivacyRef = useRef(false);
+  const privacyDragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
+
+  const laserCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const laserPointsRef = useRef<Array<{ x: number; y: number; time: number }>>([]);
+  const isDrawingLaserRef = useRef(false);
+  const keystrokeTimerRef = useRef<number | null>(null);
+  const zoomTimerRef = useRef<number | null>(null);
 
   // Crash Recovery
   const [recoverableSession, setRecoverableSession] = useState<StoredRecordingMeta | null>(null);
@@ -499,21 +528,252 @@ export const StudioApp: React.FC = () => {
       if (tool === 'teleprompter') {
         setTeleprompterOpen(nextVal);
       }
-      // Broadcast to active tab content script
+      // Broadcast to all active tabs across all open windows
       if (typeof chrome !== 'undefined' && chrome.tabs) {
-        chrome.tabs.query({ active: true, currentWindow: true }).then(([tab]) => {
-          if (tab?.id) {
-            chrome.tabs.sendMessage(tab.id, {
-              type: 'TOGGLE_LIVE_TOOL',
-              tool,
-              state: nextVal,
-            }).catch(() => {});
-          }
+        chrome.tabs.query({}).then((tabs) => {
+          tabs.forEach((tab) => {
+            if (
+              tab.id &&
+              tab.url &&
+              !tab.url.startsWith('chrome://') &&
+              !tab.url.startsWith('chrome-extension://')
+            ) {
+              chrome.tabs
+                .sendMessage(tab.id, {
+                  type: 'TOGGLE_LIVE_TOOL',
+                  tool,
+                  state: nextVal,
+                })
+                .catch(() => {});
+            }
+          });
         });
       }
       return nextTools;
     });
   };
+
+  // 1. ToolPalette Dragging Handler
+  const handlePaletteDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDraggingPaletteRef.current = true;
+    paletteDragStartRef.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      startX: toolPalettePos.x,
+      startY: toolPalettePos.y,
+    };
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!isDraggingPaletteRef.current) return;
+      const deltaX = ev.clientX - paletteDragStartRef.current.mouseX;
+      const deltaY = ev.clientY - paletteDragStartRef.current.mouseY;
+      if (previewContainerRef.current) {
+        const rect = previewContainerRef.current.getBoundingClientRect();
+        const maxX = Math.max(10, rect.width - 290);
+        const maxY = Math.max(10, rect.height - 60);
+        setToolPalettePos({
+          x: Math.max(10, Math.min(maxX, paletteDragStartRef.current.startX + deltaX)),
+          y: Math.max(10, Math.min(maxY, paletteDragStartRef.current.startY + deltaY)),
+        });
+      }
+    };
+
+    const onMouseUp = () => {
+      isDraggingPaletteRef.current = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  // 2. MiniController Dragging Handler
+  const handleMiniDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDraggingMiniRef.current = true;
+    const defaultX = previewContainerRef.current ? (previewContainerRef.current.clientWidth - 320) / 2 : 200;
+    const defaultY = previewContainerRef.current ? previewContainerRef.current.clientHeight - 64 : 450;
+    const currentX = miniControllerPos ? miniControllerPos.x : defaultX;
+    const currentY = miniControllerPos ? miniControllerPos.y : defaultY;
+
+    miniDragStartRef.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      startX: currentX,
+      startY: currentY,
+    };
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!isDraggingMiniRef.current) return;
+      const deltaX = ev.clientX - miniDragStartRef.current.mouseX;
+      const deltaY = ev.clientY - miniDragStartRef.current.mouseY;
+      if (previewContainerRef.current) {
+        const rect = previewContainerRef.current.getBoundingClientRect();
+        const maxX = Math.max(10, rect.width - 340);
+        const maxY = Math.max(10, rect.height - 56);
+        setMiniControllerPos({
+          x: Math.max(10, Math.min(maxX, miniDragStartRef.current.startX + deltaX)),
+          y: Math.max(10, Math.min(maxY, miniDragStartRef.current.startY + deltaY)),
+        });
+      }
+    };
+
+    const onMouseUp = () => {
+      isDraggingMiniRef.current = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  // 3. Privacy Shield Dragging Handler
+  const handlePrivacyDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDraggingPrivacyRef.current = true;
+    privacyDragStartRef.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      startX: privacyPos.x,
+      startY: privacyPos.y,
+    };
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!isDraggingPrivacyRef.current) return;
+      const deltaX = ev.clientX - privacyDragStartRef.current.mouseX;
+      const deltaY = ev.clientY - privacyDragStartRef.current.mouseY;
+      if (previewContainerRef.current) {
+        const rect = previewContainerRef.current.getBoundingClientRect();
+        const maxX = Math.max(0, rect.width - privacyPos.w);
+        const maxY = Math.max(0, rect.height - privacyPos.h);
+        setPrivacyPos((prev) => ({
+          ...prev,
+          x: Math.max(0, Math.min(maxX, privacyDragStartRef.current.startX + deltaX)),
+          y: Math.max(0, Math.min(maxY, privacyDragStartRef.current.startY + deltaY)),
+        }));
+      }
+    };
+
+    const onMouseUp = () => {
+      isDraggingPrivacyRef.current = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  // 4. Click Ripple Trigger
+  const triggerRipple = (x: number, y: number) => {
+    if (!clickRipple) return;
+    const id = Date.now() + Math.random();
+    setRipples((prev) => [...prev, { id, x, y }]);
+    setTimeout(() => {
+      setRipples((prev) => prev.filter((r) => r.id !== id));
+    }, 450);
+  };
+
+  // 5. Auto Cinematic Zoom Trigger
+  const triggerAutoZoom = (clickX: number, clickY: number, containerW: number, containerH: number) => {
+    if (!tools.autoZoom) return;
+    if (isZoomed) {
+      setIsZoomed(false);
+      if (zoomTimerRef.current) window.clearTimeout(zoomTimerRef.current);
+      return;
+    }
+    const normX = Math.round((clickX / containerW) * 100);
+    const normY = Math.round((clickY / containerH) * 100);
+    setZoomOrigin({ x: normX, y: normY });
+    setIsZoomed(true);
+
+    if (zoomTimerRef.current) window.clearTimeout(zoomTimerRef.current);
+    zoomTimerRef.current = window.setTimeout(() => {
+      setIsZoomed(false);
+    }, 2500);
+  };
+
+  // 6. Global Keystroke Display Listener
+  useEffect(() => {
+    if (!tools.keystroke) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      const modifiers: string[] = [];
+      if (e.metaKey) modifiers.push('⌘');
+      if (e.ctrlKey) modifiers.push('Ctrl');
+      if (e.altKey) modifiers.push('Alt');
+      if (e.shiftKey) modifiers.push('Shift');
+      const keyName = e.key.length === 1 ? e.key.toUpperCase() : e.key;
+      if (['Alt', 'Control', 'Shift', 'Meta'].includes(keyName)) return;
+      const combo = [...modifiers, keyName].join(' + ');
+      setActiveKeystroke(combo);
+      if (keystrokeTimerRef.current) window.clearTimeout(keystrokeTimerRef.current);
+      keystrokeTimerRef.current = window.setTimeout(() => {
+        setActiveKeystroke(null);
+      }, 2000);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [tools.keystroke]);
+
+  // 7. Laser Pen Animation Render Loop (2s decay)
+  useEffect(() => {
+    if (!tools.laser) return;
+    let animId: number;
+    const canvas = laserCanvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    if (previewContainerRef.current) {
+      canvas.width = previewContainerRef.current.clientWidth;
+      canvas.height = previewContainerRef.current.clientHeight;
+    }
+
+    const render = () => {
+      const now = Date.now();
+      laserPointsRef.current = laserPointsRef.current.filter((p) => now - p.time < 2000);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (laserPointsRef.current.length > 1) {
+        for (let i = 1; i < laserPointsRef.current.length; i++) {
+          const p1 = laserPointsRef.current[i - 1];
+          const p2 = laserPointsRef.current[i];
+          const age = now - p2.time;
+          const opacity = Math.max(0, 1 - age / 2000);
+
+          ctx.beginPath();
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
+          ctx.lineWidth = 5;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})`;
+          ctx.shadowColor = '#22D3EE';
+          ctx.shadowBlur = 12;
+          ctx.stroke();
+        }
+      }
+      animId = requestAnimationFrame(render);
+    };
+
+    animId = requestAnimationFrame(render);
+    return () => cancelAnimationFrame(animId);
+  }, [tools.laser]);
 
   // Screen 22: Long Recording Advisory trigger (30+ minutes)
   useEffect(() => {
@@ -910,7 +1170,34 @@ export const StudioApp: React.FC = () => {
                   background: wallpaperVal,
                   borderRadius: '24px',
                 }}
-                className="w-full max-w-[960px] aspect-video max-h-[540px] relative overflow-hidden flex items-center justify-center border border-[var(--color-border-default)] shadow-2xl transition-all duration-300"
+                className="w-full max-w-[960px] aspect-video max-h-[540px] relative overflow-hidden flex items-center justify-center border border-[var(--color-border-default)] shadow-2xl transition-all duration-300 select-none"
+                onMouseMove={(e) => {
+                  const rect = previewContainerRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    setSpotlightPos({ x, y });
+                    if (tools.laser && isDrawingLaserRef.current) {
+                      laserPointsRef.current.push({ x, y, time: Date.now() });
+                    }
+                  }
+                }}
+                onMouseDown={(e) => {
+                  const rect = previewContainerRef.current?.getBoundingClientRect();
+                  if (rect) {
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    triggerRipple(x, y);
+                    triggerAutoZoom(x, y, rect.width, rect.height);
+                    if (tools.laser) {
+                      isDrawingLaserRef.current = true;
+                      laserPointsRef.current.push({ x, y, time: Date.now() });
+                    }
+                  }
+                }}
+                onMouseUp={() => {
+                  isDrawingLaserRef.current = false;
+                }}
               >
                 {/* Inner Window Frame with padding */}
                 <div
@@ -924,6 +1211,9 @@ export const StudioApp: React.FC = () => {
                     style={{
                       borderRadius: `${radius}px`,
                       boxShadow: dropShadow ? 'var(--shadow-xl)' : 'none',
+                      transform: isZoomed ? 'scale(2)' : 'scale(1)',
+                      transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,
+                      transition: reduceMotion ? 'none' : 'transform 0.4s cubic-bezier(0.2, 0, 0, 1)',
                     }}
                     className={cn(
                       'w-full h-full relative overflow-hidden flex items-center justify-center border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] transition-all',
@@ -1050,10 +1340,93 @@ export const StudioApp: React.FC = () => {
                   </div>
                 )}
 
-                {/* Floating Tool Palette during recording (Figma 35:879) */}
+                {/* 1. Spotlight Overlay (Screen 19/20) */}
+                {tools.spotlight && (
+                  <div
+                    className="absolute inset-0 pointer-events-none z-25 transition-all"
+                    style={{
+                      background: `radial-gradient(circle 90px at ${spotlightPos.x}px ${spotlightPos.y}px, transparent 0%, rgba(0, 0, 0, 0.72) 100%)`,
+                    }}
+                  />
+                )}
+
+                {/* 2. Cyan Neon Laser Pen Canvas (Screen 19/20 - 2s fade) */}
+                <canvas
+                  ref={laserCanvasRef}
+                  className={cn(
+                    'absolute inset-0 pointer-events-none z-28 transition-opacity',
+                    tools.laser ? 'opacity-100' : 'opacity-0'
+                  )}
+                />
+
+                {/* 3. Click Ripple Effect (Screen 19/20) */}
+                {clickRipple &&
+                  ripples.map((r) => (
+                    <span
+                      key={r.id}
+                      style={{ left: r.x - 24, top: r.y - 24 }}
+                      className="absolute w-12 h-12 rounded-full border-2 border-[var(--color-brand-default)] pointer-events-none z-30 animate-ping opacity-75"
+                    />
+                  ))}
+
+                {/* 4. Keystroke Display HUD Pill (Screen 19/20) */}
+                {tools.keystroke && activeKeystroke && (
+                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-40 px-4 py-2 rounded-xl bg-[var(--color-bg-elevated)]/95 border border-[var(--color-border-strong)] text-[var(--color-brand-default)] font-mono text-sm font-bold shadow-2xl tracking-wide flex items-center gap-2 pointer-events-none animate-in fade-in zoom-in-95">
+                    <span className="text-xs text-[var(--color-text-secondary)]">KEY</span>
+                    <span>{activeKeystroke}</span>
+                  </div>
+                )}
+
+                {/* 5. Draggable Privacy Shield Blur (Screen 19/20) */}
+                {tools.privacy && (
+                  <div
+                    style={{
+                      left: `${privacyPos.x}px`,
+                      top: `${privacyPos.y}px`,
+                      width: `${privacyPos.w}px`,
+                      height: `${privacyPos.h}px`,
+                    }}
+                    className="absolute z-35 backdrop-blur-xl bg-black/45 border-2 border-dashed border-[var(--color-brand-default)] rounded-xl shadow-2xl overflow-hidden flex flex-col cursor-move select-none"
+                    onMouseDown={handlePrivacyDragStart}
+                  >
+                    <div className="px-2.5 py-1 bg-black/70 flex items-center justify-between text-[11px] font-semibold text-[var(--color-text-secondary)] border-b border-[var(--color-border-subtle)]">
+                      <span className="flex items-center gap-1.5 text-[var(--color-brand-default)]">
+                        <HugeIcon icon={ViewOffSlashIcon} size={13} />
+                        Privacy Shield (Blurred)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleTool('privacy');
+                        }}
+                        className="text-[var(--color-text-tertiary)] hover:text-white px-1"
+                        title="Close Privacy Shield"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <div className="flex-1 flex items-center justify-center text-xs text-[var(--color-text-tertiary)] italic pointer-events-none">
+                      Confidential area hidden from capture
+                    </div>
+                  </div>
+                )}
+
+                {/* Floating Draggable Tool Palette during recording (Figma 35:879) */}
                 {(status === 'recording' || status === 'paused') && (
-                  <div className="absolute top-1/2 -translate-y-1/2 left-4 z-30 shadow-2xl">
-                    <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={true} />
+                  <div
+                    style={{
+                      left: `${toolPalettePos.x}px`,
+                      top: `${toolPalettePos.y}px`,
+                    }}
+                    className="absolute z-40 shadow-2xl transition-shadow"
+                  >
+                    <ToolPalette
+                      tools={tools}
+                      onToggleTool={toggleTool}
+                      showGrip={true}
+                      onGripMouseDown={handlePaletteDragStart}
+                    />
                   </div>
                 )}
 
@@ -1084,9 +1457,19 @@ export const StudioApp: React.FC = () => {
                   </div>
                 )}
 
-                {/* Floating Mini Controller during recording (Figma 17:312) */}
+                {/* Floating Draggable Mini Controller during recording (Figma 17:312) */}
                 {(status === 'recording' || status === 'paused') && (
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                  <div
+                    style={
+                      miniControllerPos
+                        ? { left: `${miniControllerPos.x}px`, top: `${miniControllerPos.y}px`, transform: 'none' }
+                        : undefined
+                    }
+                    className={cn(
+                      'absolute z-40',
+                      !miniControllerPos && 'bottom-4 left-1/2 -translate-x-1/2'
+                    )}
+                  >
                     <MiniControllerBar
                       status={status}
                       timeFormatted={formatTime(elapsedMs)}
@@ -1099,6 +1482,7 @@ export const StudioApp: React.FC = () => {
                       onStop={handleStopRecording}
                       onToggleMic={handleToggleMic}
                       onToggleCamera={handleToggleCamera}
+                      onGripMouseDown={handleMiniDragStart}
                     />
                   </div>
                 )}

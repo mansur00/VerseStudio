@@ -55,6 +55,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
   const [isDriveConnecting, setIsDriveConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [clientIdInput, setClientIdInput] = useState('');
+  const [directTokenInput, setDirectTokenInput] = useState('');
   const [hasClientId, setHasClientId] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [redirectUri, setRedirectUri] = useState('');
@@ -105,7 +106,18 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
     setConnectError(null);
     clearError();
 
-    // If client ID was entered in the modal, persist it first
+    // 1. Direct Access Token provided
+    if (directTokenInput.trim()) {
+      await DriveService.persistSession(directTokenInput.trim(), 86400);
+      const success = await connectDrive();
+      setIsDriveConnecting(false);
+      if (success) {
+        setConnectError(null);
+        return;
+      }
+    }
+
+    // 2. Client ID provided
     if (clientIdInput.trim()) {
       await DriveService.setClientId(clientIdInput.trim());
       setHasClientId(true);
@@ -122,6 +134,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
     const success = await connectDrive();
     setIsDriveConnecting(false);
     if (!success) {
+      setShowConfig(true);
       const storeErr = useDriveStore.getState().error;
       setConnectError(storeErr || 'Could not establish Google Drive authorization.');
     }
@@ -279,6 +292,25 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
                     value={clientIdInput}
                     onChange={(e) => setClientIdInput(e.target.value)}
                     placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+                    className="text-xs font-mono"
+                  />
+                </div>
+
+                {/* Direct Access Token (Optional for Testing/Developer) */}
+                <div className="space-y-1 pt-1 border-t border-[var(--color-border-subtle)]">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-tertiary)] block">
+                      Or Google OAuth Access Token
+                    </label>
+                    <span className="text-[9px] text-[var(--color-brand-default)] font-mono">
+                      Fast Direct Connect
+                    </span>
+                  </div>
+                  <Input
+                    type="password"
+                    value={directTokenInput}
+                    onChange={(e) => setDirectTokenInput(e.target.value)}
+                    placeholder="Paste access token (from OAuth Playground or gcloud)"
                     className="text-xs font-mono"
                   />
                 </div>

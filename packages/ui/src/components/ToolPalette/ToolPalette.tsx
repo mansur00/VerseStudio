@@ -28,6 +28,7 @@ export interface ToolPaletteProps {
   onToggleTool: (tool: keyof ToolPaletteState) => void;
   className?: string;
   showGrip?: boolean;
+  onGripMouseDown?: (e: React.MouseEvent) => void;
 }
 
 export const ToolPalette: React.FC<ToolPaletteProps> = ({
@@ -35,6 +36,7 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
   onToggleTool,
   className,
   showGrip = true,
+  onGripMouseDown,
 }) => {
   return (
     <div
@@ -48,8 +50,10 @@ export const ToolPalette: React.FC<ToolPaletteProps> = ({
     >
       {showGrip && (
         <span
-          className="cursor-grab text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] px-1 active:cursor-grabbing flex items-center"
-          aria-hidden="true"
+          onMouseDown={onGripMouseDown}
+          className="cursor-grab text-[var(--color-text-tertiary)] hover:text-[var(--color-text-secondary)] px-1 active:cursor-grabbing flex items-center select-none"
+          aria-label="Drag to move toolbar"
+          title="Drag to move toolbar"
         >
           <HugeIcon icon={GripVerticalIcon} size={16} />
         </span>

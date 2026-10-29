@@ -22,6 +22,7 @@ export interface MiniControllerProps {
   onToggleMic?: () => void;
   onToggleCamera?: () => void;
   className?: string;
+  onGripMouseDown?: (e: React.MouseEvent) => void;
 }
 
 /**
@@ -39,6 +40,7 @@ export const MiniController: React.FC<MiniControllerProps> = ({
   onToggleMic,
   onToggleCamera,
   className,
+  onGripMouseDown,
 }) => {
   const isRecording = status === 'recording';
   const isPaused = status === 'paused';
@@ -55,8 +57,9 @@ export const MiniController: React.FC<MiniControllerProps> = ({
     >
       {/* 1. Drag Handle */}
       <div
-        className="w-5 h-5 flex items-center justify-center text-[var(--color-text-tertiary)] cursor-grab active:cursor-grabbing hover:text-[var(--color-text-secondary)]"
-        title="Move Controller"
+        onMouseDown={onGripMouseDown}
+        className="w-5 h-5 flex items-center justify-center text-[var(--color-text-tertiary)] cursor-grab active:cursor-grabbing hover:text-[var(--color-text-secondary)] select-none"
+        title="Drag to move controller"
       >
         <HugeIcon icon={DragDropIcon} size={16} />
       </div>
