@@ -1,16 +1,65 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   CreditCardIcon,
   DollarSignIcon,
   TrendingUpIcon,
   SparklesIcon,
   Tick01Icon,
+  AlertCircleIcon,
 } from '@hugeicons/core-free-icons';
 import { KpiCard, StatusChip, HugeIcon } from '@verse-studio/ui';
 
+interface BillingData {
+  summary: {
+    mrr: string;
+    mrrGrowth: string;
+    proSubscribers: number;
+    freeSubscribers: number;
+    totalUsers: number;
+    conversionRate: string;
+    arpu: string;
+    churnRate: string;
+  };
+  provider: {
+    name: string;
+    configured: boolean;
+    notice?: string;
+  };
+}
+
 export default function AdminBillingPage() {
+  const [data, setData] = useState<BillingData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/billing')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((resData) => {
+        setData(resData);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
+
+  const summary = data?.summary || {
+    mrr: '$0.00',
+    mrrGrowth: '0.0%',
+    proSubscribers: 0,
+    freeSubscribers: 0,
+    totalUsers: 0,
+    conversionRate: '0.0%',
+    arpu: '$0.00',
+    churnRate: '0.0%',
+  };
+
+  const provider = data?.provider || {
+    name: 'Unconfigured',
+    configured: false,
+    notice: 'Payment provider not configured in environment.',
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -22,37 +71,51 @@ export default function AdminBillingPage() {
         </p>
       </div>
 
+      {/* Provider Status Alert */}
+      {!provider.configured && (
+        <div className="p-4 rounded-xl border border-[var(--color-warning-default)]/30 bg-[var(--color-warning-subtle)]/30 flex items-start gap-3">
+          <div className="text-[var(--color-warning-default)] mt-0.5">
+            <HugeIcon icon={AlertCircleIcon} size={18} />
+          </div>
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-[var(--color-text-primary)]">
+              Payment Provider Status: Not Configured
+            </p>
+            <p className="text-xs text-[var(--color-text-secondary)] leading-relaxed">
+              Automatic payment checkout and webhooks are inactive. Plan upgrades are currently managed directly via administrator entitlement in accordance with Pass D security guidelines. Set <code>STRIPE_SECRET_KEY</code> to enable live payment processing.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           title="Monthly Recurring Revenue"
-          value="$28,920"
-          subtitle="+14.2% MRR growth"
+          value={isLoading ? '...' : summary.mrr}
+          subtitle={`${summary.proSubscribers} Pro @ $19/mo`}
           icon={<HugeIcon icon={DollarSignIcon} size={16} className="text-[var(--color-brand-default)]" />}
-          trend={{ value: '+14.2%', isPositive: true }}
         />
 
         <KpiCard
           title="Pro Subscribers"
-          value="1,522"
-          subtitle="63.1% conversion rate"
+          value={isLoading ? '...' : summary.proSubscribers.toString()}
+          subtitle={`${summary.conversionRate} conversion rate`}
           icon={<HugeIcon icon={SparklesIcon} size={16} className="text-amber-400" />}
-          trend={{ value: '+8.4%', isPositive: true }}
         />
 
         <KpiCard
           title="Average Revenue / User"
-          value="$19.00"
-          subtitle="Standard Pro tier pricing"
+          value={isLoading ? '...' : summary.arpu}
+          subtitle="Across total user base"
           icon={<HugeIcon icon={CreditCardIcon} size={16} className="text-sky-400" />}
         />
 
         <KpiCard
-          title="Churn Rate"
-          value="1.2%"
-          subtitle="Low churn due to Google Drive BYOS"
+          title="Total Registered Creators"
+          value={isLoading ? '...' : summary.totalUsers.toString()}
+          subtitle={`${summary.freeSubscribers} Free Starter tiers`}
           icon={<HugeIcon icon={TrendingUpIcon} size={16} className="text-emerald-400" />}
-          trend={{ value: '-0.3%', isPositive: true }}
         />
       </div>
 
@@ -66,7 +129,7 @@ export default function AdminBillingPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-[var(--color-text-primary)]">Free Starter</h3>
-                <p className="text-xs text-[var(--color-text-tertiary)]">888 Active Creators</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">{summary.freeSubscribers} Active Creators</p>
               </div>
               <span className="text-xl font-bold font-mono">$0</span>
             </div>
@@ -93,33 +156,33 @@ export default function AdminBillingPage() {
           {/* Pro Tier */}
           <div className="p-5 rounded-xl border border-[var(--color-brand-default)]/40 bg-[var(--color-bg-elevated)] space-y-4 relative">
             <div className="absolute top-3 right-3">
-              <StatusChip status="pro" label="MOST POPULAR" size="sm" />
+              <StatusChip status="pro" label="PRO TIER" size="sm" />
             </div>
 
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-[var(--color-text-primary)]">Pro Studio</h3>
-                <p className="text-xs text-[var(--color-text-tertiary)]">1,522 Active Subscribers</p>
+                <p className="text-xs text-[var(--color-text-tertiary)]">{summary.proSubscribers} Active Subscribers</p>
               </div>
-              <span className="text-xl font-bold font-mono text-[var(--color-brand-default)]">$19/mo</span>
+              <span className="text-xl font-bold font-mono">$19/mo</span>
             </div>
 
             <ul className="space-y-2 text-xs text-[var(--color-text-secondary)]">
               <li className="flex items-center gap-2">
                 <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
-                <span>Everything in Starter + 300 AI Minutes per month</span>
+                <span>Up to 4K 60FPS Studio Recording with Custom Wallpaper Frames</span>
               </li>
               <li className="flex items-center gap-2">
                 <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
-                <span>Custom Branding & Unbranded Tutorial Markdown Guides</span>
+                <span>300 AI Minutes / month (Gemini STT + ElevenLabs Neural Voice)</span>
               </li>
               <li className="flex items-center gap-2">
                 <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
-                <span>Priority Whisper STT & ElevenLabs Dubbing Queues</span>
+                <span>Whitelabel guide exports without watermark</span>
               </li>
               <li className="flex items-center gap-2">
                 <HugeIcon icon={Tick01Icon} size={14} className="text-[var(--color-brand-default)]" />
-                <span>2FA Security & Multi-device Sync</span>
+                <span>High-priority rendering & WebCodecs acceleration</span>
               </li>
             </ul>
           </div>

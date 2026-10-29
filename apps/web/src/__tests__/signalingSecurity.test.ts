@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { signalingDb, SignalingRoom } from '../lib/signalingStore';
+import { signalingDb } from '../lib/signalingStore';
 
 describe('Phone Camera Signaling: Security, TTL & Rate Limiting Acceptance Tests', () => {
   beforeEach(() => {
@@ -116,3 +116,4 @@ describe('Phone Camera Signaling: Security, TTL & Rate Limiting Acceptance Tests
     expect(hostPoll.messages[0].type).toBe('ANSWER_TEST');
   });
 });
+

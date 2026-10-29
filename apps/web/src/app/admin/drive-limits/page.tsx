@@ -1,10 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { HardDriveIcon, Shield01Icon, AlertCircleIcon, CheckmarkCircle01Icon } from '@hugeicons/core-free-icons';
 import { KpiCard, HugeIcon } from '@verse-studio/ui';
 
+interface DriveTelemetry {
+  totalStorageFormatted: string;
+  serverHostingCost: string;
+  tokenHealth: string;
+  quotaOverages: number;
+  totalConnectedUsers: number;
+  totalPagesHosted: number;
+}
+
 export default function AdminDriveLimitsPage() {
+  const [telemetry, setTelemetry] = useState<DriveTelemetry | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/admin/drive-limits')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        setTelemetry(data?.telemetry || null);
+        setIsLoading(false);
+      })
+      .catch(() => setIsLoading(false));
+  }, []);
+
+  const data = telemetry || {
+    totalStorageFormatted: '0.00 TB',
+    serverHostingCost: '$0.00',
+    tokenHealth: '100.0%',
+    quotaOverages: 0,
+    totalConnectedUsers: 0,
+    totalPagesHosted: 0,
+  };
+
   return (
     <div className="space-y-8">
       <div>
@@ -19,28 +50,28 @@ export default function AdminDriveLimitsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           title="Total Video Storage"
-          value="18.4 TB"
-          subtitle="Managed across user Drives"
+          value={isLoading ? '...' : data.totalStorageFormatted}
+          subtitle={`Across ${data.totalConnectedUsers} connected user Drives`}
           icon={<HugeIcon icon={HardDriveIcon} size={16} className="text-blue-400" />}
         />
 
         <KpiCard
           title="Server Video Hosting Cost"
-          value="$0.00"
-          subtitle="Zero video egress or disk cost"
+          value={isLoading ? '...' : data.serverHostingCost}
+          subtitle="Zero video egress or storage cost (BYOS)"
           icon={<HugeIcon icon={Shield01Icon} size={16} className="text-[var(--color-brand-default)]" />}
         />
 
         <KpiCard
           title="OAuth Token Health"
-          value="99.8%"
+          value={isLoading ? '...' : data.tokenHealth}
           subtitle="Active drive.file grants"
           icon={<HugeIcon icon={CheckmarkCircle01Icon} size={16} className="text-emerald-400" />}
         />
 
         <KpiCard
           title="Quota Overages"
-          value="4"
+          value={isLoading ? '...' : data.quotaOverages.toString()}
           subtitle="Users with full Google Drive"
           icon={<HugeIcon icon={AlertCircleIcon} size={16} className="text-amber-400" />}
         />
@@ -52,7 +83,7 @@ export default function AdminDriveLimitsPage() {
           <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-2">
             <h3 className="font-bold text-[var(--color-text-primary)]">Minimal OAuth Scope</h3>
             <p className="leading-relaxed">
-              VerseStudio requests strictly <code>drive.file</code>. The app can only see and access files created by VerseStudio itself, ensuring complete user privacy.
+              VerseStudio requests strictly <code>https://www.googleapis.com/auth/drive.file</code>. The app can only see and access files created by VerseStudio itself, ensuring complete user privacy.
             </p>
           </div>
 
