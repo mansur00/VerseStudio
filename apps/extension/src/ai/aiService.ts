@@ -232,7 +232,13 @@ export class AIService {
     let audioBase64: string | undefined;
     if (options?.originalAudioBlob) {
       const buffer = await options.originalAudioBlob.arrayBuffer();
-      audioBase64 = Buffer.from(buffer).toString('base64');
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const chunkSize = 0x8000;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunkSize)));
+      }
+      audioBase64 = btoa(binary);
     }
 
     onProgress?.(35, 'Contacting Gemini for Speech-to-Text and translation...');
