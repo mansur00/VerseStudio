@@ -1,5 +1,6 @@
 import type { SubtitleCue, ClickEventLog, StepByStepGuide, GuideStep } from '@verse-studio/shared';
 import { mixAudioWithDucking } from './audioDuckingMixer';
+import { getApiBaseUrl } from '../config/env';
 
 export interface AIProcessResult {
   cues: SubtitleCue[];
@@ -12,13 +13,15 @@ export interface AIProcessResult {
 }
 
 const getApiBase = () => {
+  const envUrl = getApiBaseUrl();
+  if (envUrl) return envUrl;
   if (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_APP_URL) {
     return process.env.NEXT_PUBLIC_APP_URL;
   }
   if (typeof window !== 'undefined' && (window as any).__VS_API_BASE__) {
     return (window as any).__VS_API_BASE__;
   }
-  return 'http://localhost:3000';
+  return '';
 };
 
 /**

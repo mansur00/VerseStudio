@@ -4,6 +4,8 @@
  * Conforms to Google Drive v3 Resumable Upload Specification with Range query resume.
  */
 
+import { getWatchBaseUrl } from '../config/env';
+
 export interface DriveQuota {
   limitBytes: number;
   usageBytes: number;
@@ -58,7 +60,12 @@ export class DriveService {
       if (res && res[DRIVE_CLIENT_ID_KEY]) return res[DRIVE_CLIENT_ID_KEY];
     }
     if (typeof window !== 'undefined' && window.localStorage) {
-      return window.localStorage.getItem(DRIVE_CLIENT_ID_KEY);
+      const stored = window.localStorage.getItem(DRIVE_CLIENT_ID_KEY);
+      if (stored) return stored;
+    }
+    const envClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID;
+    if (envClientId && typeof envClientId === 'string' && envClientId.trim().length > 0) {
+      return envClientId.trim();
     }
     return null;
   }
@@ -361,11 +368,12 @@ export class DriveService {
           const fileData = await chunkRes.json();
           onProgress?.(100, totalBytes, totalBytes);
 
+          const watchBase = getWatchBaseUrl();
           return {
             fileId: fileData.id,
             name: fileData.name,
             webViewLink: fileData.webViewLink || `https://drive.google.com/file/d/${fileData.id}/view`,
-            shareUrl: `https://versestudio.app/watch/${fileData.id}`,
+            shareUrl: watchBase ? `${watchBase}/${fileData.id}` : (fileData.webViewLink || `https://drive.google.com/file/d/${fileData.id}/view`),
           };
         } else {
           throw new Error(`Chunk upload failed with HTTP ${chunkRes.status}`);
@@ -393,11 +401,12 @@ export class DriveService {
             }
           } else if (statusRes.ok) {
             const fileData = await statusRes.json();
+            const watchBase = getWatchBaseUrl();
             return {
               fileId: fileData.id,
               name: fileData.name,
               webViewLink: fileData.webViewLink,
-              shareUrl: `https://versestudio.app/watch/${fileData.id}`,
+              shareUrl: watchBase ? `${watchBase}/${fileData.id}` : (fileData.webViewLink || `https://drive.google.com/file/d/${fileData.id}/view`),
             };
           }
         } catch {
@@ -437,7 +446,8 @@ export class DriveService {
       throw new Error(`Failed to set public sharing permission: HTTP ${res.status}`);
     }
 
-    return `https://versestudio.app/watch/${fileId}`;
+    const watchBase = getWatchBaseUrl();
+    return watchBase ? `${watchBase}/${fileId}` : `https://drive.google.com/file/d/${fileId}/view`;
   }
 
   /**

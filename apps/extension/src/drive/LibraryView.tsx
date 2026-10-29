@@ -18,6 +18,7 @@ import {
 } from '@hugeicons/core-free-icons';
 import { getTranslation, type SupportedLanguage, type DriveRecordingItem } from '@verse-studio/shared';
 import { useDriveStore } from './driveStore';
+import { getWatchBaseUrl } from '../config/env';
 
 export interface LibraryViewProps {
   lang?: SupportedLanguage;
@@ -301,7 +302,7 @@ export const LibraryView: React.FC<LibraryViewProps> = ({
           description="Instant public viewing link and mobile QR code"
         >
           <ShareLinkCard
-            shareUrl={shareItem.shareUrl || `https://versestudio.app/watch/${shareItem.id}`}
+            shareUrl={shareItem.shareUrl || (getWatchBaseUrl() ? `${getWatchBaseUrl()}/${shareItem.id}` : `https://drive.google.com/file/d/${shareItem.driveFileId || shareItem.id}/view`)}
             isPublic={shareItem.status === 'shared'}
             onToggleVisibility={(isPub) => {
               toggleVisibility(shareItem.id, isPub);

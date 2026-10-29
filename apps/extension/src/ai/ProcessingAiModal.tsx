@@ -106,15 +106,29 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
           </div>
         )}
 
+        {/* Error Details Banner */}
+        {isError && (
+          <div
+            role="alert"
+            className="flex items-start gap-2.5 p-3.5 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs"
+          >
+            <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-1">
+              <p className="font-semibold">AI Synthesis Notice</p>
+              <p className="text-[11px] opacity-90 leading-relaxed">
+                {processingState.error || 'Could not connect to the VerseStudio AI dubbing server. Verify network connectivity or configure API credentials in Settings.'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Progress Bar & Status Text */}
-        {!quotaExceededWarning && (
+        {!quotaExceededWarning && !isError && (
           <div>
             <div className="flex items-center justify-between font-label-s mb-2">
               <span className="text-[var(--color-text-primary)]">
                 {isCompleted
                   ? 'All AI Assets Ready'
-                  : isError
-                  ? 'Processing Failed'
                   : processingState.activeStepText || 'Processing...'}
               </span>
               <span className="font-code text-[var(--color-brand-default)]">
@@ -123,7 +137,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
             </div>
             <ProgressBar
               value={processingState.progress}
-              variant={isError ? 'neutral' : 'brand'}
+              variant="brand"
             />
           </div>
         )}
@@ -175,7 +189,7 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
         </div>
 
         {/* Modal Action Controls */}
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-2.5 pt-2">
           {isCompleted ? (
             <Button
               variant="primary"
@@ -183,6 +197,17 @@ export const ProcessingAiModal: React.FC<ProcessingAiModalProps> = ({
               onClick={() => onOpenChange(false)}
             >
               Done
+            </Button>
+          ) : isError ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                cancelProcessing();
+                onOpenChange(false);
+              }}
+            >
+              Dismiss
             </Button>
           ) : (
             <Button

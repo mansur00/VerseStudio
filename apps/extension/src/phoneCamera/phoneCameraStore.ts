@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type { PhoneCameraPeerInfo, PhoneCameraConnectionStatus } from '@verse-studio/shared';
 import { PhoneCameraService } from './phoneCameraService';
+import { getMobileStreamBaseUrl } from '../config/env';
 
 export interface PhoneCameraState {
   status: PhoneCameraConnectionStatus;
@@ -24,9 +25,9 @@ let activeService: PhoneCameraService | null = null;
 
 export const usePhoneCameraStore = create<PhoneCameraState>((set, get) => ({
   status: 'disconnected',
-  pairingCode: 'VS-8924',
-  pairingToken: '0123456789abcdef0123456789abcdef',
-  streamUrl: 'https://versestudio.app/mobile-camera?token=0123456789abcdef0123456789abcdef&pair=VS-8924',
+  pairingCode: '',
+  pairingToken: '',
+  streamUrl: '',
   peerInfo: null,
   remoteStream: null,
   isModalOpen: false,
@@ -39,7 +40,10 @@ export const usePhoneCameraStore = create<PhoneCameraState>((set, get) => ({
 
     const code = PhoneCameraService.generatePairingCode();
     const token = PhoneCameraService.generatePairingToken();
-    const streamUrl = `https://versestudio.app/mobile-camera?token=${token}&pair=${code}`;
+    const mobileBase = getMobileStreamBaseUrl();
+    const streamUrl = mobileBase
+      ? `${mobileBase}?token=${token}&pair=${code}`
+      : `?token=${token}&pair=${code}`;
 
     const service = new PhoneCameraService(code, {
       onStatusChange: (status) => set({ status }),

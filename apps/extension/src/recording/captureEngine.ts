@@ -86,10 +86,18 @@ export class CaptureEngine {
     }
   }
 
+  public getScreenStream(): MediaStream | null {
+    return this.screenStream;
+  }
+
+  public getCameraStream(): MediaStream | null {
+    return this.cameraStream;
+  }
+
   /**
    * Request screen capture at up to 4K 60FPS
    */
-  public async selectScreenSource(): Promise<MediaStream> {
+  public async selectScreenSource(surface: 'monitor' | 'window' | 'browser' = 'monitor'): Promise<MediaStream> {
     if (this.screenStream) {
       this.screenStream.getTracks().forEach((t) => t.stop());
     }
@@ -100,7 +108,7 @@ export class CaptureEngine {
         width: { ideal: 3840, max: 3840 },
         height: { ideal: 2160, max: 2160 },
         frameRate: { ideal: 60, max: 60 },
-        displaySurface: 'monitor',
+        displaySurface: surface,
       },
       audio: true, // System / tab audio capture
     };
@@ -210,6 +218,12 @@ export class CaptureEngine {
     this.micMuted = !this.micMuted;
     this.audioMixer?.setMicVolume(this.micMuted ? 0 : 1.0);
     return this.micMuted;
+  }
+
+  public async resumeAudio(): Promise<void> {
+    if (this.audioMixer) {
+      await this.audioMixer.resume();
+    }
   }
 
   private rebuildAudioMixer() {

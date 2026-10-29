@@ -17,6 +17,7 @@ describe('Google Drive Resumable Upload Engine (Pass D)', () => {
   });
 
   beforeEach(async () => {
+    process.env.VITE_WEB_BASE_URL = 'https://versestudio.app';
     fakeDrive.reset();
     await DriveService.persistSession('real_token_for_fake_drive_server');
 

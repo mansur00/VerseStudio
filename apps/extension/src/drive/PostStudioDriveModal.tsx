@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Button,
+  Input,
   ProgressBar,
   ShareLinkCard,
   StatusChip,
@@ -13,9 +14,13 @@ import {
   Alert01Icon,
   RotateLeft01Icon,
   ArrowUpRight01Icon,
+  Copy01Icon,
+  Tick01Icon,
+  Settings01Icon,
 } from '@hugeicons/core-free-icons';
 import type { SupportedLanguage } from '@verse-studio/shared';
 import { useDriveStore } from './driveStore';
+import { DriveService } from './driveService';
 
 export interface PostStudioDriveModalProps {
   isOpen: boolean;
@@ -49,6 +54,32 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [isDriveConnecting, setIsDriveConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
+  const [clientIdInput, setClientIdInput] = useState('');
+  const [hasClientId, setHasClientId] = useState(false);
+  const [showConfig, setShowConfig] = useState(false);
+  const [redirectUri, setRedirectUri] = useState('');
+  const [copiedUri, setCopiedUri] = useState(false);
+
+  useEffect(() => {
+    DriveService.getClientId().then((id) => {
+      if (id) {
+        setClientIdInput(id);
+        setHasClientId(true);
+      } else {
+        setShowConfig(true);
+      }
+    });
+
+    if (typeof chrome !== 'undefined' && chrome.identity && chrome.identity.getRedirectURL) {
+      try {
+        setRedirectUri(chrome.identity.getRedirectURL());
+      } catch {
+        setRedirectUri('https://<extension-id>.chromiumapp.org/');
+      }
+    } else {
+      setRedirectUri('https://<extension-id>.chromiumapp.org/');
+    }
+  }, [isOpen]);
 
   const isUploading = Boolean(activeUpload);
   const isDriveFull = error?.includes('Google Drive Full');
@@ -72,10 +103,27 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
   const handleConnect = async () => {
     setIsDriveConnecting(true);
     setConnectError(null);
+    clearError();
+
+    // If client ID was entered in the modal, persist it first
+    if (clientIdInput.trim()) {
+      await DriveService.setClientId(clientIdInput.trim());
+      setHasClientId(true);
+    } else {
+      const currentId = await DriveService.getClientId();
+      if (!currentId) {
+        setIsDriveConnecting(false);
+        setShowConfig(true);
+        setConnectError('Google Cloud OAuth Client ID is required to initiate connection.');
+        return;
+      }
+    }
+
     const success = await connectDrive();
     setIsDriveConnecting(false);
     if (!success) {
-      setConnectError('Could not establish Google Drive authorization.');
+      const storeErr = useDriveStore.getState().error;
+      setConnectError(storeErr || 'Could not establish Google Drive authorization.');
     }
   };
 
@@ -122,7 +170,7 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
           : `Upload "${recordingName}" directly to your VerseStudio Drive folder`
       }
     >
-      <div className="space-y-5 pt-1">
+      <div className="space-y-4 pt-1">
         {/* ================= SCREEN 34: SHARE LINK GENERATED ================= */}
         {shareUrl && (
           <div className="space-y-4">
@@ -141,28 +189,103 @@ export const PostStudioDriveModal: React.FC<PostStudioDriveModalProps> = ({
 
         {/* ================= SCREEN 28 & 29: CONNECT DRIVE PROMPT / FAILED ================= */}
         {!shareUrl && !isConnected && (
-          <div className="space-y-4">
+          <div className="space-y-3.5">
             {connectError && (
               <div
                 role="alert"
-                className="flex items-center gap-2 p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] font-label-s"
+                className="flex items-start gap-2.5 p-3 rounded-xl bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs"
               >
-                <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0" />
-                <span>{connectError}</span>
+                <HugeIcon icon={AlertCircleIcon} size={16} className="shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-semibold">Connection Notice</p>
+                  <p className="text-[11px] opacity-90 mt-0.5">{connectError}</p>
+                </div>
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-2 font-body-s text-[var(--color-text-secondary)]">
-              <div className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)] font-label-s">
-                <HugeIcon icon={CloudIcon} size={16} className="text-[var(--color-brand-default)]" />
-                <span>Zero Cloud Storage Fees</span>
+            {/* Zero cloud storage fees explanation card */}
+            <div className="p-3.5 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-2 font-body-s text-[var(--color-text-secondary)]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 font-semibold text-[var(--color-text-primary)] font-label-s">
+                  <HugeIcon icon={CloudIcon} size={16} className="text-[var(--color-brand-default)]" />
+                  <span>Zero Cloud Storage Fees</span>
+                </div>
+                {hasClientId && (
+                  <button
+                    type="button"
+                    onClick={() => setShowConfig(!showConfig)}
+                    className="text-[11px] font-mono text-[var(--color-brand-default)] hover:underline flex items-center gap-1"
+                  >
+                    <HugeIcon icon={Settings01Icon} size={12} />
+                    <span>{showConfig ? 'Hide Setup' : 'OAuth Client ID'}</span>
+                  </button>
+                )}
               </div>
-              <p>
+              <p className="text-xs">
                 VerseStudio streams and saves recordings straight to your own Google Drive using per-file permissions (<code className="font-code text-[var(--color-brand-default)]">drive.file</code>). We never hold or store your media.
               </p>
             </div>
 
-            <div className="flex gap-2">
+            {/* Google OAuth Client ID Configuration (shown if missing or toggled) */}
+            {(showConfig || !hasClientId) && (
+              <div className="p-3.5 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] space-y-2.5">
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--color-text-primary)]">
+                    Google OAuth Client ID Setup
+                  </h4>
+                  <p className="text-[11px] text-[var(--color-text-secondary)] mt-0.5">
+                    To authorize with Google Drive, enter your Google Cloud OAuth 2.0 Web Client ID below.
+                  </p>
+                </div>
+
+                {/* Redirect URI with Copy Button */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-tertiary)] block">
+                    Authorized Redirect URI
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={redirectUri}
+                      className="flex-1 bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-[var(--color-text-secondary)] select-all"
+                    />
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => {
+                        if (redirectUri) {
+                          navigator.clipboard.writeText(redirectUri);
+                          setCopiedUri(true);
+                          setTimeout(() => setCopiedUri(false), 2000);
+                        }
+                      }}
+                      leadingIcon={<HugeIcon icon={copiedUri ? Tick01Icon : Copy01Icon} size={14} />}
+                    >
+                      {copiedUri ? 'Copied' : 'Copy URI'}
+                    </Button>
+                  </div>
+                  <p className="text-[10px] text-[var(--color-text-tertiary)]">
+                    In Google Cloud Console, add this URI to 'Authorized redirect URIs' of your Web Application client.
+                  </p>
+                </div>
+
+                {/* Client ID input */}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-tertiary)] block">
+                    OAuth Client ID
+                  </label>
+                  <Input
+                    value={clientIdInput}
+                    onChange={(e) => setClientIdInput(e.target.value)}
+                    placeholder="e.g. 123456789-abc.apps.googleusercontent.com"
+                    className="text-xs font-mono"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2.5 pt-1">
               <Button variant="ghost" className="flex-1" onClick={onClose}>
                 Cancel
               </Button>

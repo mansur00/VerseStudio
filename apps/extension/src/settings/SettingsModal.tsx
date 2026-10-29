@@ -10,6 +10,7 @@ import {
   RotateLeft01Icon,
   VolumeHighIcon,
   ArrowUpRight01Icon,
+  Copy01Icon,
 } from '@hugeicons/core-free-icons';
 import {
   Modal,
@@ -661,37 +662,98 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     </p>
                   </div>
 
-                  {/* Optional Custom Google OAuth Client ID before connecting */}
-                  <div className="p-3.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-left space-y-1.5 max-w-md mx-auto">
-                    <label className="text-[11px] font-bold text-[var(--color-text-primary)] block">
-                      Google OAuth Client ID (Optional)
-                    </label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        value={customClientId}
-                        onChange={(e) => setCustomClientId(e.target.value)}
-                        placeholder="Google Cloud Web Client ID"
-                        className="text-xs font-mono"
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          DriveService.setClientId(customClientId.trim());
-                          setClientIdSaved(true);
-                          setTimeout(() => setClientIdSaved(false), 2000);
-                        }}
-                      >
-                        {clientIdSaved ? 'Saved' : 'Save'}
-                      </Button>
+                  {/* Google OAuth Client ID & Redirect URI */}
+                  <div className="p-3.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] text-left space-y-2.5 max-w-md mx-auto">
+                    <div>
+                      <label className="text-[11px] font-bold text-[var(--color-text-primary)] block">
+                        Google Cloud OAuth Client ID
+                      </label>
+                      <p className="text-[10px] text-[var(--color-text-secondary)] mt-0.5">
+                        Required for Chrome to initiate Google sign-in and direct Drive sync.
+                      </p>
+                    </div>
+
+                    {/* Redirect URI */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                        Authorized Redirect URI
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="text"
+                          readOnly
+                          value={
+                            typeof chrome !== 'undefined' && chrome.identity && chrome.identity.getRedirectURL
+                              ? chrome.identity.getRedirectURL()
+                              : 'https://<extension-id>.chromiumapp.org/'
+                          }
+                          className="flex-1 bg-[var(--color-bg-surface)] border border-[var(--color-border-subtle)] rounded px-2 py-1 text-[10px] font-mono text-[var(--color-text-secondary)] select-all"
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          leadingIcon={<HugeIcon icon={Copy01Icon} size={14} />}
+                          onClick={() => {
+                            const uri =
+                              typeof chrome !== 'undefined' && chrome.identity && chrome.identity.getRedirectURL
+                                ? chrome.identity.getRedirectURL()
+                                : 'https://<extension-id>.chromiumapp.org/';
+                            navigator.clipboard.writeText(uri);
+                            setClientIdSaved(true);
+                            setTimeout(() => setClientIdSaved(false), 2000);
+                          }}
+                        >
+                          Copy
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1 pt-1">
+                      <span className="text-[10px] font-bold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                        OAuth Client ID
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={customClientId}
+                          onChange={(e) => setCustomClientId(e.target.value)}
+                          placeholder="Google Cloud Web Client ID"
+                          className="text-xs font-mono"
+                        />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            DriveService.setClientId(customClientId.trim());
+                            setClientIdSaved(true);
+                            setTimeout(() => setClientIdSaved(false), 2000);
+                          }}
+                        >
+                          {clientIdSaved ? 'Saved' : 'Save'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
+
+                  {useDriveStore.getState().error && (
+                    <div className="p-3 rounded-lg bg-[var(--color-error-subtle)] border border-[var(--color-error-default)] text-[var(--color-error-default)] text-xs max-w-md mx-auto text-left">
+                      <div className="flex items-center gap-2 font-semibold">
+                        <HugeIcon icon={Alert01Icon} size={14} className="shrink-0" />
+                        <span>Connection Notice</span>
+                      </div>
+                      <p className="text-[11px] opacity-90 mt-1">
+                        {useDriveStore.getState().error}
+                      </p>
+                    </div>
+                  )}
 
                   <Button
                     variant="primary"
                     size="md"
                     leadingIcon={<HugeIcon icon={ArrowUpRight01Icon} size={16} />}
                     onClick={async () => {
+                      if (customClientId.trim()) {
+                        await DriveService.setClientId(customClientId.trim());
+                      }
                       const success = await connectDrive();
                       if (success) {
                         await authStore.setDriveConnected(true);

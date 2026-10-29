@@ -46,34 +46,6 @@ interface DriveState {
   clearError: () => void;
 }
 
-const DEFAULT_RECORDINGS: DriveRecordingItem[] = [
-  {
-    id: 'rec_demo_1',
-    name: 'VerseStudio 4K Product Walkthrough',
-    driveFileId: 'drv_sample_01',
-    shareUrl: 'https://versestudio.app/watch/drv_sample_01',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
-    durationSeconds: 254, // 04:14
-    sizeBytes: 420 * 1024 * 1024, // 420 MB
-    createdAt: 'Oct 24, 2026',
-    status: 'shared',
-    resolution: '4k',
-    fps: 60,
-  },
-  {
-    id: 'rec_demo_2',
-    name: 'Design System & Tokens Review',
-    driveFileId: 'drv_sample_02',
-    shareUrl: 'https://versestudio.app/watch/drv_sample_02',
-    durationSeconds: 98, // 01:38
-    sizeBytes: 160 * 1024 * 1024, // 160 MB
-    createdAt: 'Oct 25, 2026',
-    status: 'private',
-    resolution: '4k',
-    fps: 60,
-  },
-];
-
 async function readStorage<T>(key: string): Promise<T | null> {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     return new Promise((resolve) => {
@@ -107,9 +79,9 @@ async function writeStorage<T>(key: string, value: T | null): Promise<void> {
 }
 
 export const useDriveStore = create<DriveState>((set, get) => ({
-  isConnected: true,
+  isConnected: false,
   quota: null,
-  recordings: DEFAULT_RECORDINGS,
+  recordings: [],
   trashedItem: null,
   activeUpload: null,
   isLoading: false,
@@ -121,7 +93,7 @@ export const useDriveStore = create<DriveState>((set, get) => ({
     set({ isLoading: true });
     try {
       const stored = await readStorage<DriveRecordingItem[]>(LOCAL_RECORDINGS_KEY);
-      const items = stored && stored.length > 0 ? stored : DEFAULT_RECORDINGS;
+      const items = stored || [];
       const quota = await DriveService.getStorageQuota();
 
       set({
@@ -131,7 +103,7 @@ export const useDriveStore = create<DriveState>((set, get) => ({
         isLoading: false,
       });
     } catch {
-      set({ isConnected: false, isLoading: false });
+      set({ isConnected: false, isLoading: false, recordings: [] });
     }
   },
 

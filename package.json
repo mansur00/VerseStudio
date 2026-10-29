@@ -9,10 +9,12 @@
     "test": "pnpm --recursive run test",
     "lint": "pnpm --recursive run lint",
     "typecheck": "pnpm --recursive run typecheck",
-    "package:extension": "rm -rf apps/extension/dist release/versestudio-4k-pro-v1.0.0.zip && pnpm --filter @verse-studio/extension build && cd apps/extension/dist && zip -r ../../../release/versestudio-4k-pro-v1.0.0.zip ./*"
+    "check:prod-config": "./scripts/check-production-config.sh",
+    "package:extension": "rm -rf apps/extension/dist release/versestudio-4k-pro-v1.0.0.zip && VITE_WEB_BASE_URL=https://app.versestudio.com VITE_API_BASE_URL=https://api.versestudio.com pnpm --filter @verse-studio/extension build && ./scripts/check-production-config.sh && cd apps/extension/dist && zip -r ../../../release/versestudio-4k-pro-v1.0.0.zip ./*"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.12",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@types/node": "^20.14.0",
     "@types/pg": "^8.23.1",

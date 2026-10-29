@@ -86,19 +86,19 @@ export const TimelineTrimmer: React.FC<TimelineTrimmerProps> = ({
   };
 
   return (
-    <div className={cn('w-full flex flex-col gap-2 select-none', className)}>
+    <div className={cn('w-full flex flex-col gap-1.5 select-none', className)}>
       {/* Timestamps Header */}
-      <div className="flex items-center justify-between text-xs font-mono text-[var(--color-text-secondary)]">
-        <div>
-          <span className="text-[var(--color-brand-default)] font-semibold">Start: </span>
+      <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs font-mono text-[var(--color-text-secondary)]">
+        <div className="flex items-center gap-1">
+          <span className="text-[var(--color-brand-default)] font-semibold">Start:</span>
           <span>{formatTime(startTime)}</span>
         </div>
-        <div>
-          <span className="text-[var(--color-text-primary)] font-semibold">Playhead: </span>
+        <div className="flex items-center gap-1">
+          <span className="text-[var(--color-text-primary)] font-semibold">Playhead:</span>
           <span>{formatTime(currentTime)}</span>
         </div>
-        <div>
-          <span className="text-[var(--color-brand-default)] font-semibold">End: </span>
+        <div className="flex items-center gap-1">
+          <span className="text-[var(--color-brand-default)] font-semibold">End:</span>
           <span>{formatTime(endTime)}</span>
         </div>
       </div>
@@ -107,7 +107,7 @@ export const TimelineTrimmer: React.FC<TimelineTrimmerProps> = ({
       <div
         ref={containerRef}
         onClick={handleTrackClick}
-        className="relative h-14 bg-[var(--color-bg-hover)] rounded-xl border border-[var(--color-border-default)] cursor-pointer overflow-hidden p-1 flex items-center"
+        className="relative h-11 sm:h-12 bg-[var(--color-bg-hover)] rounded-xl border border-[var(--color-border-default)] cursor-pointer overflow-hidden p-1 flex items-center"
       >
         {/* Waveform / Filmstrip Placeholder Stripes */}
         <div className="absolute inset-0 opacity-15 flex items-center justify-around pointer-events-none px-2">

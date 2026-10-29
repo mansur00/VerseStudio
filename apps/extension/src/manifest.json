@@ -34,6 +34,10 @@
   "optional_permissions": [
     "desktopCapture"
   ],
+  "host_permissions": [
+    "https://www.googleapis.com/*",
+    "https://accounts.google.com/*"
+  ],
   "web_accessible_resources": [
     {
       "resources": [

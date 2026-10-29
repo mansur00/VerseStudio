@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '../../utils/cn';
-import { Tick01Icon } from '@hugeicons/core-free-icons';
+import { Tick02Icon } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../HugeIcon';
 
 export interface WallpaperOption {
@@ -12,47 +12,45 @@ export interface WallpaperOption {
   previewStyle: React.CSSProperties;
 }
 
+/**
+ * Wallpapers defined in Figma Screens 14 (36:1508 to 36:1518) & Component 34:592
+ */
 export const DEFAULT_WALLPAPERS: WallpaperOption[] = [
   {
+    id: 'studio-green',
+    name: 'Studio Deep Green',
+    value: 'linear-gradient(127deg, rgba(48, 69, 31, 1) 0%, rgba(31, 31, 43, 1) 74%)',
+    previewStyle: { background: 'linear-gradient(127deg, #30451F 0%, #1F1F2B 74%)' },
+  },
+  {
     id: 'mesh-lime',
-    name: 'Lime Mesh',
-    value: 'radial-gradient(circle at 20% 20%, rgba(163, 230, 53, 0.25) 0%, #1B1C21 80%)',
-    previewStyle: { background: 'radial-gradient(circle at 20% 20%, #A3E635 0%, #1B1C21 80%)' },
-  },
-  {
-    id: 'cyber-cyan',
-    name: 'Cyber Cyan',
-    value: 'radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.25) 0%, #1B1C21 80%)',
-    previewStyle: { background: 'radial-gradient(circle at 80% 20%, #22D3EE 0%, #1B1C21 80%)' },
-  },
-  {
-    id: 'sunset-amber',
-    name: 'Sunset Amber',
-    value: 'radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.25) 0%, #1B1C21 80%)',
-    previewStyle: { background: 'radial-gradient(circle at 50% 10%, #F59E0B 0%, #1B1C21 80%)' },
+    name: 'Lime Accent',
+    value: 'linear-gradient(135deg, rgba(163, 230, 53, 1) 0%, rgba(54, 83, 20, 1) 80%)',
+    previewStyle: { background: 'linear-gradient(135deg, #A3E635 0%, #365314 80%)' },
   },
   {
     id: 'velvet-purple',
     name: 'Velvet Purple',
-    value: 'radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.25) 0%, #1B1C21 80%)',
-    previewStyle: { background: 'radial-gradient(circle at 70% 80%, #A855F7 0%, #1B1C21 80%)' },
+    value: 'linear-gradient(135deg, rgba(134, 119, 255, 1) 0%, rgba(35, 30, 99, 1) 80%)',
+    previewStyle: { background: 'linear-gradient(135deg, #8677FF 0%, #231E63 80%)' },
   },
   {
-    id: 'pure-carbon',
-    name: 'Carbon Surface',
-    value: '#222329',
-    previewStyle: { background: '#222329' },
+    id: 'sunset-amber',
+    name: 'Sunset Glow',
+    value: 'linear-gradient(135deg, rgba(255, 138, 91, 1) 0%, rgba(122, 31, 92, 1) 80%)',
+    previewStyle: { background: 'linear-gradient(135deg, #FF8A5B 0%, #7A1F5C 80%)' },
   },
   {
-    id: 'transparent',
-    name: 'Transparent / Clean',
-    value: 'transparent',
-    previewStyle: {
-      backgroundImage:
-        'linear-gradient(45deg, #333 25%, transparent 25%), linear-gradient(-45deg, #333 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #333 75%), linear-gradient(-45deg, transparent 75%, #333 75%)',
-      backgroundSize: '8px 8px',
-      backgroundPosition: '0 0, 0 4px, 4px -4px, -4px 0px',
-    },
+    id: 'cyber-cyan',
+    name: 'Cyber Cyan',
+    value: 'linear-gradient(135deg, rgba(34, 211, 238, 1) 0%, rgba(11, 58, 99, 1) 80%)',
+    previewStyle: { background: 'linear-gradient(135deg, #22D3EE 0%, #0B3A63 80%)' },
+  },
+  {
+    id: 'dark-charcoal',
+    name: 'Dark Charcoal',
+    value: 'linear-gradient(135deg, rgba(92, 92, 102, 1) 0%, rgba(27, 27, 31, 1) 80%)',
+    previewStyle: { background: 'linear-gradient(135deg, #5C5C66 0%, #1B1B1F 80%)' },
   },
 ];
 
@@ -63,6 +61,10 @@ export interface WallpaperSwatchProps {
   className?: string;
 }
 
+/**
+ * Wallpaper Swatch matches Figma Component 34:592
+ * 12px border radius, 2px lime border and check badge when selected
+ */
 export const WallpaperSwatch: React.FC<WallpaperSwatchProps> = ({
   selectedId,
   onSelect,
@@ -70,7 +72,7 @@ export const WallpaperSwatch: React.FC<WallpaperSwatchProps> = ({
   className,
 }) => {
   return (
-    <div className={cn('flex items-center gap-2 flex-wrap', className)}>
+    <div className={cn('flex items-center gap-2.5 flex-wrap', className)}>
       {options.map((option) => {
         const isSelected = selectedId === option.id;
         return (
@@ -81,16 +83,17 @@ export const WallpaperSwatch: React.FC<WallpaperSwatchProps> = ({
             title={option.name}
             aria-label={`Select ${option.name} wallpaper`}
             className={cn(
-              'relative w-8 h-8 rounded-lg overflow-hidden border-2 transition-all duration-150 transform hover:scale-105',
+              'relative w-12 h-12 rounded-xl overflow-hidden transition-all duration-150 select-none outline-none',
+              'focus-visible:ring-2 focus-visible:ring-[var(--color-border-focus)]',
               isSelected
-                ? 'border-[var(--color-brand-default)] ring-2 ring-[var(--color-brand-default)]/40 shadow-[var(--glow-brand)]'
-                : 'border-[var(--color-border-subtle)] hover:border-[var(--color-border-strong)]'
+                ? 'border-2 border-[var(--color-brand-default)] shadow-[var(--glow-brand)] scale-[1.04]'
+                : 'border border-[var(--color-border-default)] hover:border-[var(--color-border-strong)] hover:scale-[1.02]'
             )}
             style={option.previewStyle}
           >
             {isSelected && (
-              <span className="absolute inset-0 flex items-center justify-center bg-black/30">
-                <HugeIcon icon={Tick01Icon} size={14} className="text-white" />
+              <span className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[var(--color-brand-default)] flex items-center justify-center shadow-xs">
+                <HugeIcon icon={Tick02Icon} size={11} className="text-[var(--color-text-on-brand)]" />
               </span>
             )}
           </button>

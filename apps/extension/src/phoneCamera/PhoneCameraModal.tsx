@@ -5,7 +5,6 @@ import {
   Tick01Icon,
   ArrowUpRight01Icon,
   Wifi01Icon,
-  SparklesIcon,
   FlashIcon,
   BatteryCharging01Icon,
   VideoReplayIcon,
@@ -30,7 +29,6 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
     streamUrl,
     peerInfo,
     remoteStream,
-    connectSimulatedPhone,
     disconnectPhone,
   } = usePhoneCameraStore();
 
@@ -263,25 +261,12 @@ export const PhoneCameraModal: React.FC<PhoneCameraModalProps> = ({
               </div>
             </div>
 
-            {/* Waiting status indicator */}
-            <div className="p-3 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-between font-body-s">
+            {/* Waiting status indicator (Figma Screen 15) */}
+            <div className="p-3 rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-center justify-center font-body-s">
               <div className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                 <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-brand-default)] animate-ping" />
                 <span className="font-medium font-label-s">Waiting for smartphone to connect...</span>
               </div>
-
-              {/* Dev/demo simulation trigger */}
-              <button
-                type="button"
-                onClick={() => {
-                  const simStream = connectSimulatedPhone();
-                  onUseAsCamera?.(simStream);
-                }}
-                className="font-caption font-semibold text-[var(--color-brand-default)] hover:underline flex items-center gap-1"
-              >
-                <HugeIcon icon={SparklesIcon} size={12} />
-                <span>Simulate Connection</span>
-              </button>
             </div>
 
             {/* Wi-Fi advisory notice */}

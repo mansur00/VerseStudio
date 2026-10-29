@@ -1,4 +1,5 @@
 import type { PhoneCameraPeerInfo } from '@verse-studio/shared';
+import { getApiBaseUrl } from '../config/env';
 
 export interface PhoneCameraCallbacks {
   onStatusChange?: (status: PhoneCameraPeerInfo['status']) => void;
@@ -39,9 +40,9 @@ export class PhoneCameraService {
     this.callbacks = callbacks;
     this.signalingBaseUrl =
       config.baseUrl ||
-      (typeof window !== 'undefined' && window.location.origin.includes('localhost')
-        ? 'http://localhost:3000'
-        : 'https://versestudio.app');
+      getApiBaseUrl() ||
+      (typeof process !== 'undefined' && (process.env as any)?.NEXT_PUBLIC_APP_URL) ||
+      '';
 
     if (config.turnServers && config.turnServers.length > 0) {
       this.iceServers = [...this.iceServers, ...config.turnServers];
@@ -142,13 +143,15 @@ export class PhoneCameraService {
 
     // 1. Dual Network Signaling Poll
     if (this.signalingPollInterval) clearInterval(this.signalingPollInterval);
+    let consecutiveFailures = 0;
     this.signalingPollInterval = setInterval(async () => {
-      if (this.isDestroyed) return;
+      if (this.isDestroyed || consecutiveFailures > 5) return;
       try {
         const res = await fetch(
           `${this.signalingBaseUrl}/api/signaling?token=${encodeURIComponent(this.pairingToken)}&code=${encodeURIComponent(this.pairingCode)}&role=host`
         );
         if (res.ok) {
+          consecutiveFailures = 0;
           const data = await res.json();
           if (data.iceServers && Array.isArray(data.iceServers) && data.iceServers.length > 0) {
             this.iceServers = data.iceServers;
@@ -158,11 +161,13 @@ export class PhoneCameraService {
               await handleMessage(msg);
             }
           }
+        } else {
+          consecutiveFailures++;
         }
       } catch (e) {
-        // Polling retry
+        consecutiveFailures++;
       }
-    }, 250);
+    }, 1500);
 
     // 2. Local loopback BroadcastChannel
     try {

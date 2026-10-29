@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   IconButton,
-  StatusChip,
   RecordButton,
   Modal,
   MicLevel,
@@ -15,7 +14,15 @@ import {
   UserMenu,
   LiveSubtitle,
   AudioTrackSelector,
+  LayoutSwitcher,
+  CameraBubble,
+  MiniController as MiniControllerBar,
+  KeyboardShortcutPill,
+  Toggle,
+  Slider,
+  Select,
   HugeIcon,
+  cn,
   type ToolPaletteState,
   DEFAULT_WALLPAPERS,
 } from '@verse-studio/ui';
@@ -23,14 +30,10 @@ import {
   getTranslation,
   type SupportedLanguage,
   type RecordingLayout,
-  type SubtitleMode,
   type DriveRecordingItem,
 } from '@verse-studio/shared';
 import {
-  MonitorIcon,
-  Layout01Icon,
-  Camera01Icon,
-  Layers01Icon,
+  CameraOff01Icon,
   Settings01Icon,
   Sun01Icon,
   Moon01Icon,
@@ -42,7 +45,6 @@ import {
   Delete01Icon,
   RotateLeft01Icon,
   Alert01Icon,
-  Move01Icon,
   CloudIcon,
   SparklesIcon,
   File01Icon,
@@ -51,6 +53,8 @@ import {
   GoBackward5SecIcon,
   GoForward5SecIcon,
   FullScreenIcon,
+  Mic01Icon,
+  TranslateIcon,
 } from '@hugeicons/core-free-icons';
 
 import { CaptureEngine, DeviceInfo, RecordingStatus } from '../recording/captureEngine';
@@ -84,6 +88,84 @@ import {
   SettingsModal,
 } from '../settings';
 
+/**
+ * Clean Figma Mockup Dashboard (Figma Screen 12 Nodes 17:31-17:47)
+ * Shown inside the Captured Window container prior to screen connection
+ */
+const FigmaDashboardMockup: React.FC<{ onSelect: () => void }> = ({ onSelect }) => (
+  <div
+    onClick={onSelect}
+    className="w-full h-full bg-[var(--color-bg-surface)] flex flex-col overflow-hidden select-none cursor-pointer group"
+  >
+    {/* Title bar with traffic light window dots */}
+    <div className="h-10 bg-[var(--color-bg-elevated)] border-b border-[var(--color-border-subtle)] flex items-center px-4 justify-between shrink-0">
+      <div className="flex items-center gap-2">
+        <span className="w-2.5 h-2.5 rounded-full bg-[#FF4D4F]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#F59E0B]" />
+        <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]" />
+      </div>
+      <div className="w-64 h-5 rounded-full bg-[var(--color-border-default)] flex items-center justify-center opacity-80">
+        <span className="text-[10px] text-[var(--color-text-tertiary)] font-mono">https://example.com/recording-source</span>
+      </div>
+      <div className="w-12" />
+    </div>
+
+    {/* Body */}
+    <div className="flex-1 flex overflow-hidden">
+      {/* Sidebar wireframe */}
+      <div className="w-36 bg-[var(--color-bg-elevated)] p-3 border-r border-[var(--color-border-subtle)] space-y-2 hidden sm:block">
+        <div className="w-16 h-3 rounded bg-[var(--color-border-default)] mb-3" />
+        <div className="w-full h-6 rounded bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30" />
+        <div className="w-20 h-5 rounded bg-[var(--color-bg-hover)]" />
+        <div className="w-24 h-5 rounded bg-[var(--color-bg-hover)]" />
+      </div>
+
+      {/* Main mockup canvas */}
+      <div className="flex-1 p-5 space-y-4 flex flex-col justify-between overflow-hidden">
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-h3 text-base sm:text-lg font-semibold text-[var(--color-text-primary)]">
+              Dashboard
+            </h3>
+            <span className="text-xs px-2.5 py-1 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-medium">
+              Click anywhere to connect display
+            </span>
+          </div>
+
+          {/* Metric cards */}
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-1">
+              <span className="text-[11px] text-[var(--color-text-tertiary)]">Recordings</span>
+              <p className="text-sm sm:text-base font-bold text-[var(--color-text-primary)]">24 videos</p>
+            </div>
+            <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-1">
+              <span className="text-[11px] text-[var(--color-text-tertiary)]">Storage</span>
+              <p className="text-sm sm:text-base font-bold text-[var(--color-brand-default)]">Google Drive</p>
+            </div>
+            <div className="p-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] space-y-1">
+              <span className="text-[11px] text-[var(--color-text-tertiary)]">Quality</span>
+              <p className="text-sm sm:text-base font-bold text-[var(--color-text-primary)]">4K · 60 FPS</p>
+            </div>
+          </div>
+
+          {/* Wireframe content lines */}
+          <div className="space-y-2 opacity-50">
+            <div className="w-3/4 h-2.5 rounded-full bg-[var(--color-border-default)]" />
+            <div className="w-1/2 h-2.5 rounded-full bg-[var(--color-border-default)]" />
+            <div className="w-2/3 h-2.5 rounded-full bg-[var(--color-border-default)]" />
+          </div>
+        </div>
+
+        <div className="text-center py-2">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-semibold text-xs shadow-[var(--glow-brand)] group-hover:scale-105 transition-transform">
+            Select Screen, Window, or Tab to Record
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 export const StudioApp: React.FC = () => {
   // App State & Preferences
   const [lang, setLang] = useState<SupportedLanguage>('en');
@@ -100,18 +182,32 @@ export const StudioApp: React.FC = () => {
   const [micMuted, setMicMuted] = useState(false);
   const [cameraEnabled, setCameraEnabled] = useState(true);
   const [hasScreenSource, setHasScreenSource] = useState(false);
+  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
 
   const [availableCameras, setAvailableCameras] = useState<DeviceInfo[]>([]);
   const [availableMics, setAvailableMics] = useState<DeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string>('');
   const [selectedMic, setSelectedMic] = useState<string>('');
-  const [streamSettings, setStreamSettings] = useState<MediaTrackSettings | null>(null);
+
+  // Sidebar Settings Tabs (Figma Screen 12, 13, 14: Capture | Camera | Look)
+  const [activeSidebarTab, setActiveSidebarTab] = useState<'capture' | 'camera' | 'look'>('capture');
+  const [sourceType, setSourceType] = useState<'screen' | 'window' | 'tab'>('screen');
+  const [cameraShape, setCameraShape] = useState<'circle' | 'rounded'>('circle');
+  const [bubbleSize, setBubbleSize] = useState<number>(140);
+  const [bubblePosition, setBubblePosition] = useState<{ x: number; y: number }>({ x: 0.82, y: 0.78 });
+  const [mirrorCamera, setMirrorCamera] = useState<boolean>(false);
+  const [noiseSuppression, setNoiseSuppression] = useState<boolean>(true);
+  const [systemAudio, setSystemAudio] = useState<boolean>(true);
+  const [dropShadow, setDropShadow] = useState<boolean>(true);
+  const [zoomLevel, setZoomLevel] = useState<number>(2.0);
+  const [clickRipple, setClickRipple] = useState<boolean>(true);
 
   // Compositor Styling State
   const [layout, setLayout] = useState<RecordingLayout>('screen-camera');
-  const [wallpaperId, setWallpaperId] = useState('mesh-lime');
+  const [wallpaperId, setWallpaperId] = useState('studio-green');
   const [wallpaperVal, setWallpaperVal] = useState(DEFAULT_WALLPAPERS[0].value);
-  const [padding, setPadding] = useState<number>(32);
+  const [padding, setPadding] = useState<number>(48);
   const [radius, setRadius] = useState<number>(24);
 
   // Countdown Overlay
@@ -162,6 +258,7 @@ export const StudioApp: React.FC = () => {
   const phoneCameraStore = usePhoneCameraStore();
 
   // DOM References
+  const previewContainerRef = useRef<HTMLDivElement>(null);
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const previewVideoRef = useRef<HTMLVideoElement>(null);
   const miniControllerRef = useRef<MiniController | null>(null);
@@ -215,8 +312,8 @@ export const StudioApp: React.FC = () => {
         height: 2160,
         fps: 60,
         wallpaper: wallpaperVal,
-        padding,
-        borderRadius: radius,
+        padding: Math.round(padding * (3840 / 960)),
+        borderRadius: Math.round(radius * (3840 / 960)),
       },
       {
         onStatusChange: (newStatus) => {
@@ -239,7 +336,6 @@ export const StudioApp: React.FC = () => {
           );
         },
         onMicLevel: (lvl) => setMicLevel(lvl),
-        onStreamSettings: (settings) => setStreamSettings(settings),
         onError: (err) => console.error('[Engine Error]', err),
       }
     );
@@ -249,13 +345,12 @@ export const StudioApp: React.FC = () => {
     // Mount compositor canvas to viewport
     if (canvasContainerRef.current) {
       canvasContainerRef.current.innerHTML = '';
-      const canvas = newEngine.compositor.getCanvas();
-      canvas.className = 'w-full h-full object-contain rounded-xl shadow-2xl';
-      canvasContainerRef.current.appendChild(canvas);
-      newEngine.compositor.start();
+      const canvasEl = newEngine.compositor.getCanvas();
+      canvasEl.className = 'w-full h-full object-contain pointer-events-none';
+      canvasContainerRef.current.appendChild(canvasEl);
     }
 
-    // Initialize Document PiP Mini Controller
+    // Initialize Document PiP MiniController
     miniControllerRef.current = new MiniController({
       onPauseResume: () => {
         if (newEngine.getStatus() === 'recording') {
@@ -281,52 +376,86 @@ export const StudioApp: React.FC = () => {
       setAvailableMics(mics);
       if (cameras.length > 0) setSelectedCamera(cameras[0].deviceId);
       if (mics.length > 0) setSelectedMic(mics[0].deviceId);
+
+      // Auto-connect default camera & microphone
+      newEngine.setCamera(true, cameras[0]?.deviceId)
+        .then(() => setCameraStream(newEngine.getCameraStream()))
+        .catch(() => {});
+      newEngine.setMicrophone(true, mics[0]?.deviceId).catch(() => {});
     });
+
+    // Wire Phone Camera store to update engine when connected
+    const unsubPhoneCamera = usePhoneCameraStore.subscribe((state) => {
+      if (state.isUsingPhoneCamera && state.remoteStream) {
+        newEngine.compositor.setCameraSource(state.remoteStream);
+      }
+    });
+
+    // Initialize Google Drive library & settings
+    useDriveStore.getState().initialize();
+    useSettingsStore.getState().initialize();
 
     // Check for crash recovery session
     RecordingStorage.checkRecoverableSession().then((session) => {
-      if (session) {
-        setRecoverableSession(session);
-      }
+      if (session) setRecoverableSession(session);
     });
-
-    // Initialize Auth session
-    useAuthStore.getState().initialize().then(() => {
-      const s = useAuthStore.getState();
-      if (s.isAuthenticated && !s.isOnboarded) {
-        setOnboardingModalOpen(true);
-      }
-    });
-
-    // Initialize Google Drive library
-    useDriveStore.getState().initialize();
-
-    // Initialize Studio Settings
-    useSettingsStore.getState().initialize();
 
     return () => {
+      unsubPhoneCamera();
       newEngine.dispose();
       miniControllerRef.current?.close();
     };
   }, []);
 
-  // Sync Compositor settings when UI changes
+  // Sync canvas container ref whenever view switches back to studio
+  useEffect(() => {
+    if (view === 'studio' && canvasContainerRef.current && engine) {
+      canvasContainerRef.current.innerHTML = '';
+      const canvasEl = engine.compositor.getCanvas();
+      canvasEl.className = 'w-full h-full object-contain pointer-events-none';
+      canvasContainerRef.current.appendChild(canvasEl);
+    }
+  }, [view, engine, hasScreenSource]);
+
+  // Update compositor configuration when styling changes
   useEffect(() => {
     if (!engine) return;
     engine.compositor.config.wallpaper = wallpaperVal;
-    engine.compositor.config.padding = padding;
-    engine.compositor.config.borderRadius = radius;
+    engine.compositor.config.padding = Math.round(padding * (3840 / 960));
+    engine.compositor.config.borderRadius = Math.round(radius * (3840 / 960));
+    engine.compositor.config.cameraBubbleSize = Math.round(bubbleSize * (3840 / 960));
     engine.compositor.setLayout(layout);
-  }, [engine, wallpaperVal, padding, radius, layout]);
+  }, [engine, wallpaperVal, padding, radius, bubbleSize, layout]);
 
-  // Handle Source Selection
-  const handleSelectScreen = async () => {
+  // Handle Source Selection with displaySurface hint
+  const handleSelectSourceByType = async (surfaceTypeTarget: 'screen' | 'window' | 'tab') => {
+    setSourceType(surfaceTypeTarget);
     if (!engine) return;
     try {
-      await engine.selectScreenSource();
-      setHasScreenSource(true);
-    } catch (e) {
+      const surface = surfaceTypeTarget === 'screen' ? 'monitor' : surfaceTypeTarget === 'window' ? 'window' : 'browser';
+      const stream = await engine.selectScreenSource(surface);
+      if (stream) {
+        setHasScreenSource(true);
+        setScreenStream(stream);
+      }
+    } catch {
       // User cancelled picker
+    }
+  };
+
+  // Handle Layout Switcher
+  const handleLayoutChange = (newLayout: RecordingLayout) => {
+    setLayout(newLayout);
+    if (engine) {
+      engine.compositor.setLayout(newLayout);
+    }
+  };
+
+  // Handle Bubble Position Change
+  const handleBubblePositionChange = (pos: { x: number; y: number }) => {
+    setBubblePosition(pos);
+    if (engine) {
+      engine.compositor.setCameraBubblePosition(pos.x, pos.y);
     }
   };
 
@@ -336,12 +465,14 @@ export const StudioApp: React.FC = () => {
     const nextState = !cameraEnabled;
     setCameraEnabled(nextState);
     await engine.setCamera(nextState, selectedCamera);
+    setCameraStream(nextState ? engine.getCameraStream() : null);
   };
 
   const handleSelectCamera = async (deviceId: string) => {
     setSelectedCamera(deviceId);
     if (cameraEnabled && engine) {
       await engine.setCamera(true, deviceId);
+      setCameraStream(engine.getCameraStream());
     }
   };
 
@@ -391,11 +522,32 @@ export const StudioApp: React.FC = () => {
   }, [elapsedMs, showLongRecordingWarning]);
 
   // Start Countdown and Recording
-  const handleStartRecordingClick = () => {
+  const handleStartRecordingClick = async () => {
     if (status === 'recording' || status === 'paused') {
       handleStopRecording();
       return;
     }
+
+    // Wake up Web Audio context on user gesture
+    await engine?.resumeAudio();
+
+    // If layout requires screen capture and none has been selected yet, prompt user immediately
+    if (layout !== 'camera-only' && (!hasScreenSource || !engine?.getScreenStream())) {
+      try {
+        const surface = sourceType === 'screen' ? 'monitor' : sourceType === 'window' ? 'window' : 'browser';
+        const stream = await engine?.selectScreenSource(surface);
+        if (stream) {
+          setHasScreenSource(true);
+          setScreenStream(stream);
+        } else {
+          return;
+        }
+      } catch {
+        // User cancelled picker
+        return;
+      }
+    }
+
     setShowCountdown(true);
   };
 
@@ -415,92 +567,10 @@ export const StudioApp: React.FC = () => {
     handleRecordingStopped(recId);
   };
 
-  // Synthesize an interactive preview stream blob when raw data is not cached locally
-  const generatePreviewStreamBlob = async (title: string, durationSecs: number): Promise<Blob> => {
-    try {
-      const canvas = document.createElement('canvas');
-      canvas.width = 1280;
-      canvas.height = 720;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return new Blob([], { type: 'video/webm' });
-
-      // Stylish dark gradient background
-      const grad = ctx.createLinearGradient(0, 0, 1280, 720);
-      grad.addColorStop(0, '#222329');
-      grad.addColorStop(1, '#1B1C21');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, 1280, 720);
-
-      // Border & frame
-      ctx.strokeStyle = '#383942';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(24, 24, 1232, 672);
-
-      // Brand badge
-      ctx.fillStyle = '#A3E635';
-      ctx.fillRect(60, 60, 200, 36);
-      ctx.fillStyle = '#1B1C21';
-      ctx.font = 'bold 16px Inter, sans-serif';
-      ctx.fillText('VERSE STUDIO 4K PRO', 76, 84);
-
-      // Title
-      ctx.fillStyle = '#F5F5F7';
-      ctx.font = 'bold 32px Inter, sans-serif';
-      ctx.fillText(title || 'Recorded Presentation', 60, 150);
-
-      // Details
-      ctx.fillStyle = '#B9BAC4';
-      ctx.font = '18px Inter, sans-serif';
-      const mins = Math.floor(durationSecs / 60);
-      const secs = Math.floor(durationSecs % 60);
-      ctx.fillText(`Duration: ${mins}m ${secs}s | 4K 60FPS Video Capture | Stereo Audio`, 60, 195);
-
-      // Audio waveform simulation
-      ctx.fillStyle = '#A3E635';
-      for (let i = 0; i < 48; i++) {
-        const h = Math.abs(Math.sin(i * 0.35)) * 60 + 20;
-        ctx.fillRect(60 + i * 24, 460 - h / 2, 12, h);
-      }
-
-      // Stream ready badge
-      ctx.fillStyle = '#292A31';
-      ctx.fillRect(60, 560, 380, 48);
-      ctx.fillStyle = '#A3E635';
-      ctx.font = 'bold 15px Inter, sans-serif';
-      ctx.fillText('✓ Video Stream Ready for Playback & Trimming', 76, 590);
-
-      const stream = canvas.captureStream(30);
-      return await new Promise<Blob>((resolve) => {
-        try {
-          const recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-          const chunks: Blob[] = [];
-          recorder.ondataavailable = (e) => {
-            if (e.data && e.data.size > 0) chunks.push(e.data);
-          };
-          recorder.onstop = () => {
-            resolve(new Blob(chunks, { type: 'video/webm' }));
-          };
-          recorder.start();
-          setTimeout(() => {
-            try {
-              recorder.stop();
-            } catch {
-              resolve(new Blob(chunks, { type: 'video/webm' }));
-            }
-          }, 400);
-        } catch {
-          resolve(new Blob(['preview-stream'], { type: 'video/webm' }));
-        }
-      });
-    } catch {
-      return new Blob(['preview-stream'], { type: 'video/webm' });
-    }
-  };
-
   const handleRecordingStopped = async (recId: string) => {
     setCurrentRecordingId(recId);
     const data = await RecordingStorage.getRecordingBlob(recId);
-    if (data) {
+    if (data && data.blob.size > 0) {
       setRecordingBlob(data.blob);
       const durSecs = Math.max(1, (data.meta.durationMs || 1000) / 1000);
       setVideoDuration(durSecs);
@@ -508,11 +578,6 @@ export const StudioApp: React.FC = () => {
       setCurrentTime(0);
       setIsPlaying(false);
       setView('post-studio');
-
-      // Auto-trigger AI processing if cues are not yet populated
-      if (useAIStore.getState().liveCues.length === 0) {
-        useAIStore.getState().startProcessingAI(`VerseStudio_${new Date().toISOString().slice(0, 10)}`, durSecs);
-      }
     }
   };
 
@@ -520,7 +585,7 @@ export const StudioApp: React.FC = () => {
   const handleRecoverSession = async () => {
     if (!recoverableSession) return;
     const data = await RecordingStorage.getRecordingBlob(recoverableSession.id);
-    if (data) {
+    if (data && data.blob.size > 0) {
       setRecordingBlob(data.blob);
       setCurrentRecordingId(recoverableSession.id);
       const durSecs = Math.max(1, (data.meta.durationMs || 5000) / 1000);
@@ -542,15 +607,10 @@ export const StudioApp: React.FC = () => {
       const durSecs = (data.meta.durationMs || item.durationSeconds * 1000) / 1000;
       setVideoDuration(durSecs);
       setTrimRange({ start: 0, end: durSecs });
-    } else {
-      const fallbackBlob = await generatePreviewStreamBlob(item.name, item.durationSeconds);
-      setRecordingBlob(fallbackBlob);
-      setVideoDuration(item.durationSeconds || 10);
-      setTrimRange({ start: 0, end: item.durationSeconds || 10 });
+      setCurrentTime(0);
+      setIsPlaying(false);
+      setView('post-studio');
     }
-    setCurrentTime(0);
-    setIsPlaying(false);
-    setView('post-studio');
   };
 
   // Switch to Post-Studio and auto-load stored or library recording if empty
@@ -559,7 +619,6 @@ export const StudioApp: React.FC = () => {
       setView('post-studio');
       return;
     }
-    // Check if there is any stored session in IndexedDB
     try {
       const sessions = await RecordingStorage.getAllSessions();
       if (sessions && sessions.length > 0) {
@@ -581,21 +640,10 @@ export const StudioApp: React.FC = () => {
       // Fallback
     }
 
-    // Check library recordings
     const libraryItems = useDriveStore.getState().recordings;
     if (libraryItems.length > 0) {
       await handleLoadLibraryRecording(libraryItems[0]);
-      return;
     }
-
-    // Create a demo session so Post-Studio is immediately usable
-    const demoBlob = await generatePreviewStreamBlob('VerseStudio 4K Recording', 60);
-    setRecordingBlob(demoBlob);
-    setVideoDuration(60);
-    setTrimRange({ start: 0, end: 60 });
-    setCurrentTime(0);
-    setIsPlaying(false);
-    setView('post-studio');
   };
 
   // Export handlers
@@ -662,8 +710,8 @@ export const StudioApp: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] flex flex-col select-none">
-      {/* Countdown Fullscreen Overlay */}
+    <div className="h-screen w-screen overflow-hidden bg-[var(--color-bg-canvas)] text-[var(--color-text-primary)] flex flex-col select-none">
+      {/* Countdown Fullscreen Overlay (Figma Screen 19) */}
       {showCountdown && (
         <CountdownOverlay
           onComplete={onCountdownComplete}
@@ -714,51 +762,25 @@ export const StudioApp: React.FC = () => {
         </div>
       )}
 
-      {/* Studio Header Bar */}
-      <header className="min-h-16 py-2.5 px-3 sm:px-6 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-wrap items-center justify-between gap-3 shrink-0">
+      {/* Top Bar (Figma Screen 12 Node 17:4) */}
+      <header className="h-16 px-6 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex items-center justify-between shrink-0">
+        {/* Brand */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[var(--color-brand-default)] flex items-center justify-center shadow-[var(--glow-brand)] shrink-0">
-              <span className="font-black text-[var(--color-text-on-brand)] text-base">V</span>
-            </div>
-            <div>
-              <h1 className="text-base font-bold tracking-tight text-[var(--color-text-primary)] leading-none">
-                {t.common.appName}
-              </h1>
-              <div className="flex items-center gap-2 mt-1">
-                <StatusChip
-                  status={status === 'recording' ? 'recording' : 'active'}
-                  label={
-                    status === 'recording'
-                      ? `${t.recording.recording} (${formatTime(elapsedMs)})`
-                      : status === 'paused'
-                      ? `${t.recording.paused} (${formatTime(elapsedMs)})`
-                      : 'Studio Ready'
-                  }
-                />
-                <span className="text-xs text-[var(--color-text-tertiary)] font-mono font-medium hidden sm:inline">
-                  {streamSettings?.height
-                    ? streamSettings.height >= 2160
-                      ? '4K 60FPS'
-                      : streamSettings.height >= 1440
-                      ? '1440p 60FPS'
-                      : streamSettings.height >= 1080
-                      ? '1080p 60FPS'
-                      : `${streamSettings.width}x${streamSettings.height}`
-                    : '4K 60FPS'}
-                </span>
-                {streamSettings && streamSettings.height && streamSettings.height < 2160 && (
-                  <span className="text-[10px] text-[var(--color-warning-default)] hidden lg:inline font-mono">
-                    (Negotiated: {streamSettings.width}x{streamSettings.height})
-                  </span>
-                )}
-              </div>
-            </div>
+          <div className="w-8 h-8 rounded-lg bg-[var(--color-brand-default)] flex items-center justify-center shrink-0">
+            <span className="w-4 h-4 rounded-full bg-[var(--color-bg-canvas)] flex items-center justify-center">
+              <span className="w-2 h-2 rounded-full bg-[var(--color-record-default)]" />
+            </span>
+          </div>
+          <h1 className="font-h4 text-xl font-semibold tracking-tight text-[var(--color-text-primary)]">
+            VerseStudio
+          </h1>
+          <div className="px-2 py-0.5 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-hover)] text-xs font-medium">
+            4K · 60 FPS
           </div>
         </div>
 
-        {/* Studio / Post-Studio View Switcher */}
-        <div className="flex items-center gap-1 bg-[var(--color-bg-hover)] p-1 rounded-lg border border-[var(--color-border-subtle)] order-3 sm:order-2">
+        {/* View Switcher: Studio | Post-Studio | Library */}
+        <div className="flex items-center gap-1 bg-[var(--color-bg-hover)] p-1 rounded-lg border border-[var(--color-border-subtle)]">
           <button
             type="button"
             onClick={() => setView('studio')}
@@ -779,7 +801,7 @@ export const StudioApp: React.FC = () => {
                 : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
             }`}
           >
-            {t.postStudio.title.split(' ')[0]}
+            Post-Studio
           </button>
           <button
             type="button"
@@ -794,8 +816,9 @@ export const StudioApp: React.FC = () => {
           </button>
         </div>
 
-        {/* Language, Theme & Actions */}
-        <div className="flex items-center gap-2 sm:gap-3 order-2 sm:order-3">
+        {/* Actions (Figma Screen 12 Node 17:13) */}
+        <div className="flex items-center gap-3">
+          {/* Language Toggle */}
           <div className="flex items-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-0.5">
             <button
               type="button"
@@ -821,6 +844,7 @@ export const StudioApp: React.FC = () => {
             </button>
           </div>
 
+          {/* Theme Toggle */}
           <IconButton
             variant="ghost"
             size="sm"
@@ -830,7 +854,17 @@ export const StudioApp: React.FC = () => {
             {theme === 'dark' ? <HugeIcon icon={Sun01Icon} size={16} /> : <HugeIcon icon={Moon01Icon} size={16} />}
           </IconButton>
 
-          {/* User Account Menu / Sign In */}
+          {/* Settings Button (Figma 17:14) */}
+          <IconButton
+            variant="ghost"
+            size="sm"
+            aria-label="Settings"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <HugeIcon icon={Settings01Icon} size={18} />
+          </IconButton>
+
+          {/* User Avatar Button (Figma 51:3366) */}
           {authStore.isAuthenticated && authStore.user ? (
             <UserMenu
               user={{
@@ -846,345 +880,676 @@ export const StudioApp: React.FC = () => {
               onSignOut={() => authStore.signOut()}
             />
           ) : (
-            <Button
-              variant="secondary"
-              size="sm"
+            <button
+              type="button"
               onClick={() => {
                 setAuthModalView('sign-in');
                 setAuthModalOpen(true);
               }}
+              className="w-7 h-7 rounded-full bg-[var(--color-brand-subtle)] text-[var(--color-brand-hover)] font-medium text-xs flex items-center justify-center border border-[var(--color-brand-default)]/30 hover:border-[var(--color-brand-default)] transition-colors"
+              title="Sign in / Profile"
             >
-              Sign In
-            </Button>
+              RA
+            </button>
           )}
-
-          <IconButton
-            variant="secondary"
-            size="sm"
-            aria-label="Settings"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <HugeIcon icon={Settings01Icon} size={16} />
-          </IconButton>
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Studio Viewport (Figma Screen 12, 13, 14, 20) */}
       {view === 'studio' ? (
-        <main className="flex-1 flex flex-col p-3 sm:p-5 lg:p-6 max-w-7xl mx-auto w-full gap-4 sm:gap-5 overflow-y-auto">
-          {/* Top Controls Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-[var(--color-bg-surface)] p-3 rounded-xl border border-[var(--color-border-default)] shadow-sm shrink-0">
-            {/* Screen Source & Layouts */}
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <Button
-                variant={hasScreenSource ? 'secondary' : 'primary'}
-                size="sm"
-                onClick={handleSelectScreen}
-                leadingIcon={<HugeIcon icon={MonitorIcon} size={16} />}
+        <main className="flex-1 flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden w-full bg-[var(--color-bg-canvas)]">
+          {/* Left: Main Stage / Preview (Figma 17:29) */}
+          <section className="flex-1 h-full flex flex-col items-center justify-between p-4 sm:p-6 lg:p-8 overflow-y-auto">
+            <div className="flex-1 w-full flex items-center justify-center">
+              {/* Central Preview Canvas (Figma 17:30) */}
+              <div
+                ref={previewContainerRef}
+                style={{
+                  background: wallpaperVal,
+                  borderRadius: '24px',
+                }}
+                className="w-full max-w-[960px] aspect-video max-h-[540px] relative overflow-hidden flex items-center justify-center border border-[var(--color-border-default)] shadow-2xl transition-all duration-300"
               >
-                <span className="hidden sm:inline">{hasScreenSource ? 'Display Connected' : t.setup.selectSource}</span>
-                <span className="sm:hidden">{hasScreenSource ? 'Screen' : 'Select'}</span>
-              </Button>
-
-              <div className="hidden sm:block h-6 w-px bg-[var(--color-border-subtle)]" />
-
-              <div className="flex items-center gap-1 overflow-x-auto">
-                <Button
-                  variant={layout === 'screen-only' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setLayout('screen-only')}
-                  leadingIcon={<HugeIcon icon={MonitorIcon} size={14} />}
-                >
-                  <span className="hidden md:inline">{t.setup.layoutScreenOnly}</span>
-                </Button>
-                <Button
-                  variant={layout === 'screen-camera' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setLayout('screen-camera')}
-                  leadingIcon={<HugeIcon icon={Layers01Icon} size={14} />}
-                >
-                  <span className="hidden md:inline">{t.setup.layoutScreenCamera}</span>
-                </Button>
-                <Button
-                  variant={layout === 'split-50-50' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setLayout('split-50-50')}
-                  leadingIcon={<HugeIcon icon={Layout01Icon} size={14} />}
-                >
-                  <span className="hidden md:inline">{t.setup.layoutSplit}</span>
-                </Button>
-                <Button
-                  variant={layout === 'camera-only' ? 'primary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setLayout('camera-only')}
-                  leadingIcon={<HugeIcon icon={Camera01Icon} size={14} />}
-                >
-                  <span className="hidden md:inline">{t.setup.layoutCameraOnly}</span>
-                </Button>
-              </div>
-            </div>
-
-            {/* Hardware: Camera & Microphone & Subtitles */}
-            <div className="flex flex-wrap items-center gap-3">
-              {/* Mic Controls */}
-              <div className="flex items-center gap-1.5">
-                <IconButton
-                  variant={micMuted ? 'ghost' : 'secondary'}
-                  size="sm"
-                  aria-label={micMuted ? 'Unmute Mic' : 'Mute Mic'}
-                  onClick={handleToggleMic}
-                >
-                  {micMuted ? (
-                    <HugeIcon icon={VolumeOffIcon} size={16} className="text-[var(--color-error-default)]" />
-                  ) : (
-                    <HugeIcon icon={VolumeHighIcon} size={16} className="text-[var(--color-brand-default)]" />
-                  )}
-                </IconButton>
-                <MicLevel level={micLevel} muted={micMuted} showIcon={false} />
-                {!micMuted && availableMics.length > 0 && (
-                  <select
-                    value={selectedMic}
-                    onChange={(e) => handleSelectMic(e.target.value)}
-                    className="bg-[var(--color-bg-hover)] text-xs text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] rounded-md px-1.5 py-1 max-w-[95px] sm:max-w-[110px] truncate focus:outline-none focus:border-[var(--color-brand-default)]"
-                    aria-label="Microphone Selection"
-                  >
-                    {availableMics.map((m) => (
-                      <option key={m.deviceId} value={m.deviceId}>
-                        {m.label}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </div>
-
-              {/* Camera Toggle & Selection */}
-              <div className="flex items-center gap-1.5">
-                <IconButton
-                  variant={cameraEnabled ? 'primary' : 'ghost'}
-                  size="sm"
-                  aria-label="Toggle camera"
-                  onClick={handleToggleCamera}
-                >
-                  <HugeIcon icon={Camera01Icon} size={16} />
-                </IconButton>
-                {cameraEnabled && availableCameras.length > 0 && (
-                  <select
-                    value={selectedCamera}
-                    onChange={(e) => handleSelectCamera(e.target.value)}
-                    className="bg-[var(--color-bg-hover)] text-xs text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] rounded-md px-1.5 py-1 max-w-[95px] sm:max-w-[110px] truncate focus:outline-none focus:border-[var(--color-brand-default)]"
-                    aria-label="Camera Selection"
-                  >
-                    {availableCameras.map((c) => (
-                      <option key={c.deviceId} value={c.deviceId}>
-                        {c.label}
-                      </option>
-                    ))}
-                  </select>
-                )}
-
-                {/* Phone Camera Wireless WebRTC Option (Screens 14-16) */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (phoneCameraStore.status === 'connected' && phoneCameraStore.remoteStream) {
-                      phoneCameraStore.setIsModalOpen(true);
-                    } else {
-                      phoneCameraStore.startPairingSession();
-                    }
+                {/* Inner Window Frame with padding */}
+                <div
+                  style={{
+                    padding: `${padding}px`,
                   }}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border transition-all ${
-                    phoneCameraStore.isUsingPhoneCamera
-                      ? 'bg-[var(--color-brand-default)] border-[var(--color-brand-default)] text-[var(--color-text-on-brand)]'
-                      : 'bg-[var(--color-bg-hover)] border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                  }`}
-                  aria-label="Phone Camera"
+                  className="w-full h-full flex items-center justify-center relative pointer-events-auto"
                 >
-                  <HugeIcon icon={SmartPhone01Icon} size={14} />
-                  <span className="hidden sm:inline">
-                    {phoneCameraStore.isUsingPhoneCamera ? 'Phone 1080p' : 'Phone'}
-                  </span>
-                </button>
-              </div>
-
-              {/* Phase 2: Live Tools Toolbar */}
-              <div className="flex items-center gap-2 border-l border-[var(--color-border-subtle)] pl-2 sm:pl-3">
-                <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={false} />
-              </div>
-
-              {/* Phase 5: Bilingual Subtitles Mode Selector */}
-              <div className="flex items-center gap-2 border-l border-[var(--color-border-subtle)] pl-2 sm:pl-3">
-                <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider hidden 2xl:inline">
-                  {t.recording.subtitles}:
-                </span>
-                <div className="flex items-center rounded-md border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] p-0.5">
-                  {(['bilingual', 'english-only', 'off'] as SubtitleMode[]).map((mode) => (
-                    <button
-                      key={mode}
-                      onClick={() => aiStore.setSubtitleMode(mode)}
-                      className={`px-2 py-1 text-xs rounded font-medium transition-all ${
-                        aiStore.subtitleMode === mode
-                          ? 'bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-semibold'
-                          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-                      }`}
-                    >
-                      {mode === 'bilingual' ? 'BN + EN' : mode === 'english-only' ? 'EN' : 'Off'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Central Live Compositor Canvas Viewport (Adaptive Responsive Height) */}
-          <div className="flex-1 relative flex items-center justify-center bg-[var(--color-bg-elevated)] rounded-2xl border border-[var(--color-border-default)] p-2 sm:p-4 shadow-inner min-h-[260px] sm:min-h-[340px] lg:min-h-[440px] max-h-[580px] overflow-hidden">
-            <div
-              ref={canvasContainerRef}
-              className="w-full h-full max-h-[560px] flex items-center justify-center"
-            />
-
-            {/* Floating Live Tool Palette inside viewport */}
-            <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
-              <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={true} />
-            </div>
-
-            {/* Floating Teleprompter inside viewport */}
-            {teleprompterOpen && (
-              <div className="absolute top-4 sm:top-6 left-4 sm:left-6 z-30 flex flex-col gap-2">
-                <Teleprompter
-                  isOpen={teleprompterOpen}
-                  onClose={() => toggleTool('teleprompter')}
-                  isBangla={lang === 'bn'}
-                />
-                <div className="px-3 py-1.5 rounded-lg bg-[var(--color-warning-subtle)] border border-[var(--color-border-subtle)] text-[var(--color-warning-default)] text-xs flex items-center gap-1.5 max-w-sm">
-                  <HugeIcon icon={Alert01Icon} size={14} className="text-amber-400 shrink-0" />
-                  <span>Entire Screen capture records all on-screen overlays. Use Window or Tab capture to exclude prompter.</span>
-                </div>
-              </div>
-            )}
-
-            {/* Live Subtitle Overlay during recording (Screens 19, 20) */}
-            {(status === 'recording' || status === 'paused') && (
-              <div className="absolute bottom-6 inset-x-6 z-20 flex justify-center pointer-events-none">
-                <LiveSubtitle
-                  mode={aiStore.subtitleMode}
-                  banglaText={
-                    aiStore.currentLiveCue?.banglaText ||
-                    (status === 'recording' ? 'রেকর্ডিং এবং অডিও স্পিচ সনাক্ত হচ্ছে...' : undefined)
-                  }
-                  englishText={
-                    aiStore.currentLiveCue?.englishText ||
-                    (status === 'recording' ? 'Transcribing and translating live Bengali speech...' : undefined)
-                  }
-                  isListening={status === 'recording'}
-                />
-              </div>
-            )}
-
-            {/* In-viewport camera bubble drag instruction */}
-            {layout === 'screen-camera' && !teleprompterOpen && (
-              <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--color-bg-elevated)] font-caption text-[var(--color-text-secondary)] border border-[var(--color-border-subtle)] pointer-events-none">
-                <HugeIcon icon={Move01Icon} size={14} className="text-[var(--color-brand-default)]" />
-                <span className="hidden sm:inline">Draggable Camera Bubble Enabled</span>
-                <span className="sm:hidden">Bubble Active</span>
-              </div>
-            )}
-          </div>
-
-          {/* Bottom Bar: Frame Customization & Recording Trigger (Responsive Wrapping) */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-[var(--color-bg-surface)] p-3 sm:px-6 sm:py-3.5 rounded-xl border border-[var(--color-border-default)] shadow-sm shrink-0">
-            {/* Wallpaper & Frame Options */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-6">
-              <div>
-                <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider block mb-1">
-                  Backdrop Frame:
-                </span>
-                <WallpaperSwatch
-                  selectedId={wallpaperId}
-                  onSelect={(id, val) => {
-                    setWallpaperId(id);
-                    setWallpaperVal(val);
-                  }}
-                />
-              </div>
-
-              <div className="hidden sm:block h-8 w-px bg-[var(--color-border-subtle)]" />
-
-              <div>
-                <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider block mb-1">
-                  Frame Inset:
-                </span>
-                <div className="flex items-center gap-1">
-                  {[0, 16, 32, 48].map((px) => (
-                    <button
-                      key={px}
-                      type="button"
-                      onClick={() => setPadding(px)}
-                      className={`px-2 sm:px-2.5 py-1 text-xs rounded-md border font-mono transition-all ${
-                        padding === px
-                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold'
-                          : 'border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-default)]'
-                      }`}
-                    >
-                      {px}px
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-semibold text-[var(--color-text-secondary)] uppercase tracking-wider block mb-1">
-                  Radius:
-                </span>
-                <div className="flex items-center gap-1">
-                  {[0, 12, 24].map((r) => (
-                    <button
-                      key={r}
-                      type="button"
-                      onClick={() => setRadius(r)}
-                      className={`px-2 sm:px-2.5 py-1 text-xs rounded-md border font-mono transition-all ${
-                        radius === r
-                          ? 'border-[var(--color-brand-default)] bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-bold'
-                          : 'border-[var(--color-border-subtle)] text-[var(--color-text-secondary)] hover:border-[var(--color-border-default)]'
-                      }`}
-                    >
-                      {r}px
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Big Record Button & Controls */}
-            <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-              {(status === 'recording' || status === 'paused') && (
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="font-mono text-base sm:text-lg font-bold text-[var(--color-text-primary)]">
-                    {formatTime(elapsedMs)}
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="secondary"
+                  {/* Captured Window (Figma 17:31) */}
+                  <div
+                    style={{
+                      borderRadius: `${radius}px`,
+                      boxShadow: dropShadow ? 'var(--shadow-xl)' : 'none',
+                    }}
+                    className={cn(
+                      'w-full h-full relative overflow-hidden flex items-center justify-center border border-[var(--color-border-default)] bg-[var(--color-bg-surface)] transition-all',
+                      !hasScreenSource && layout !== 'camera-only' && 'cursor-pointer'
+                    )}
                     onClick={() => {
-                      if (status === 'recording') engine?.pauseRecording();
-                      else engine?.resumeRecording();
+                      if (!hasScreenSource && layout !== 'camera-only') {
+                        handleSelectSourceByType(sourceType);
+                      }
                     }}
                   >
-                    {status === 'recording' ? t.recording.pause : t.recording.resume}
-                  </Button>
+                    {/* Camera Only layout */}
+                    {layout === 'camera-only' ? (
+                      <div className="w-full h-full relative bg-[var(--color-bg-elevated)] flex items-center justify-center">
+                        {cameraEnabled && (phoneCameraStore.remoteStream || engine?.getCameraStream()) ? (
+                          <video
+                            autoPlay
+                            playsInline
+                            muted
+                            ref={(el) => {
+                              if (el) {
+                                el.srcObject = phoneCameraStore.remoteStream || engine?.getCameraStream() || null;
+                                el.play().catch(() => {});
+                              }
+                            }}
+                            className={cn('w-full h-full object-cover', mirrorCamera && 'scale-x-[-1]')}
+                          />
+                        ) : (
+                          <div className="flex flex-col items-center justify-center gap-3">
+                            <HugeIcon icon={CameraOff01Icon} size={48} className="text-[var(--color-text-tertiary)]" />
+                            <span className="text-sm font-medium text-[var(--color-text-secondary)]">Camera Off</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : layout === 'split-50-50' ? (
+                      /* Split 50/50 Layout */
+                      <div className="w-full h-full flex items-center">
+                        <div className="w-1/2 h-full border-r border-[var(--color-border-default)] relative overflow-hidden bg-black flex items-center justify-center">
+                          {hasScreenSource && (screenStream || engine?.getScreenStream()) ? (
+                            <video
+                              autoPlay
+                              playsInline
+                              muted
+                              ref={(el) => {
+                                if (el) {
+                                  el.srcObject = screenStream || engine?.getScreenStream() || null;
+                                  el.play().catch(() => {});
+                                }
+                              }}
+                              className="w-full h-full object-contain pointer-events-none"
+                            />
+                          ) : (
+                            <FigmaDashboardMockup onSelect={() => handleSelectSourceByType(sourceType)} />
+                          )}
+                        </div>
+                        <div className="w-1/2 h-full relative overflow-hidden bg-[var(--color-bg-elevated)] flex items-center justify-center">
+                          {cameraEnabled && (phoneCameraStore.remoteStream || cameraStream || engine?.getCameraStream()) ? (
+                            <video
+                              autoPlay
+                              playsInline
+                              muted
+                              ref={(el) => {
+                                if (el) {
+                                  el.srcObject = phoneCameraStore.remoteStream || cameraStream || engine?.getCameraStream() || null;
+                                  el.play().catch(() => {});
+                                }
+                              }}
+                              className={cn('w-full h-full object-cover', mirrorCamera && 'scale-x-[-1]')}
+                            />
+                          ) : (
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <HugeIcon icon={CameraOff01Icon} size={36} className="text-[var(--color-text-tertiary)]" />
+                              <span className="text-xs text-[var(--color-text-secondary)]">Camera Off</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      /* Screen Only or Screen + Camera Bubble */
+                      <div className="w-full h-full relative flex items-center justify-center bg-black">
+                        {hasScreenSource && (screenStream || engine?.getScreenStream()) ? (
+                          <video
+                            autoPlay
+                            playsInline
+                            muted
+                            ref={(el) => {
+                              if (el) {
+                                el.srcObject = screenStream || engine?.getScreenStream() || null;
+                                el.play().catch(() => {});
+                              }
+                            }}
+                            className="w-full h-full object-contain pointer-events-none"
+                          />
+                        ) : (
+                          <FigmaDashboardMockup onSelect={() => handleSelectSourceByType(sourceType)} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Camera Bubble Overlay (Figma 17:48 / 10:177) */}
+                  {layout === 'screen-camera' && (
+                    <CameraBubble
+                      shape={cameraShape}
+                      size={bubbleSize}
+                      isOff={!cameraEnabled}
+                      mirrored={mirrorCamera}
+                      videoStream={phoneCameraStore.remoteStream || cameraStream || engine?.getCameraStream() || null}
+                      position={bubblePosition}
+                      onPositionChange={handleBubblePositionChange}
+                      boundsRef={previewContainerRef}
+                    />
+                  )}
                 </div>
+
+                {/* Overlaid REC Badge during recording (Figma 17:229) */}
+                {(status === 'recording' || status === 'paused') && (
+                  <div className="absolute top-4 left-4 z-30 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#4A1517] border border-[var(--color-record-default)] shadow-lg">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-record-default)] animate-pulse" />
+                    <span className="text-xs font-bold text-[#FF6B6B] tracking-wide">REC</span>
+                    <span className="font-mono text-xs text-[#F5F5F7] font-medium tracking-tight">
+                      {formatTime(elapsedMs)}
+                    </span>
+                  </div>
+                )}
+
+                {/* Floating Tool Palette during recording (Figma 35:879) */}
+                {(status === 'recording' || status === 'paused') && (
+                  <div className="absolute top-1/2 -translate-y-1/2 left-4 z-30 shadow-2xl">
+                    <ToolPalette tools={tools} onToggleTool={toggleTool} showGrip={true} />
+                  </div>
+                )}
+
+                {/* Floating Teleprompter inside preview (Figma 17:233) */}
+                {teleprompterOpen && (
+                  <div className="absolute top-4 left-6 z-40 max-w-sm">
+                    <Teleprompter
+                      isOpen={teleprompterOpen}
+                      onClose={() => toggleTool('teleprompter')}
+                      isBangla={lang === 'bn'}
+                    />
+                  </div>
+                )}
+
+                {/* Floating Live Subtitles during recording (Figma 35:943) */}
+                {(status === 'recording' || status === 'paused') && aiStore.subtitleMode !== 'off' && (
+                  <div className="absolute bottom-6 inset-x-6 z-30 flex justify-center pointer-events-none">
+                    <LiveSubtitle
+                      mode={aiStore.subtitleMode}
+                      banglaText={
+                        aiStore.currentLiveCue?.banglaText || 'আজকে আমরা মূল বিষয়গুলো শিখব।'
+                      }
+                      englishText={
+                        aiStore.currentLiveCue?.englishText || 'Today we are going to learn the basics.'
+                      }
+                      isListening={status === 'recording'}
+                    />
+                  </div>
+                )}
+
+                {/* Floating Mini Controller during recording (Figma 17:312) */}
+                {(status === 'recording' || status === 'paused') && (
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+                    <MiniControllerBar
+                      status={status}
+                      timeFormatted={formatTime(elapsedMs)}
+                      micMuted={micMuted}
+                      cameraOff={!cameraEnabled}
+                      onTogglePause={() => {
+                        if (status === 'recording') engine?.pauseRecording();
+                        else engine?.resumeRecording();
+                      }}
+                      onStop={handleStopRecording}
+                      onToggleMic={handleToggleMic}
+                      onToggleCamera={handleToggleCamera}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Layout Switcher & Explanatory Caption (Figma 17:58 & 17:107) */}
+            <div className="flex flex-col items-center gap-2 mt-4 shrink-0">
+              <LayoutSwitcher value={layout} onChange={handleLayoutChange} />
+              <p className="text-sm font-normal text-[var(--color-text-tertiary)] text-center">
+                {layout === 'screen-camera'
+                  ? 'Screen + Camera Bubble. Drag the bubble anywhere on the canvas.'
+                  : layout === 'screen-only'
+                  ? 'Screen Only. Full display recording without camera overlay.'
+                  : layout === 'camera-only'
+                  ? 'Camera Only. High-definition presenter recording.'
+                  : 'Split 50/50. Screen presentation and camera side by side.'}
+              </p>
+            </div>
+          </section>
+
+          {/* Right: Settings Panel (Figma 17:108) */}
+          <aside className="w-full lg:w-[360px] h-full bg-[var(--color-bg-surface)] border-t lg:border-t-0 lg:border-l border-[var(--color-border-subtle)] flex flex-col shrink-0 shadow-lg">
+            {/* Sidebar Tabs (Figma 35:862) */}
+            <div className="px-5 pt-3 border-b border-[var(--color-border-subtle)] shrink-0">
+              <div className="flex items-center gap-6">
+                {(['capture', 'camera', 'look'] as const).map((tabKey) => {
+                  const isActive = activeSidebarTab === tabKey;
+                  const label =
+                    tabKey === 'capture'
+                      ? 'Capture'
+                      : tabKey === 'camera'
+                      ? 'Camera'
+                      : 'Look';
+                  return (
+                    <button
+                      key={tabKey}
+                      type="button"
+                      onClick={() => setActiveSidebarTab(tabKey)}
+                      className={cn(
+                        'py-3 text-sm font-medium transition-all relative border-b-2 outline-none',
+                        isActive
+                          ? 'border-[var(--color-brand-default)] text-[var(--color-text-primary)] font-semibold'
+                          : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                      )}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Scrollable Tab Content Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+              {/* TAB 1: CAPTURE (Figma Screen 12) */}
+              {activeSidebarTab === 'capture' && (
+                <>
+                  {/* SOURCE SECTION */}
+                  <div className="space-y-3">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      SOURCE
+                    </span>
+                    <div className="grid grid-cols-3 gap-1 bg-[var(--color-bg-canvas)] p-1 rounded-lg border border-[var(--color-border-subtle)]">
+                      {(['screen', 'window', 'tab'] as const).map((type) => (
+                        <button
+                          key={type}
+                          type="button"
+                          onClick={() => handleSelectSourceByType(type)}
+                          className={cn(
+                            'py-1.5 text-xs font-medium rounded capitalize transition-all',
+                            sourceType === type
+                              ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-xs font-semibold'
+                              : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
+                          )}
+                        >
+                          {type}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-[var(--color-text-secondary)]">
+                      <span>Status:</span>
+                      <span className={hasScreenSource ? 'text-[var(--color-success-default)] font-medium' : 'text-[var(--color-text-tertiary)]'}>
+                        {hasScreenSource ? 'Display Connected (4K)' : 'No display stream'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* AUDIO SECTION */}
+                  <div className="space-y-4 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      AUDIO
+                    </span>
+
+                    {/* Microphone Toggle */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={Mic01Icon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Microphone</span>
+                      </div>
+                      <Toggle
+                        checked={!micMuted}
+                        onCheckedChange={() => handleToggleMic()}
+                      />
+                    </div>
+
+                    {/* Live Mic Level Row (Figma 82:5514) */}
+                    <div className="flex items-center justify-between text-xs text-[var(--color-text-tertiary)] pl-7">
+                      <span>Mic input level</span>
+                      <MicLevel level={micLevel} muted={micMuted} showIcon={false} />
+                    </div>
+
+                    {/* System Audio Toggle */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={VolumeHighIcon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">System audio</span>
+                      </div>
+                      <Toggle
+                        checked={systemAudio}
+                        onCheckedChange={(val) => setSystemAudio(val)}
+                      />
+                    </div>
+
+                    {/* Bangla to English Subtitles Toggle (Figma 17:143) */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={TranslateIcon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">
+                          Bangla to English subtitles
+                        </span>
+                      </div>
+                      <Toggle
+                        checked={aiStore.subtitleMode !== 'off'}
+                        onCheckedChange={(checked) => aiStore.setSubtitleMode(checked ? 'bilingual' : 'off')}
+                      />
+                    </div>
+                  </div>
+
+                  {/* EFFECTS SECTION (Figma 17:156) */}
+                  <div className="space-y-4 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      EFFECTS
+                    </span>
+
+                    {/* Auto Cinematic Zoom */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={SparklesIcon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Auto cinematic zoom</span>
+                      </div>
+                      <Toggle
+                        checked={tools.autoZoom}
+                        onCheckedChange={() => toggleTool('autoZoom')}
+                      />
+                    </div>
+
+                    {/* Cursor Spotlight */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={Sun01Icon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Cursor spotlight</span>
+                      </div>
+                      <Toggle
+                        checked={tools.spotlight}
+                        onCheckedChange={() => toggleTool('spotlight')}
+                      />
+                    </div>
+
+                    {/* Keystroke Display */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-4 h-4 rounded bg-[var(--color-bg-hover)] border border-[var(--color-border-default)] flex items-center justify-center text-[9px] font-mono font-bold text-[var(--color-text-secondary)]">K</span>
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Keystroke display</span>
+                      </div>
+                      <Toggle
+                        checked={tools.keystroke}
+                        onCheckedChange={() => toggleTool('keystroke')}
+                      />
+                    </div>
+
+                    {/* Privacy Shield */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={Moon01Icon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Privacy shield</span>
+                      </div>
+                      <Toggle
+                        checked={tools.privacy}
+                        onCheckedChange={() => toggleTool('privacy')}
+                      />
+                    </div>
+
+                    {/* Teleprompter */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <HugeIcon icon={File01Icon} size={18} className="text-[var(--color-text-secondary)]" />
+                        <span className="text-sm font-medium text-[var(--color-text-primary)]">Teleprompter (not recorded)</span>
+                      </div>
+                      <Toggle
+                        checked={tools.teleprompter}
+                        onCheckedChange={() => toggleTool('teleprompter')}
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
+              {/* TAB 2: CAMERA (Figma Screen 13) */}
+              {activeSidebarTab === 'camera' && (
+                <>
+                  {/* CAMERA SOURCE */}
+                  <div className="space-y-3">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      CAMERA SOURCE
+                    </span>
+                    <Select
+                      options={
+                        availableCameras.length > 0
+                          ? availableCameras.map((c) => ({ value: c.deviceId, label: c.label || 'Webcam' }))
+                          : [{ value: 'default', label: 'FaceTime HD Camera' }]
+                      }
+                      value={selectedCamera}
+                      onChange={(e) => handleSelectCamera(e.target.value)}
+                    />
+
+                    {/* Phone Camera Button (Figma 36:1274) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (phoneCameraStore.status === 'connected' && phoneCameraStore.remoteStream) {
+                          phoneCameraStore.setIsModalOpen(true);
+                        } else {
+                          phoneCameraStore.startPairingSession();
+                        }
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[var(--color-bg-elevated)] border border-[var(--color-border-default)] hover:border-[var(--color-brand-default)] transition-colors text-sm font-medium text-[var(--color-text-primary)]"
+                    >
+                      <HugeIcon icon={SmartPhone01Icon} size={16} className="text-[var(--color-brand-default)]" />
+                      <span>{phoneCameraStore.isUsingPhoneCamera ? 'Connected: Phone Camera' : 'Use phone camera (wireless)'}</span>
+                    </button>
+
+                    {/* Mirror Camera Toggle */}
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Mirror camera</span>
+                      <Toggle
+                        checked={mirrorCamera}
+                        onCheckedChange={(val) => setMirrorCamera(val)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* BUBBLE SIZE & SHAPE */}
+                  <div className="space-y-3 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider">
+                        BUBBLE SIZE
+                      </span>
+                      <span className="font-mono text-xs text-[var(--color-text-secondary)]">{bubbleSize} px</span>
+                    </div>
+                    <Slider
+                      value={[bubbleSize]}
+                      min={96}
+                      max={240}
+                      step={8}
+                      onValueChange={([v]) => setBubbleSize(v)}
+                    />
+
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Bubble shape</span>
+                      <div className="flex items-center gap-1 bg-[var(--color-bg-canvas)] p-1 rounded-lg border border-[var(--color-border-subtle)]">
+                        <button
+                          type="button"
+                          onClick={() => setCameraShape('circle')}
+                          className={cn(
+                            'px-2.5 py-1 text-xs rounded font-medium transition-all',
+                            cameraShape === 'circle'
+                              ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-xs font-semibold'
+                              : 'text-[var(--color-text-secondary)]'
+                          )}
+                        >
+                          Circle
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setCameraShape('rounded')}
+                          className={cn(
+                            'px-2.5 py-1 text-xs rounded font-medium transition-all',
+                            cameraShape === 'rounded'
+                              ? 'bg-[var(--color-bg-surface)] text-[var(--color-text-primary)] shadow-xs font-semibold'
+                              : 'text-[var(--color-text-secondary)]'
+                          )}
+                        >
+                          Rounded
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MICROPHONE IN CAMERA TAB */}
+                  <div className="space-y-3 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      MICROPHONE
+                    </span>
+                    <Select
+                      options={
+                        availableMics.length > 0
+                          ? availableMics.map((m) => ({ value: m.deviceId, label: m.label || 'Microphone' }))
+                          : [{ value: 'default', label: 'Default Microphone' }]
+                      }
+                      value={selectedMic}
+                      onChange={(e) => handleSelectMic(e.target.value)}
+                    />
+
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Noise suppression</span>
+                      <Toggle
+                        checked={noiseSuppression}
+                        onCheckedChange={(val) => setNoiseSuppression(val)}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-[var(--color-text-tertiary)] pt-1">
+                      <span>Mic input level</span>
+                      <MicLevel level={micLevel} muted={micMuted} showIcon={false} />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* TAB 3: LOOK (Figma Screen 14) */}
+              {activeSidebarTab === 'look' && (
+                <>
+                  {/* WALLPAPER SECTION */}
+                  <div className="space-y-3">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      WALLPAPER
+                    </span>
+                    <WallpaperSwatch
+                      selectedId={wallpaperId}
+                      onSelect={(id, val) => {
+                        setWallpaperId(id);
+                        setWallpaperVal(val);
+                      }}
+                    />
+                  </div>
+
+                  {/* FRAME SECTION */}
+                  <div className="space-y-3 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      FRAME
+                    </span>
+
+                    {/* Padding slider */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-[var(--color-text-primary)] font-medium">Padding</span>
+                        <span className="font-mono text-[var(--color-text-secondary)]">{padding} px</span>
+                      </div>
+                      <Slider
+                        value={[padding]}
+                        min={0}
+                        max={64}
+                        step={8}
+                        onValueChange={([v]) => setPadding(v)}
+                      />
+                    </div>
+
+                    {/* Corner radius slider */}
+                    <div className="space-y-1.5 pt-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-[var(--color-text-primary)] font-medium">Corner radius</span>
+                        <span className="font-mono text-[var(--color-text-secondary)]">{radius} px</span>
+                      </div>
+                      <Slider
+                        value={[radius]}
+                        min={0}
+                        max={32}
+                        step={4}
+                        onValueChange={([v]) => setRadius(v)}
+                      />
+                    </div>
+
+                    {/* Drop shadow toggle */}
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Drop shadow</span>
+                      <Toggle
+                        checked={dropShadow}
+                        onCheckedChange={(val) => setDropShadow(val)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* CURSOR AND MOTION */}
+                  <div className="space-y-3 pt-2 border-t border-[var(--color-border-subtle)]">
+                    <span className="text-[11px] font-semibold text-[var(--color-text-tertiary)] uppercase tracking-wider block">
+                      CURSOR AND MOTION
+                    </span>
+
+                    {/* Zoom level */}
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-[var(--color-text-primary)] font-medium">Zoom level</span>
+                        <span className="font-mono text-[var(--color-text-secondary)]">{zoomLevel.toFixed(1)}x</span>
+                      </div>
+                      <Slider
+                        value={[zoomLevel * 10]}
+                        min={10}
+                        max={30}
+                        step={1}
+                        onValueChange={([v]) => setZoomLevel(v / 10)}
+                      />
+                    </div>
+
+                    {/* Click ripple toggle */}
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-sm font-medium text-[var(--color-text-primary)]">Click ripple</span>
+                      <Toggle
+                        checked={clickRipple}
+                        onCheckedChange={(val) => setClickRipple(val)}
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Bottom Record Area (Figma Screen 12 Node 17:201) */}
+            <div className="p-5 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex items-center gap-4 shrink-0">
               <RecordButton
+                size="lg"
                 status={status === 'recording' ? 'recording' : status === 'paused' ? 'paused' : 'idle'}
                 onClick={handleStartRecordingClick}
               />
+              <div className="flex flex-col gap-1">
+                <h4 className="font-h4 text-lg font-semibold text-[var(--color-text-primary)] leading-none">
+                  {status === 'recording'
+                    ? (lang === 'bn' ? 'রেকর্ডিং চলছে...' : 'Recording...')
+                    : status === 'paused'
+                    ? (lang === 'bn' ? 'রেকর্ডিং স্থগিত' : 'Recording paused')
+                    : (lang === 'bn' ? 'রেকর্ডিং শুরু করুন' : 'Start recording')}
+                </h4>
+                <div className="flex items-center gap-1">
+                  <KeyboardShortcutPill keys={['Alt', 'R']} size="sm" />
+                </div>
+              </div>
             </div>
-          </div>
+          </aside>
         </main>
-      ) : (
+      ) : view === 'post-studio' ? (
         /* Post-Studio Viewport (Screens 23, 24, 26, 27) */
-        <main className="flex-1 flex flex-col p-3 sm:p-6 lg:p-8 max-w-6xl mx-auto w-full gap-4 sm:gap-6 overflow-y-auto">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <main className="flex-1 min-h-0 flex flex-col p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto w-full gap-4 sm:gap-5 overflow-y-auto pb-24">
+          <div className="flex flex-wrap items-center justify-between gap-3 shrink-0">
             <div>
               <h2 className="font-h2 font-bold text-[var(--color-text-primary)]">
                 {t.postStudio.title}
@@ -1215,7 +1580,7 @@ export const StudioApp: React.FC = () => {
           </div>
 
           {/* Video Preview Player with Full Stream Loading & Controls */}
-          <div className="relative aspect-video max-h-[320px] sm:max-h-[440px] lg:max-h-[520px] bg-black rounded-2xl overflow-hidden border border-[var(--color-border-default)] shadow-2xl flex items-center justify-center group">
+          <div className="relative aspect-video max-h-[240px] sm:max-h-[320px] lg:max-h-[380px] w-full bg-black rounded-2xl overflow-hidden border border-[var(--color-border-default)] shadow-xl flex items-center justify-center group shrink-0">
             <video
               ref={previewVideoRef}
               src={previewUrl || undefined}
@@ -1355,34 +1720,41 @@ export const StudioApp: React.FC = () => {
                   <HugeIcon icon={GoForward5SecIcon} size={16} />
                 </button>
 
-                <span className="font-code text-xs text-white/90 ml-1 sm:ml-2">
+                <span className="font-mono text-xs text-white/90 ml-1">
                   {formatTime(currentTime * 1000)} / {formatTime(videoDuration * 1000)}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="font-code text-[11px] text-[var(--color-brand-default)] bg-[var(--color-bg-canvas)] px-2 py-0.5 rounded border border-[var(--color-border-subtle)] hidden md:inline">
-                  Trim: {formatTime(trimRange.start * 1000)} - {formatTime((trimRange.end || videoDuration) * 1000)}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (previewVideoRef.current?.requestFullscreen) {
-                      previewVideoRef.current.requestFullscreen();
+              <button
+                type="button"
+                onClick={() => {
+                  if (previewVideoRef.current) {
+                    if (document.fullscreenElement) {
+                      document.exitFullscreen().catch(() => {});
+                    } else {
+                      previewVideoRef.current.requestFullscreen().catch(() => {});
                     }
-                  }}
-                  className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
-                  title="Fullscreen"
-                  aria-label="Fullscreen"
-                >
-                  <HugeIcon icon={FullScreenIcon} size={16} />
-                </button>
-              </div>
+                  }
+                }}
+                className="p-1 sm:p-1.5 rounded-md hover:bg-[var(--color-bg-hover)] text-white transition-colors"
+                title="Fullscreen"
+                aria-label="Fullscreen"
+              >
+                <HugeIcon icon={FullScreenIcon} size={16} />
+              </button>
             </div>
           </div>
 
-          {/* Interactive Timeline Trimmer */}
-          <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)]">
+          {/* Timeline Trimmer (Screen 24) */}
+          <div className="bg-[var(--color-bg-surface)] p-3 sm:p-4.5 rounded-2xl border border-[var(--color-border-default)] shadow-sm space-y-2.5 shrink-0">
+            <div className="flex items-center justify-between">
+              <span className="font-label-s text-[var(--color-text-secondary)]">
+                Trim Range: {formatTime(trimRange.start * 1000)} — {formatTime(trimRange.end * 1000)}
+              </span>
+              <span className="font-mono text-xs text-[var(--color-brand-default)] font-semibold">
+                Duration: {formatTime((trimRange.end - trimRange.start) * 1000)}
+              </span>
+            </div>
             <TimelineTrimmer
               duration={videoDuration}
               currentTime={currentTime}
@@ -1391,184 +1763,127 @@ export const StudioApp: React.FC = () => {
               onSeek={(time) => {
                 if (previewVideoRef.current) {
                   previewVideoRef.current.currentTime = time;
-                  setCurrentTime(time);
-                  aiStore.updateLiveCueForTimestamp(time);
                 }
               }}
-              onTrimChange={(start, end) => setTrimRange({ start, end })}
+              onTrimChange={(start, end) => {
+                setTrimRange({ start, end });
+                if (previewVideoRef.current) {
+                  previewVideoRef.current.currentTime = start;
+                }
+              }}
             />
           </div>
 
-          {/* Audio Track Selector & AI Voice Dubbing (Screen 24) */}
-          <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] space-y-3.5">
+          {/* Audio Tracks & AI Voice Generation (Screen 24) */}
+          <div className="bg-[var(--color-bg-surface)] p-3.5 sm:p-4.5 rounded-2xl border border-[var(--color-border-default)] shadow-sm space-y-3.5 shrink-0">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="font-h4 font-bold text-[var(--color-text-primary)] flex items-center gap-2">
-                  <HugeIcon icon={VolumeHighIcon} size={16} className="text-[var(--color-brand-default)]" />
-                  <span>{t.postStudio.audioTracks.title}</span>
+                <h3 className="font-label-m font-semibold text-[var(--color-text-primary)]">
+                  Audio & Voice Tracks
                 </h3>
-                <p className="font-body-s text-[var(--color-text-secondary)] mt-0.5">
-                  Select your desired voiceover track for playback and export.
+                <p className="font-caption text-[var(--color-text-secondary)]">
+                  Select playback audio: Native Bengali recording, synthesized English AI voice, or studio mixed ducking.
                 </p>
               </div>
 
+              {/* Generate AI Voice Button */}
               <Button
-                size="sm"
                 variant="secondary"
+                size="sm"
                 leadingIcon={<HugeIcon icon={SparklesIcon} size={16} className="text-[var(--color-brand-default)]" />}
-                onClick={() =>
+                onClick={() => {
                   aiStore.startProcessingAI(
                     `VerseStudio_${new Date().toISOString().slice(0, 10)}`,
-                    Math.round(videoDuration)
-                  )
-                }
+                    videoDuration || 60
+                  );
+                }}
               >
-                {t.postStudio.generateAiVoice}
+                Process AI Voice & Guide
               </Button>
             </div>
 
             <AudioTrackSelector
               value={aiStore.selectedAudioTrack}
-              onChange={aiStore.setSelectedAudioTrack}
+              onChange={(track) => aiStore.setSelectedAudioTrack(track)}
             />
           </div>
 
-          {/* Step-by-Step Guide & Subtitle Exports (Screens 24, 25) */}
-          <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-lg bg-[var(--color-brand-subtle)] border border-[var(--color-brand-default)]/30 text-[var(--color-brand-default)]">
-                <HugeIcon icon={File01Icon} size={20} />
-              </div>
-              <div>
-                <h4 className="font-label-m font-bold text-[var(--color-text-primary)]">
-                  Step-by-Step Tutorial Guide & Subtitles
-                </h4>
-                <p className="font-body-s text-[var(--color-text-secondary)] mt-0.5">
-                  Compiled automatically from recorded user clicks, navigation, and translated Bengali speech.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
+          {/* Export Actions & Google Drive Save */}
+          <div className="bg-[var(--color-bg-surface)] p-3.5 sm:p-5 rounded-2xl border border-[var(--color-border-default)] shadow-md flex flex-wrap items-center justify-between gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              {/* Local Export Buttons */}
               <Button
-                size="sm"
-                variant="secondary"
-                leadingIcon={<HugeIcon icon={AiTranscribeAudioIcon} size={16} />}
-                onClick={() => aiStore.exportSrtDownload()}
+                variant="primary"
+                size="md"
+                leadingIcon={<HugeIcon icon={Download01Icon} size={18} />}
+                onClick={handleExportMP4}
               >
-                {t.postStudio.exportSrt}
+                Export MP4 (4K)
               </Button>
               <Button
-                size="sm"
-                variant="primary"
-                leadingIcon={<HugeIcon icon={File01Icon} size={16} />}
+                variant="secondary"
+                size="md"
+                leadingIcon={<HugeIcon icon={Download01Icon} size={18} />}
+                onClick={handleExportWebM}
+              >
+                Export WebM
+              </Button>
+              <Button
+                variant="ghost"
+                size="md"
+                leadingIcon={<HugeIcon icon={File01Icon} size={18} />}
                 onClick={() => aiStore.setIsGuideModalOpen(true)}
               >
-                {t.postStudio.viewGuide}
+                Step-by-Step Guide
+              </Button>
+            </div>
+
+            {/* Cloud Sync to User's Own Google Drive */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="primary"
+                size="md"
+                leadingIcon={<HugeIcon icon={CloudIcon} size={18} />}
+                onClick={() => {
+                  setShowDriveUploadModal(true);
+                }}
+              >
+                Save to Google Drive
               </Button>
             </div>
           </div>
-
-          {/* Export Action Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Local Export */}
-            <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-border-default)] flex flex-col justify-between">
-              <div>
-                <h3 className="font-label-m font-bold text-[var(--color-text-primary)]">
-                  {t.postStudio.exportLocal}
-                </h3>
-                <p className="font-body-s text-[var(--color-text-secondary)] mt-1">
-                  Download instantly in native 4K WebM or containerized MP4 format with audio sync.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-2 mt-4">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  leadingIcon={<HugeIcon icon={Download01Icon} size={16} />}
-                  onClick={handleExportWebM}
-                >
-                  Download WebM (Instant)
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  leadingIcon={<HugeIcon icon={Download01Icon} size={16} />}
-                  onClick={handleExportMP4}
-                >
-                  Export MP4 (4K)
-                </Button>
-              </div>
-            </div>
-
-            {/* Google Drive Upload Card (Screens 24, 28-34) */}
-            <div className="bg-[var(--color-bg-surface)] p-4 sm:p-5 rounded-xl border border-[var(--color-brand-default)] flex flex-col justify-between shadow-sm">
-              <div>
-                <div className="flex items-center justify-between">
-                  <h3 className="font-label-m font-bold text-[var(--color-text-primary)]">
-                    {t.postStudio.saveDrive}
-                  </h3>
-                  <StatusChip status="shared" label="Google Drive Ready" />
-                </div>
-                <p className="font-body-s text-[var(--color-text-secondary)] mt-1">
-                  Upload directly to your personal Google Drive (<code className="font-code text-[var(--color-brand-default)]">VerseStudio/</code> folder) and get an instant shareable watch link.
-                </p>
-              </div>
-
-              <div className="mt-4">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  leadingIcon={<HugeIcon icon={CloudIcon} size={16} />}
-                  onClick={() => setShowDriveUploadModal(true)}
-                >
-                  Save to Google Drive & Share
-                </Button>
-              </div>
-            </div>
-          </div>
         </main>
+      ) : (
+        /* Cloud Library Viewport (Screens 35, 36, 37, 38, 39) */
+        <LibraryView
+          lang={lang}
+          onNewRecording={() => setView('studio')}
+          onPlayRecording={(item) => handleLoadLibraryRecording(item)}
+        />
       )}
 
-      {/* Library View (Screens 35 to 45) */}
-      {view === 'library' && (
-        <main className="flex-1 overflow-auto">
-          <LibraryView
-            lang={lang}
-            onNewRecording={() => setView('studio')}
-            onPlayRecording={handleLoadLibraryRecording}
-          />
-        </main>
-      )}
-
-      {/* 4K Video Export Progress Modal (Screen 26) */}
+      {/* Exporting 4K Progress Modal (Screen 26) */}
       <Modal
-        open={exportProgress !== null}
-        onOpenChange={() => {
-          if (exportAbortRef.current) {
-            exportAbortRef.current.abort();
+        open={!!exportProgress}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (exportAbortRef.current) {
+              exportAbortRef.current.abort();
+            }
+            setExportProgress(null);
           }
-          setExportProgress(null);
         }}
         title="Exporting 4K 60FPS Video"
       >
-        <div className="py-4 flex flex-col gap-4">
-          <ProgressBar
-            value={exportProgress?.percentage || 0}
-            label={
-              exportProgress?.stage === 'analyzing'
-                ? 'Analyzing video streams...'
-                : exportProgress?.stage === 'muxing'
-                ? 'Muxing 4K frames with mp4-muxer...'
-                : exportProgress?.stage === 'finalizing'
-                ? 'Finalizing video container...'
-                : 'Export complete!'
-            }
-          />
-          <p className="text-xs text-[var(--color-text-tertiary)]">
-            Please keep this tab open while 4K video frames are containerized with full fidelity.
+        <div className="space-y-4 py-2">
+          <p className="font-body-s text-[var(--color-text-secondary)]">
+            Merging 4K frames, trimming boundaries, and muxing multi-track audio streams.
           </p>
+          <ProgressBar value={exportProgress?.percentage || 0} />
+          <div className="flex items-center justify-between font-caption text-[var(--color-text-tertiary)]">
+            <span className="capitalize">Stage: {exportProgress?.stage || 'processing'}...</span>
+            <span className="font-mono font-semibold">{exportProgress?.percentage || 0}%</span>
+          </div>
           <div className="flex justify-end pt-2">
             <Button
               variant="secondary"
@@ -1617,7 +1932,7 @@ export const StudioApp: React.FC = () => {
         </div>
       </Modal>
 
-      {/* Phase 7 Studio Settings Modal (Screens 48 to 55) */}
+      {/* Settings Modal (Screens 48 to 55) */}
       <SettingsModal
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
@@ -1627,7 +1942,7 @@ export const StudioApp: React.FC = () => {
         onOpenUpgrade={() => setActiveAccountModal('upgrade')}
       />
 
-      {/* Phase 3 Auth & Onboarding Modals */}
+      {/* Auth Modal (Screens 01, 02, 07, 08, 09, 10, 11) */}
       <AuthModal
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
@@ -1640,12 +1955,14 @@ export const StudioApp: React.FC = () => {
         }}
       />
 
+      {/* Onboarding Flow Modal (Screens 04, 05, 06) */}
       <OnboardingModal
         isOpen={onboardingModalOpen}
         onClose={() => setOnboardingModalOpen(false)}
         lang={lang}
       />
 
+      {/* Account Settings Modals (Screens 57, 58, 59, 60, 61, 62) */}
       <AccountModals
         activeModal={activeAccountModal}
         onClose={() => setActiveAccountModal(null)}
@@ -1654,7 +1971,7 @@ export const StudioApp: React.FC = () => {
         onOpenDelete={() => setActiveAccountModal('delete')}
       />
 
-      {/* Phase 4 Google Drive Upload Modal */}
+      {/* Google Drive Upload & Share Modal (Screens 28, 29, 30, 31, 32, 33, 34) */}
       <PostStudioDriveModal
         isOpen={showDriveUploadModal}
         onClose={() => setShowDriveUploadModal(false)}
@@ -1665,22 +1982,28 @@ export const StudioApp: React.FC = () => {
         lang={lang}
       />
 
-      {/* Phase 5 Bilingual AI Modals */}
+      {/* Bilingual AI Voice Processing Modal (Screen 23) */}
       <ProcessingAiModal
         open={aiStore.isProcessingModalOpen}
         onOpenChange={aiStore.setIsProcessingModalOpen}
         onUpgradeClick={() => setActiveAccountModal('upgrade')}
       />
 
+      {/* Markdown & PDF Step-by-Step Guide Preview (Screen 25) */}
       <GuidePreviewModal
         open={aiStore.isGuideModalOpen}
         onOpenChange={aiStore.setIsGuideModalOpen}
       />
 
-      {/* Phase 6 Phone Camera Modal */}
+      {/* Phone Camera WebRTC Pairing Modal (Screens 15, 16) */}
       <PhoneCameraModal
         open={phoneCameraStore.isModalOpen}
-        onOpenChange={phoneCameraStore.setIsModalOpen}
+        onOpenChange={(open) => {
+          phoneCameraStore.setIsModalOpen(open);
+          if (!open && phoneCameraStore.status === 'waiting') {
+            phoneCameraStore.disconnectPhone();
+          }
+        }}
         onUseAsCamera={(stream) => {
           engine?.setCustomCameraStream(stream);
           setCameraEnabled(true);

@@ -50,14 +50,14 @@ export const Modal: React.FC<ModalProps> = ({
         {/* Dialog Content */}
         <DialogPrimitive.Content
           className={cn(
-            'fixed left-[50%] top-[50%] z-50 w-full translate-x-[-50%] translate-y-[-50%]',
+            'fixed left-[50%] top-[50%] z-50 w-[calc(100vw-2rem)] max-h-[calc(100vh-2rem)] translate-x-[-50%] translate-y-[-50%] flex flex-col overflow-hidden',
             sizeClasses[size],
-            'bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] rounded-2xl p-6 shadow-xl',
+            'bg-[var(--color-bg-surface)] border border-[var(--color-border-default)] rounded-2xl p-4 sm:p-6 shadow-xl',
             'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
             className
           )}
         >
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between shrink-0">
             <div className="space-y-1">
               <DialogPrimitive.Title className="font-h4 font-semibold text-[var(--color-text-primary)]">
                 {title}
@@ -79,10 +79,10 @@ export const Modal: React.FC<ModalProps> = ({
             </DialogPrimitive.Close>
           </div>
 
-          {children ? <div className="mt-4">{children}</div> : null}
+          {children ? <div className="mt-4 flex-1 min-h-0 overflow-y-auto pr-1">{children}</div> : null}
 
           {(confirmText || cancelText) && (
-            <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 sm:gap-3">
+            <div className="mt-6 shrink-0 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 sm:gap-3">
               {cancelText && (
                 <Button
                   variant="secondary"

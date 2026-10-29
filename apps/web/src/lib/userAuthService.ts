@@ -14,6 +14,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
 import { ServerDatabase, DbProfile } from './serverDb';
+import { EmailService } from './emailService';
 
 const JWT_SECRET = process.env.USER_SESSION_SECRET || 'vs_user_auth_secret_production_2026';
 const AUTH_STORE_FILE = path.resolve(process.env.TEMP_DIR || '/tmp', 'verse_studio_user_auth.json');
@@ -133,8 +134,25 @@ class UserAuthenticationManager {
     }
   }
 
+  private rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+
+  public checkRateLimit(key: string, limit = 10, windowMs = 60000): { allowed: boolean; remaining: number } {
+    const now = Date.now();
+    const entry = this.rateLimitMap.get(key);
+    if (!entry || now > entry.resetAt) {
+      this.rateLimitMap.set(key, { count: 1, resetAt: now + windowMs });
+      return { allowed: true, remaining: limit - 1 };
+    }
+    if (entry.count >= limit) {
+      return { allowed: false, remaining: 0 };
+    }
+    entry.count++;
+    return { allowed: true, remaining: limit - entry.count };
+  }
+
   public hashPassword(password: string, salt: string): string {
-    return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha256').toString('hex');
+    // OWASP Recommended: PBKDF2-HMAC-SHA256 with >= 600,000 iterations
+    return crypto.pbkdf2Sync(password, salt, 600000, 64, 'sha256').toString('hex');
   }
 
   public signUserToken(payload: { id: string; email: string; name: string }): string {
@@ -207,6 +225,10 @@ class UserAuthenticationManager {
     });
 
     this.saveToDisk();
+
+    // Dispatch verification OTP email through configured email provider (Resend / SMTP)
+    await EmailService.sendVerificationOtp(cleanEmail, code, name);
+
     return { success: true, code };
   }
 
@@ -368,6 +390,11 @@ class UserAuthenticationManager {
         used: false,
       });
       this.saveToDisk();
+
+      // Dispatch single-use password reset link through configured email provider (Resend / SMTP)
+      const webBase = process.env.NEXT_PUBLIC_APP_URL || process.env.WEB_BASE_URL || 'https://versestudio.app';
+      const resetLink = `${webBase}/reset-password?token=${token}`;
+      await EmailService.sendPasswordResetLink(cleanEmail, resetLink, user.name);
     }
 
     return { success: true, resetToken: token };

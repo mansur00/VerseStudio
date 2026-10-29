@@ -20,6 +20,8 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
 }) => {
   const [count, setCount] = useState(initialCount);
   const [animating, setAnimating] = useState(false);
+  const onCompleteRef = React.useRef(onComplete);
+  onCompleteRef.current = onComplete;
 
   useEffect(() => {
     setAnimating(true);
@@ -27,7 +29,7 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
 
     if (count <= 1) {
       const doneTimer = setTimeout(() => {
-        onComplete();
+        onCompleteRef.current();
       }, 1000);
       return () => {
         clearTimeout(animTimer);
@@ -43,7 +45,7 @@ export const CountdownOverlay: React.FC<CountdownOverlayProps> = ({
       clearTimeout(animTimer);
       clearTimeout(timer);
     };
-  }, [count, onComplete]);
+  }, [count]);
 
   return (
     <div

@@ -88,6 +88,19 @@ export class AudioMixer {
   }
 
   /**
+   * Resumes Web Audio context if suspended by browser autoplay policy
+   */
+  async resume(): Promise<void> {
+    if (this.audioCtx && this.audioCtx.state === 'suspended') {
+      try {
+        await this.audioCtx.resume();
+      } catch (err) {
+        console.warn('Could not resume AudioContext:', err);
+      }
+    }
+  }
+
+  /**
    * Set microphone volume or mute (0.0 to 1.0)
    */
   setMicVolume(volume: number) {
