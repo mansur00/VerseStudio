@@ -1,20 +1,14 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import * as SliderPrimitive from '@radix-ui/react-slider';
 import { cn } from '../../utils/cn';
 import {
-  PlayIcon,
-  PauseIcon,
   RotateLeft01Icon,
   Cancel01Icon,
   GripVerticalIcon,
-  TextFontIcon,
-  DashboardSpeed01Icon,
-  Edit01Icon,
-  Tick01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeIcon } from '../HugeIcon';
-import { Slider } from '../Slider/Slider';
 
 export interface TeleprompterProps {
   isOpen: boolean;
@@ -22,19 +16,21 @@ export interface TeleprompterProps {
   defaultText?: string;
   isBangla?: boolean;
   className?: string;
+  onGripMouseDown?: (e: React.MouseEvent) => void;
+  onLanguageChange?: (lang: 'en' | 'bn') => void;
 }
 
-const DEFAULT_SCRIPT_EN = `Welcome to VerseStudio 4K Pro.
-Today we are demonstrating studio-grade screen recording at 60 frames per second.
-Notice how smooth the cursor spotlight and live tools feel.
-With automatic Bangla-to-English AI dubbing, creating bilingual content has never been easier.
-Thank you for watching, and let's explore the post-studio editor.`;
+const DEFAULT_SCRIPT_EN = `1. 4K 60 FPS studio screen recording with camera bubble.
+2. Real-time Bangla speech to English subtitles.
+3. Resumable Google Drive cloud integration without risking memory crashes.
 
-const DEFAULT_SCRIPT_BN = `ভার্সস্টুডিও ৪কে প্রো-তে আপনাকে স্বাগতম।
-আজ আমরা ৬০ ফ্রেম প্রতি সেকেন্ডে স্টুডিও-মানের স্ক্রিন রেকর্ডিং প্রদর্শন করছি।
-দেখুন কার্সার স্পটলাইট এবং লাইভ টুলস কতটা সাবলীলভাবে কাজ করে।
-স্বয়ংক্রিয় বাংলা থেকে ইংরেজি এআই ডাবিংয়ের মাধ্যমে দ্বিভাষিক কনটেন্ট তৈরি এখন অত্যন্ত সহজ।
-আমাদের সাথে থাকার জন্য ধন্যবাদ, এবার চলুন পোস্ট-স্টুডিও এডিটরটি ঘুরে দেখি।`;
+Let's dive in and review the canvas controls!`;
+
+const DEFAULT_SCRIPT_BN = `১. ৪কে ৬০ এফপিএস স্টুডিও স্ক্রিন রেকর্ডিং ও ক্যামেরা বাবল।
+২. রিয়েল-টাইম বাংলা স্পিচ থেকে ইংরেজি সাবটাইটেল।
+৩. মেমোরি ক্র্যাশ ছাড়াই গুগল ড্রাইভে সরাসরি ক্লাউড ইন্টিগ্রেশন।
+
+চলুন ক্যানভাস ও স্টুডিও টুলসগুলো বিস্তারিত দেখে নেওয়া যাক!`;
 
 export const Teleprompter: React.FC<TeleprompterProps> = ({
   isOpen,
@@ -42,24 +38,28 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
   defaultText,
   isBangla = false,
   className,
+  onGripMouseDown,
+  onLanguageChange,
 }) => {
+  const [currentLang, setCurrentLang] = useState<'en' | 'bn'>(isBangla ? 'bn' : 'en');
   const [script, setScript] = useState(
     defaultText || (isBangla ? DEFAULT_SCRIPT_BN : DEFAULT_SCRIPT_EN)
   );
-  const [isEditing, setIsEditing] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [speed, setSpeed] = useState([30]); // px per second
-  const [fontSize, setFontSize] = useState([20]); // px
-  const [activeLineIndex, setActiveLineIndex] = useState(0);
+  const [speed, setSpeed] = useState(2); // 1x to 4x multiplier
+  const [fontSize, setFontSize] = useState(18); // 14px to 32px
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const animFrameRef = useRef<number | null>(null);
 
-  const lines = script.split('\n').filter((l) => l.trim().length > 0);
+  // Sync external isBangla prop if changed
+  useEffect(() => {
+    setCurrentLang(isBangla ? 'bn' : 'en');
+  }, [isBangla]);
 
   // Autoscroll animation loop
   useEffect(() => {
-    if (!isScrolling || !scrollContainerRef.current) {
+    if (!isScrolling || !textareaRef.current) {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       return;
     }
@@ -70,17 +70,14 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
       const delta = (timestamp - lastTimestamp) / 1000;
       lastTimestamp = timestamp;
 
-      const container = scrollContainerRef.current;
-      if (container) {
-        container.scrollTop += delta * speed[0];
-
-        // Calculate active line from scrollTop
-        const lineHeight = fontSize[0] * 1.8;
-        const currentLine = Math.floor(container.scrollTop / lineHeight);
-        setActiveLineIndex(Math.min(lines.length - 1, Math.max(0, currentLine)));
+      const el = textareaRef.current;
+      if (el) {
+        // Speed multiplier * 25 px per second
+        const pxPerSec = speed * 25;
+        el.scrollTop += delta * pxPerSec;
 
         // Stop if end of text reached
-        if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+        if (el.scrollTop + el.clientHeight >= el.scrollHeight - 2) {
           setIsScrolling(false);
           return;
         }
@@ -94,14 +91,24 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isScrolling, speed, fontSize, lines.length]);
+  }, [isScrolling, speed]);
 
   const handleReset = () => {
     setIsScrolling(false);
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = 0;
+    if (textareaRef.current) {
+      textareaRef.current.scrollTop = 0;
     }
-    setActiveLineIndex(0);
+  };
+
+  const handleToggleLanguage = () => {
+    const nextLang = currentLang === 'en' ? 'bn' : 'en';
+    setCurrentLang(nextLang);
+    onLanguageChange?.(nextLang);
+
+    // Swap default text if user hasn't heavily modified it
+    if (script === DEFAULT_SCRIPT_EN || script === DEFAULT_SCRIPT_BN) {
+      setScript(nextLang === 'bn' ? DEFAULT_SCRIPT_BN : DEFAULT_SCRIPT_EN);
+    }
   };
 
   if (!isOpen) return null;
@@ -111,149 +118,185 @@ export const Teleprompter: React.FC<TeleprompterProps> = ({
       role="region"
       aria-label="Teleprompter Overlay"
       className={cn(
-        'w-full max-w-[380px] bg-[var(--color-bg-surface)] rounded-2xl border border-[var(--color-border-default)] shadow-2xl',
+        'w-[360px] sm:w-[400px] bg-[var(--color-bg-surface)] rounded-2xl border border-[var(--color-border-subtle)] shadow-2xl shadow-black/60',
         'flex flex-col select-none overflow-hidden transition-all',
         className
       )}
     >
-      {/* Teleprompter Header */}
-      <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-hover)]/40">
+      {/* Teleprompter HUD Header */}
+      <div className="flex items-center justify-between px-3.5 py-2.5 bg-[var(--color-bg-surface)] border-b border-[var(--color-border-subtle)]">
         <div className="flex items-center gap-2">
-          <HugeIcon icon={GripVerticalIcon} size={16} className="text-[var(--color-text-tertiary)] cursor-grab" />
-          <span className="font-label-s font-bold text-[var(--color-text-primary)]">
-            Teleprompter
+          <div
+            onMouseDown={onGripMouseDown}
+            className="p-1 -ml-1 text-[#808191] hover:text-white cursor-grab active:cursor-grabbing rounded transition-colors"
+            title="Drag Teleprompter HUD"
+          >
+            <HugeIcon icon={GripVerticalIcon} size={15} />
+          </div>
+
+          <span className="text-sm font-bold text-[var(--color-text-primary)] tracking-tight">
+            Teleprompter HUD
           </span>
-          {isBangla && (
-            <span className="font-caption px-1.5 py-0.5 rounded bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-bangla font-semibold">
-              বাংলা
-            </span>
-          )}
+
+          <span className="px-1.5 py-0.5 rounded bg-[var(--color-brand-subtle)] text-[var(--color-brand-default)] font-mono text-[11px] font-bold tracking-tight">
+            Alt+T
+          </span>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
+          {/* Language Switcher Button */}
           <button
             type="button"
-            onClick={() => setIsEditing(!isEditing)}
-            title={isEditing ? 'Save Script' : 'Edit Script'}
-            className="p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+            onClick={handleToggleLanguage}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#272832] border border-[#383944] text-xs font-semibold text-white hover:bg-[#343542] transition-colors"
+            title={`Switch to ${currentLang === 'en' ? 'Bangla' : 'English'}`}
           >
-            {isEditing ? <HugeIcon icon={Tick01Icon} size={14} /> : <HugeIcon icon={Edit01Icon} size={14} />}
+            <svg
+              className="w-3.5 h-3.5 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 8l6 6" />
+              <path d="M4 14h8" />
+              <path d="M2 5h12" />
+              <path d="M7 2h1" />
+              <path d="M22 22l-5-10-5 10" />
+              <path d="M14 18h6" />
+            </svg>
+            <span>{currentLang === 'en' ? 'EN' : 'BN'}</span>
           </button>
+
+          {/* Close button */}
           <button
             type="button"
             onClick={onClose}
             aria-label="Close teleprompter"
-            className="p-1 rounded-md text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)]"
+            className="p-1 rounded-md text-[#808191] hover:text-white hover:bg-[#272832] transition-colors"
           >
-            <HugeIcon icon={Cancel01Icon} size={14} />
+            <HugeIcon icon={Cancel01Icon} size={15} />
           </button>
         </div>
       </div>
 
-      {/* Main Reading Viewport / Editor */}
-      <div className="relative h-[220px] p-4 overflow-hidden">
-        {/* Subtle reading focal guide overlay */}
-        <div className="absolute top-[35%] left-0 right-0 h-10 bg-[var(--color-brand-default)]/5 border-y border-[var(--color-brand-default)]/20 pointer-events-none" />
-
-        {isEditing ? (
+      {/* Main Text Reading / Inset Box */}
+      <div className="p-3">
+        <div className="relative bg-[#16171C] border border-[#2B2C35] rounded-xl p-3.5 h-[190px] flex flex-col overflow-hidden">
           <textarea
+            ref={textareaRef}
             value={script}
             onChange={(e) => setScript(e.target.value)}
-            className="w-full h-full bg-transparent font-body-s text-[var(--color-text-primary)] resize-none focus:outline-none font-sans"
-            placeholder="Type or paste your teleprompter script here..."
+            style={{ fontSize: `${fontSize}px` }}
+            className={cn(
+              'w-full h-full bg-transparent text-[var(--color-text-primary)] font-medium resize-none outline-none leading-relaxed',
+              'overflow-y-auto pr-1',
+              '[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#3A3B47] [&::-webkit-scrollbar-thumb]:rounded-full',
+              currentLang === 'bn' ? 'font-bangla leading-loose' : 'font-sans'
+            )}
+            placeholder={
+              currentLang === 'bn'
+                ? 'এখানে আপনার স্ক্রিপ্ট টাইপ করুন...'
+                : 'Type or paste your script here...'
+            }
+            spellCheck={false}
           />
-        ) : (
-          <div
-            ref={scrollContainerRef}
-            className="w-full h-full overflow-y-auto no-scrollbar scroll-smooth flex flex-col gap-3 py-16"
-          >
-            {lines.map((line, idx) => {
-              const isActive = idx === activeLineIndex;
-              return (
-                <p
-                  key={idx}
-                  style={{ fontSize: `${fontSize[0]}px` }}
-                  className={cn(
-                    'transition-colors duration-200 leading-relaxed font-medium',
-                    isBangla && 'font-bangla leading-loose',
-                    isActive
-                      ? 'text-[var(--color-brand-default)] font-bold scale-[1.02] origin-left'
-                      : 'text-[var(--color-text-secondary)] opacity-60'
-                  )}
-                >
-                  {line}
-                </p>
-              );
-            })}
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* Control Footer */}
-      <div className="p-3 border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] flex flex-col gap-2.5">
-        {/* Sliders: Speed and Font Size */}
-        <div className="grid grid-cols-2 gap-3 font-caption text-[var(--color-text-secondary)]">
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="flex items-center gap-1">
-                <HugeIcon icon={DashboardSpeed01Icon} size={12} /> Speed
-              </span>
-              <span className="font-code">{speed[0]}</span>
-            </div>
-            <Slider
-              value={speed}
-              onValueChange={setSpeed}
-              min={10}
-              max={100}
-              step={5}
-              ariaLabel="Scroll speed"
-            />
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="flex items-center gap-1">
-                <HugeIcon icon={TextFontIcon} size={12} /> Size
-              </span>
-              <span className="font-code">{fontSize[0]}px</span>
-            </div>
-            <Slider
-              value={fontSize}
-              onValueChange={setFontSize}
-              min={14}
-              max={32}
-              step={2}
-              ariaLabel="Font size"
-            />
-          </div>
-        </div>
-
-        {/* Playback Controls */}
-        <div className="flex items-center justify-between pt-1">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="flex items-center gap-1.5 px-2.5 py-1 font-label-s rounded-lg text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-hover)] transition-colors"
-          >
-            <HugeIcon icon={RotateLeft01Icon} size={14} />
-            Reset
-          </button>
-
+      {/* Bottom Controls Bar */}
+      <div className="flex items-center justify-between px-3.5 pb-3 select-none gap-2">
+        {/* Play/Pause & Reset Buttons */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
             onClick={() => setIsScrolling(!isScrolling)}
-            className="flex items-center gap-2 px-4 py-1.5 rounded-lg bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] font-label-s font-bold shadow-[var(--glow-brand)] active:scale-95 transition-transform"
+            title={isScrolling ? 'Pause scrolling' : 'Start scrolling'}
+            aria-label={isScrolling ? 'Pause scrolling' : 'Start scrolling'}
+            className="w-8 h-8 rounded-lg bg-[var(--color-brand-default)] text-[var(--color-text-on-brand)] flex items-center justify-center font-bold shadow-md hover:bg-[var(--color-brand-hover)] active:scale-95 transition-all"
           >
             {isScrolling ? (
-              <>
-                <HugeIcon icon={PauseIcon} size={14} /> Pause
-              </>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16" rx="1.5" />
+                <rect x="14" y="4" width="4" height="16" rx="1.5" />
+              </svg>
             ) : (
-              <>
-                <HugeIcon icon={PlayIcon} size={14} /> Start Scroll
-              </>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="ml-0.5">
+                <path d="M7 4.5v15c0 .8.9 1.3 1.6.9l12-7.5c.7-.4.7-1.4 0-1.8l-12-7.5c-.7-.4-1.6.1-1.6.9z" />
+              </svg>
             )}
           </button>
+
+          <button
+            type="button"
+            onClick={handleReset}
+            title="Reset to top"
+            aria-label="Reset to top"
+            className="w-8 h-8 rounded-lg bg-[#272832] border border-[#383944] text-[#B9BAC4] hover:text-white hover:bg-[#343542] flex items-center justify-center transition-all active:scale-95"
+          >
+            <HugeIcon icon={RotateLeft01Icon} size={15} />
+          </button>
+        </div>
+
+        {/* Speed Multiplier & Slider */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 text-[#B9BAC4]">
+            {/* Speedometer gauge icon */}
+            <svg
+              className="w-4 h-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M12 14l3-3" />
+              <path d="M3.34 19a10 10 0 1 1 17.32 0" />
+            </svg>
+            <span className="font-mono text-xs font-semibold text-[#B9BAC4] min-w-[20px]">
+              {speed}x
+            </span>
+          </div>
+
+          <SliderPrimitive.Root
+            value={[speed]}
+            onValueChange={(val) => setSpeed(val[0])}
+            min={1}
+            max={4}
+            step={0.5}
+            aria-label="Scroll speed"
+            className="relative flex items-center select-none touch-none w-16 sm:w-20 h-5 cursor-pointer"
+          >
+            <SliderPrimitive.Track className="relative h-1.5 grow rounded-full bg-[#2E303A] overflow-hidden">
+              <SliderPrimitive.Range className="absolute h-full bg-[var(--color-brand-default)]" />
+            </SliderPrimitive.Track>
+            <SliderPrimitive.Thumb className="block w-3.5 h-3.5 rounded-full bg-[var(--color-brand-default)] shadow focus:outline-none hover:scale-110 active:scale-95 transition-transform" />
+          </SliderPrimitive.Root>
+        </div>
+
+        {/* Font Size & Slider */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className="font-bold text-xs text-[#B9BAC4] select-none font-sans px-0.5">
+            T
+          </span>
+
+          <SliderPrimitive.Root
+            value={[fontSize]}
+            onValueChange={(val) => setFontSize(val[0])}
+            min={14}
+            max={32}
+            step={2}
+            aria-label="Font size"
+            className="relative flex items-center select-none touch-none w-16 sm:w-20 h-5 cursor-pointer"
+          >
+            <SliderPrimitive.Track className="relative h-1.5 grow rounded-full bg-[#2E303A] overflow-hidden">
+              <SliderPrimitive.Range className="absolute h-full bg-[var(--color-brand-default)]" />
+            </SliderPrimitive.Track>
+            <SliderPrimitive.Thumb className="block w-3.5 h-3.5 rounded-full bg-[var(--color-brand-default)] shadow focus:outline-none hover:scale-110 active:scale-95 transition-transform" />
+          </SliderPrimitive.Root>
         </div>
       </div>
     </div>

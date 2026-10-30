@@ -231,6 +231,7 @@ export const StudioApp: React.FC = () => {
   // Draggable UI Overlays & Live Effects State
   const [toolPalettePos, setToolPalettePos] = useState({ x: 20, y: 120 });
   const [miniControllerPos, setMiniControllerPos] = useState<{ x: number; y: number } | null>(null);
+  const [teleprompterPos, setTeleprompterPos] = useState({ x: 24, y: 24 });
   const [spotlightPos, setSpotlightPos] = useState({ x: 480, y: 270 });
   const [privacyPos, setPrivacyPos] = useState({ x: 120, y: 100, w: 280, h: 140 });
   const [activeKeystroke, setActiveKeystroke] = useState<string | null>(null);
@@ -247,6 +248,9 @@ export const StudioApp: React.FC = () => {
 
   const isDraggingPrivacyRef = useRef(false);
   const privacyDragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
+
+  const isDraggingTeleprompterRef = useRef(false);
+  const teleprompterDragStartRef = useRef({ mouseX: 0, mouseY: 0, startX: 0, startY: 0 });
 
   const laserCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const laserPointsRef = useRef<Array<{ x: number; y: number; time: number }>>([]);
@@ -670,7 +674,44 @@ export const StudioApp: React.FC = () => {
     window.addEventListener('mouseup', onMouseUp);
   };
 
-  // 4. Click Ripple Trigger
+  // 4. Teleprompter Dragging Handler
+  const handleTeleprompterDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    isDraggingTeleprompterRef.current = true;
+    teleprompterDragStartRef.current = {
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+      startX: teleprompterPos.x,
+      startY: teleprompterPos.y,
+    };
+
+    const onMouseMove = (ev: MouseEvent) => {
+      if (!isDraggingTeleprompterRef.current) return;
+      const deltaX = ev.clientX - teleprompterDragStartRef.current.mouseX;
+      const deltaY = ev.clientY - teleprompterDragStartRef.current.mouseY;
+      if (previewContainerRef.current) {
+        const rect = previewContainerRef.current.getBoundingClientRect();
+        const maxX = Math.max(10, rect.width - 380);
+        const maxY = Math.max(10, rect.height - 240);
+        setTeleprompterPos({
+          x: Math.max(10, Math.min(maxX, teleprompterDragStartRef.current.startX + deltaX)),
+          y: Math.max(10, Math.min(maxY, teleprompterDragStartRef.current.startY + deltaY)),
+        });
+      }
+    };
+
+    const onMouseUp = () => {
+      isDraggingTeleprompterRef.current = false;
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+
+  // 5. Click Ripple Trigger
   const triggerRipple = (x: number, y: number) => {
     if (!clickRipple) return;
     const id = Date.now() + Math.random();
@@ -1430,13 +1471,23 @@ export const StudioApp: React.FC = () => {
                   </div>
                 )}
 
-                {/* Floating Teleprompter inside preview (Figma 17:233) */}
+                {/* Floating Teleprompter HUD inside preview */}
                 {teleprompterOpen && (
-                  <div className="absolute top-4 left-6 z-40 max-w-sm">
+                  <div
+                    style={{
+                      position: 'absolute',
+                      left: `${teleprompterPos.x}px`,
+                      top: `${teleprompterPos.y}px`,
+                      zIndex: 42,
+                    }}
+                    className="shadow-2xl"
+                  >
                     <Teleprompter
                       isOpen={teleprompterOpen}
                       onClose={() => toggleTool('teleprompter')}
                       isBangla={lang === 'bn'}
+                      onGripMouseDown={handleTeleprompterDragStart}
+                      onLanguageChange={(newLang) => setLang(newLang)}
                     />
                   </div>
                 )}
@@ -1677,7 +1728,10 @@ export const StudioApp: React.FC = () => {
                     </div>
 
                     {/* Teleprompter */}
-                    <div className="flex items-center justify-between">
+                    <div
+                      className="flex items-center justify-between cursor-pointer"
+                      onClick={() => toggleTool('teleprompter')}
+                    >
                       <div className="flex items-center gap-2.5">
                         <HugeIcon icon={File01Icon} size={18} className="text-[var(--color-text-secondary)]" />
                         <span className="text-sm font-medium text-[var(--color-text-primary)]">Teleprompter (not recorded)</span>
@@ -1685,6 +1739,7 @@ export const StudioApp: React.FC = () => {
                       <Toggle
                         checked={tools.teleprompter}
                         onCheckedChange={() => toggleTool('teleprompter')}
+                        aria-label="Teleprompter (not recorded)"
                       />
                     </div>
                   </div>
